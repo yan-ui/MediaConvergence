@@ -9,19 +9,31 @@ import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
 
 public interface AccountContract {
     interface LoginView extends BaseContract.BaseView{
-        void loginSuccess(String msg);
-        void loginError(String msg);
+        void loginSuccess();
+        void loginError();
     }
     interface LoginPresenter extends BaseContract.BasePresenter<LoginView>{
         void login(String name, String password);
+        void thirdLogin(String platform,String code);
     }
 
     interface RegisterView extends BaseContract.BaseView{
-        void registerSuccess(String msg);
-        void registerError(String msg);
+        void registerSuccess();
+        void getCaptchaSuccess();
     }
 
     interface RegisterPresenter extends BaseContract.BasePresenter<RegisterView>{
-        void register(FrameLayout4Loading frameLayout4Loading,String name,String password);
+        void getCaptcha(String mobile,String event);
+        void register(String mobile,String password,String captcha);
     }
+
+    interface ForgetView extends BaseContract.BaseView{
+        void getCaptchaSuccess();
+        void resetpwdSuccess();
+    }
+    interface ForgetPresenter extends BaseContract.BasePresenter<ForgetView>{
+        void getCaptcha(String mobile,String event);
+        void resetpwd(String mobile, String newpassword,String captcha);
+    }
+
 }

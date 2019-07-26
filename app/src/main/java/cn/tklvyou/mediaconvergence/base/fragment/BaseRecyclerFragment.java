@@ -3,20 +3,20 @@ package cn.tklvyou.mediaconvergence.base.fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import cn.tklvyou.mediaconvergence.base.BaseAdapter;
+import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack;
 import cn.tklvyou.mediaconvergence.base.interfaces.CacheCallBack;
 import cn.tklvyou.mediaconvergence.base.interfaces.OnStopLoadListener;
@@ -24,18 +24,19 @@ import cn.tklvyou.mediaconvergence.common.Contacts;
 import cn.tklvyou.mediaconvergence.manager.CacheManager;
 
 
-/**基础RecyclerView Fragment
- * @author Lemon
- * @param <T> 数据模型(model/JavaBean)类
+/**
+ * 基础RecyclerView Fragment
+ *
+ * @param <T>  数据模型(model/JavaBean)类
  * @param <VH> ViewHolder或其子类
- * @param <A> 管理LV的Adapter
+ * @param <A>  管理LV的Adapter
+ * @author Lemon
  * @see #rvBaseRecycler
  * @see #initCache
  * @see #initView
  * @see #getListAsync
  * @see #onRefresh
- * @see
- *   <pre>
+ * @see <pre>
  *       基础使用：<br />
  *       extends BaseRecyclerFragment 并在子类onCreateView中调用onRefresh(...), 具体参考.DemoRecyclerActivity
  *       <br /><br />
@@ -49,52 +50,50 @@ import cn.tklvyou.mediaconvergence.manager.CacheManager;
  *       4.setList把列表数据绑定到adapter <br />
  *   </pre>
  */
-public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder, A extends RecyclerView.Adapter<VH>>
-        extends BaseFragment implements OnItemClickListener, OnItemLongClickListener {
+public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter, T, VH extends BaseViewHolder, A extends BaseQuickAdapter<T, VH>>
+        extends BaseFragment<P> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
 
     private static final String TAG = "BaseRecyclerFragment";
 
     /**
      * 显示列表的RecyclerView
-     * @warn 只使用rvBaseRecycler为显示列表数据的AbsRecyclerView(RecyclerView,GridView等)，不要在子类中改变它
+     *
+     * @warn 只使用rvBaseRecycler为显示列表数据的AbsRecyclerView(RecyclerView, GridView等)，不要在子类中改变它
      */
     protected RecyclerView rvBaseRecycler;
     /**
      * 管理LV的Item的Adapter
      */
     protected A adapter;
-    /**
-     * 如果在子类中调用(即super.initView());则view必须含有initView中初始化用到的id且id对应的View的类型全部相同；
-     * 否则必须在子类initView中重写这个类中initView内的代码(所有id替换成可用id)
-     */
-    @Override
-    public void initView() {//必须调用
 
-        rvBaseRecycler = getRecyclerView();
+    public void initRecyclerView(RecyclerView recyclerView) {
+        rvBaseRecycler = recyclerView;
         rvBaseRecycler.setLayoutManager(new LinearLayoutManager(mActivity));
     }
 
-
-    protected abstract RecyclerView getRecyclerView();
-
-    /**设置adapter
+    /**
+     * 设置adapter
+     *
      * @param adapter
      */
     public void setAdapter(A adapter) {
-        if (adapter instanceof BaseAdapter) {
-            ((BaseAdapter) adapter).setOnItemClickListener(this);
-            ((BaseAdapter) adapter).setOnItemLongClickListener(this);
-        }
+        adapter.setOnItemClickListener(this);
+        adapter.setOnItemLongClickListener(this);
         this.adapter = adapter;
         rvBaseRecycler.setAdapter(adapter);
+        adapter.disableLoadMoreIfNotFullPage();
     }
 
-    /**刷新列表数据（已在UI线程中），一般需求建议直接调用setList(List<T> l, AdapterCallBack<A> callBack)
+    /**
+     * 刷新列表数据（已在UI线程中），一般需求建议直接调用setList(List<T> l, AdapterCallBack<A> callBack)
+     *
      * @param list
      */
     public abstract void setList(List<T> list);
 
-    /**显示列表（已在UI线程中）
+    /**
+     * 显示列表（已在UI线程中）
+     *
      * @param callBack
      */
     public void setList(AdapterCallBack<A> callBack) {
@@ -111,11 +110,11 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
 
     /**
      * 获取列表，在非UI线程中
-     * @must 获取成功后调用onLoadSucceed
+     *
      * @param page 在onLoadSucceed中传回来保证一致性
+     * @must 获取成功后调用onLoadSucceed
      */
     public abstract void getListAsync(int page);
-
 
 
     public void loadData(int page) {
@@ -123,9 +122,9 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
     }
 
     /**
-     * 列表首页页码。有些服务器设置为1，即列表页码从1开始
+     * 列表首页页码。有些服务器设置为0，即列表页码从0开始
      */
-    public static final int PAGE_NUM_0 = 0;
+    public static final int PAGE_NUM_1 = 1;
 
     /**
      * 数据列表
@@ -144,7 +143,10 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
      */
     private int page;
     private int loadCacheStart;
-    /**加载数据，用getListAsync方法发请求获取数据
+
+    /**
+     * 加载数据，用getListAsync方法发请求获取数据
+     *
      * @param page_
      * @param isCache
      */
@@ -156,8 +158,8 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
         isLoading = true;
         isSucceed = false;
 
-        if (page_ <= PAGE_NUM_0) {
-            page_ = PAGE_NUM_0;
+        if (page_ <= PAGE_NUM_1) {
+            page_ = PAGE_NUM_1;
             isHaveMore = true;
             loadCacheStart = 0;//使用则可像网络正常情况下的重载，不使用则在网络异常情况下不重载（导致重载后加载数据下移）
         } else {
@@ -181,7 +183,7 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
                     onLoadSucceed(page, CacheManager.getInstance().getList(cacheCallBack.getCacheClass()
                             , cacheCallBack.getCacheGroup(), loadCacheStart, cacheCallBack.getCacheCount()),
                             true);
-                    if (page <= PAGE_NUM_0) {
+                    if (page <= PAGE_NUM_1) {
                         isLoading = false;//stopLoadeData在其它线程isLoading = false;后这个线程里还是true
                         loadData(page, false);
                     }
@@ -190,14 +192,19 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
         });
     }
 
-    /**停止加载数据
+    /**
+     * 停止加载数据
      * isCache = false;
+     *
      * @param page
      */
     public synchronized void stopLoadData(int page) {
         stopLoadData(page, false);
     }
-    /**停止加载数据
+
+    /**
+     * 停止加载数据
+     *
      * @param page
      * @param isCache
      */
@@ -215,31 +222,32 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
             return;
         }
         onStopLoadListener.onStopRefresh();
-        if (page > PAGE_NUM_0) {
+        if (page > PAGE_NUM_1) {
             onStopLoadListener.onStopLoadMore(isHaveMore);
         }
     }
 
 
-
     private boolean isSucceed = false;
-    /**处理列表
+
+    /**
+     * 处理列表
+     *
      * @param page
      * @param newList 新数据列表
      * @param isCache
-     * @return
      * @return
      */
     public synchronized void handleList(int page, List<T> newList, boolean isCache) {
         if (newList == null) {
             newList = new ArrayList<T>();
         }
-        isSucceed = ! newList.isEmpty();
+        isSucceed = !newList.isEmpty();
         Log.i(TAG, "\n\n<<<<<<<<<<<<<<<<<\n handleList  newList.size = " + newList.size() + "; isCache = " + isCache
                 + "; page = " + page + "; isSucceed = " + isSucceed);
 
-        if (page <= PAGE_NUM_0) {
-            Log.i(TAG, "handleList  page <= PAGE_NUM_0 >>>>  ");
+        if (page <= PAGE_NUM_1) {
+            Log.i(TAG, "handleList  page <= PAGE_NUM_1 >>>>  ");
             saveCacheStart = 0;
             list = new ArrayList<T>(newList);
             if (isCache == false && list.isEmpty() == false) {
@@ -247,12 +255,12 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
                 isToLoadCache = false;
             }
         } else {
-            Log.i(TAG, "handleList  page > PAGE_NUM_0 >>>>  ");
+            Log.i(TAG, "handleList  page > PAGE_NUM_1 >>>>  ");
             if (list == null) {
                 list = new ArrayList<T>();
             }
             saveCacheStart = list.size();
-            isHaveMore = ! newList.isEmpty();
+            isHaveMore = !newList.isEmpty();
             if (isHaveMore) {
                 list.addAll(newList);
             }
@@ -264,16 +272,20 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
     }
 
 
-
-    /**加载成功
+    /**
+     * 加载成功
      * isCache = false;
+     *
      * @param page
      * @param newList
      */
     public synchronized void onLoadSucceed(final int page, final List<T> newList) {
         onLoadSucceed(page, newList, false);
     }
-    /**加载成功
+
+    /**
+     * 加载成功
+     *
      * @param page
      * @param newList
      * @param isCache newList是否为缓存
@@ -301,7 +313,9 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
         });
     }
 
-    /**加载失败
+    /**
+     * 加载失败
+     *
      * @param page
      * @param e
      */
@@ -310,8 +324,6 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
         stopLoadData(page);
         ToastUtils.showShort("加载失败");
     }
-
-
 
 
     //缓存<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -325,7 +337,10 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
     //	}
 
     private int saveCacheStart;
-    /**保存缓存
+
+    /**
+     * 保存缓存
+     *
      * @param newList
      */
     public synchronized void saveCache(List<T> newList) {
@@ -347,10 +362,11 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
     //缓存>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-
-
     private OnStopLoadListener onStopLoadListener;
-    /**设置停止加载监听
+
+    /**
+     * 设置停止加载监听
+     *
      * @param onStopLoadListener
      */
     protected void setOnStopLoadListener(OnStopLoadListener onStopLoadListener) {
@@ -358,9 +374,12 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
     }
 
     private CacheCallBack<T> cacheCallBack;
-    /**初始化缓存
-     * @warn 在initData前使用才有效
+
+    /**
+     * 初始化缓存
+     *
      * @param cacheCallBack
+     * @warn 在initData前使用才有效
      */
     protected void initCache(CacheCallBack<T> cacheCallBack) {
         this.cacheCallBack = cacheCallBack;
@@ -370,43 +389,50 @@ public abstract class BaseRecyclerFragment<T, VH extends RecyclerView.ViewHolder
     }
 
 
-    /**刷新（从头加载）
+    /**
+     * 刷新（从头加载）
+     *
      * @must 在子类onCreate中调用，建议放在最后
      */
     public void onRefresh() {
-        loadData(PAGE_NUM_0);
+        loadData(PAGE_NUM_1);
     }
-    /**加载更多
+
+    /**
+     * 加载更多
      */
     public void onLoadMore() {
-        if (isSucceed == false && page <= PAGE_NUM_0) {
-            Log.w(TAG, "onLoadMore  isSucceed == false && page <= PAGE_NUM_0 >> return;");
+        if (isSucceed == false && page <= PAGE_NUM_1) {
+            Log.w(TAG, "onLoadMore  isSucceed == false && page <= PAGE_NUM_1 >> return;");
             return;
         }
         loadData(page + (isSucceed ? 1 : 0));
     }
 
 
+    /**
+     * 重写后可自定义对这个事件的处理
+     *
+     * @param view
+     * @param position
+     */
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
-    /**重写后可自定义对这个事件的处理
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
-     */
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     }
-    /**重写后可自定义对这个事件的处理，如果要在长按后不触发onItemClick，则需要 return true;
-     * @param parent
+
+
+    /**
+     * 重写后可自定义对这个事件的处理，如果要在长按后不触发onItemClick，则需要 return true;
+     *
      * @param view
      * @param position
-     * @param id
      */
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+    public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
         return false;
     }
+
 
 
     //生命周期、onActivityResult<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

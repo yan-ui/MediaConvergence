@@ -3,6 +3,7 @@ package cn.tklvyou.mediaconvergence.base.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -52,7 +53,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     protected P mPresenter;
 
     public FrameLayout4Loading mFrameLayout4Loading;
-    private CommonTitleBar titleBar;
+    private CommonTitleBar baseTitleBar;
 
     private boolean isAlive =false;
 
@@ -60,6 +61,11 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.basehead_layout);
+
+        //解决华为虚拟键盘关闭导致的Activity被重新创建闪退桌面的问题
+        Configuration configuration = getResources().getConfiguration();
+        configuration.screenLayout = 0x0100;
+        getResources().updateConfiguration(configuration,getResources().getDisplayMetrics());
 
         isAlive = true;
         threadNameList = new ArrayList<String>();
@@ -83,9 +89,9 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     }
 
     private void initBaseView() {
-        titleBar = findViewById(R.id.titleBar);
+        baseTitleBar = findViewById(R.id.baseTitleBar);
         mFrameLayout4Loading = findViewById(R.id.base_content);
-        titleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar);
+        baseTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar);
 
         fragmentManager = getSupportFragmentManager();
         mPresenter = initPresenter();
@@ -116,7 +122,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
      * 获取标题栏对象
      */
     public CommonTitleBar getCommonTitleBar() {
-        return titleBar;
+        return baseTitleBar;
     }
 
 
@@ -126,7 +132,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
      * @param title
      */
     public void setTitle(String title) {
-        titleBar.getCenterTextView().setText(title);
+        baseTitleBar.getCenterTextView().setText(title);
     }
 
 
@@ -137,51 +143,51 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
      * @param subTitle
      */
     public void setTitle(String title, String subTitle) {
-        titleBar.getCenterTextView().setText(title);
-        titleBar.getCenterSubTextView().setText(subTitle);
+        baseTitleBar.getCenterTextView().setText(title);
+        baseTitleBar.getCenterSubTextView().setText(subTitle);
     }
 
 
     public void setNavigationText(String leftText) {
-        titleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_TEXTVIEW, leftText, 0, 0, 0);
+        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_TEXTVIEW, leftText, 0, 0, 0);
     }
 
     public void setNavigationText(String leftText, int leftDrawable) {
-        titleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_TEXTVIEW, leftText, leftDrawable, 0, 0);
+        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_TEXTVIEW, leftText, leftDrawable, 0, 0);
     }
 
     public void setNavigationImage() {
-        titleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, 0, 0);
+        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, 0, 0);
     }
 
     public void setNavigationImage(int leftImageResource) {
-        titleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, leftImageResource, 0);
+        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, leftImageResource, 0);
     }
 
     public void setNavigationCustom(int leftCustomViewRes) {
-        titleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_CUSTOM_VIEW, "", 0, 0, leftCustomViewRes);
+        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_CUSTOM_VIEW, "", 0, 0, leftCustomViewRes);
     }
 
 
     public void setNavigationOnClickListener(CommonTitleBar.OnNavigationListener listener) {
-        titleBar.setNavigationListener(listener);
+        baseTitleBar.setNavigationListener(listener);
     }
 
 
     public void setPositiveText(String rightText) {
-        titleBar.setRightContent(CommonTitleBar.TYPE_RIGHT_TEXTVIEW, rightText, 0, 0);
+        baseTitleBar.setRightContent(CommonTitleBar.TYPE_RIGHT_TEXTVIEW, rightText, 0, 0);
     }
 
     public void setPositiveImage(int rightImageResource) {
-        titleBar.setRightContent(CommonTitleBar.TYPE_RIGHT_IMAGEBUTTON, "", rightImageResource, 0);
+        baseTitleBar.setRightContent(CommonTitleBar.TYPE_RIGHT_IMAGEBUTTON, "", rightImageResource, 0);
     }
 
     public void setPositiveCustom(int rightCustomViewRes) {
-        titleBar.setRightContent(CommonTitleBar.TYPE_RIGHT_CUSTOM_VIEW, "", 0, rightCustomViewRes);
+        baseTitleBar.setRightContent(CommonTitleBar.TYPE_RIGHT_CUSTOM_VIEW, "", 0, rightCustomViewRes);
     }
 
     public void setPositiveOnClickListener(CommonTitleBar.OnPositiveListener listener) {
-        titleBar.setPositiveListener(listener);
+        baseTitleBar.setPositiveListener(listener);
     }
 
 
@@ -189,11 +195,11 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
      * ToolBar 隐藏与显示 *
      */
     public void showTitleBar() {
-        titleBar.setVisibility(View.VISIBLE);
+        baseTitleBar.setVisibility(View.VISIBLE);
     }
 
     public void hideTitleBar() {
-        titleBar.setVisibility(View.GONE);
+        baseTitleBar.setVisibility(View.GONE);
     }
 
 

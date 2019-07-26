@@ -6,7 +6,7 @@ package cn.tklvyou.mediaconvergence.base;
 public class BaseResult<T> {
 
     private int code;
-    private Object msg;
+    private String msg;
     private T data;
 
     public int getCode() {
@@ -17,11 +17,11 @@ public class BaseResult<T> {
         this.code = code;
     }
 
-    public Object getMsg() {
+    public String getMsg() {
         return msg;
     }
 
-    public void setMsg(Object msg) {
+    public void setMsg(String msg) {
         this.msg = msg;
     }
 

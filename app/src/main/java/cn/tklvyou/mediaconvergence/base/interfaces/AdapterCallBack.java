@@ -20,4 +20,5 @@ public interface AdapterCallBack<A> {
 	 * 因为这样的话会不兼容部分 Android SDK 或 第三方库的Adapter
 	 */
 	void refreshAdapter();
+
 }

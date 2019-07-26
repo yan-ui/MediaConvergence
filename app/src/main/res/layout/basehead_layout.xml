@@ -7,7 +7,7 @@
 
     <!--头部-->
     <com.wuhenzhizao.titlebar.widget.CommonTitleBar
-        android:id="@+id/titleBar"
+        android:id="@+id/baseTitleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         titlebar:bottomShadowHeight="0dp"

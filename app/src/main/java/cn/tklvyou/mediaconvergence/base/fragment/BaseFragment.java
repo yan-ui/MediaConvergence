@@ -132,7 +132,6 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        LogUtils.e(isVisibleToUser,isFirstVisible);
         if (isVisibleToUser) {
             if (isFirstVisible) {
                 isFirstVisible = false;

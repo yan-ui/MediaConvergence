@@ -4,16 +4,18 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
+import cn.tklvyou.mediaconvergence.BuildConfig;
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.base.MyApplication;
 import cn.tklvyou.mediaconvergence.common.Contacts;
-import cn.tklvyou.mediaconvergence.ui.account.AccountActivity;
+import cn.tklvyou.mediaconvergence.ui.account.LoginActivity;
 import cn.tklvyou.mediaconvergence.utils.JsonHandleUtils;
 import okhttp3.FormBody;
 import okhttp3.Interceptor;
@@ -56,8 +58,14 @@ public class RetrofitHelper {
     }
 
     private void resetApp() {
+        String url;
+        if(BuildConfig.DEBUG){
+            url = Contacts.DEV_BASE_URL;
+        }else {
+            url = Contacts.PRO_BASE_URL;
+        }
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(Contacts.DEV_BASE_URL)
+                .baseUrl(url)
                 .client(getOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -91,6 +99,7 @@ public class RetrofitHelper {
         public Response intercept(Interceptor.Chain chain) throws IOException {
             Request request = chain.request()
                     .newBuilder()
+                    .addHeader("token", SPUtils.getInstance().getString("token"))
                     .addHeader("X-APP-TYPE", "android")
                     .build();
             Response response = chain.proceed(request);
@@ -118,7 +127,9 @@ public class RetrofitHelper {
 
             if (result != null && result.getCode() == 401) {
                 Log.d(TAG, "--->登录失效，自动重新登录");
-                MyApplication.getAppContext().startActivity(new Intent(MyApplication.getAppContext(), AccountActivity.class));
+                Intent intent = new Intent(MyApplication.getAppContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                MyApplication.getAppContext().startActivity(intent);
             }
 
             return response;

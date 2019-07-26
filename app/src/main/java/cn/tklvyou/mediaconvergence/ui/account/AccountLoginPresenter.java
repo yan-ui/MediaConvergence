@@ -3,7 +3,15 @@ package cn.tklvyou.mediaconvergence.ui.account;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
+
+import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
+import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
+import cn.tklvyou.mediaconvergence.base.BaseResult;
+import cn.tklvyou.mediaconvergence.model.User;
+import io.reactivex.functions.Consumer;
 
 
 /**
@@ -15,41 +23,59 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
     @Override
     public void login(final String name, final String password) {
         mView.showLoading();
-//        RetrofitHelper.getInstance().getServer()
-//                .getBooks("","","","")
-//                .compose(RxSchedulers.<BookModel>applySchedulers())
-//                .compose(mView.<BookModel>bindToLife())
-//                .subscribe(new Consumer<BookModel>() {
-//                    @Override
-//                    public void accept(BookModel bookModel) throws Exception {
-////                        mView.hideLoading();
-//                        frameLayout4Loading.hideLoadingView();
-////                        mView.setBook(bookModel);
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-////                       mView.hideLoading();
-//                        frameLayout4Loading.hideLoadingView();
-//                        frameLayout4Loading.showDefaultExceptionView();
-//                    }
-//                });
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                if (TextUtils.equals(name, "1") && TextUtils.equals(password, "2")) {
-//                    User user = new User();
-//                    user.setName("veer");
-//                    user.setPassword("v123456");
-//                    DbUserDao.getInstance().addUser(user);
-                    mView.loginSuccess("登录成功");
-//                    SPUtils.getInstance().put("isLogin", true);
-                } else {
-                    mView.loginError("密码错误！");
-                }
-                mView.hideLoading();
-            }
-        }, 2000);
+        RetrofitHelper.getInstance().getServer()
+                .login(name, password)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(new Consumer<BaseResult<User>>() {
+                    @Override
+                    public void accept(BaseResult<User> result) throws Exception {
+                        mView.hideLoading();
+                        ToastUtils.showShort(result.getMsg());
+                        if(result.getCode() == 1){
+                            mView.loginSuccess();
+                            SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
+                            SPUtils.getInstance().put("login",true);
+                        }else {
+                            mView.loginError();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                       mView.hideLoading();
 
+                    }
+                });
+    }
+
+    @Override
+    public void thirdLogin(String platform, String code) {
+        mView.showLoading();
+        RetrofitHelper.getInstance().getServer()
+                .thirdLogin(platform, code)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(new Consumer<BaseResult<User>>() {
+                    @Override
+                    public void accept(BaseResult<User> result) throws Exception {
+                        mView.hideLoading();
+                        ToastUtils.showShort(result.getMsg());
+                        if(result.getCode() == 1){
+                            mView.loginSuccess();
+                            SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
+                            SPUtils.getInstance().put("login",true);
+                        }else {
+                            mView.loginError();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mView.hideLoading();
+
+                    }
+                });
     }
 
 }

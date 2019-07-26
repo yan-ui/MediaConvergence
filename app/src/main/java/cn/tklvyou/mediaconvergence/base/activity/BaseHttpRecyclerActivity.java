@@ -1,22 +1,14 @@
 package cn.tklvyou.mediaconvergence.base.activity;
 
-import android.view.View;
-import android.widget.AdapterView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.List;
 
-import cn.tklvyou.mediaconvergence.base.BaseAdapter;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
-import cn.tklvyou.mediaconvergence.base.interfaces.OnLoadListener;
 import cn.tklvyou.mediaconvergence.base.interfaces.OnStopLoadListener;
 
 
@@ -41,42 +33,31 @@ import cn.tklvyou.mediaconvergence.base.interfaces.OnStopLoadListener;
  *       4.setList把列表数据绑定到adapter <br />
  *   </pre>
  */
-public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresenter, T, VH extends ViewHolder, A extends RecyclerView.Adapter<VH>>
+public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresenter, T, VH extends BaseViewHolder, A extends BaseQuickAdapter<T,VH>>
         extends BaseRecyclerActivity<P, T, VH, A>
-        implements OnStopLoadListener, OnRefreshListener, OnLoadMoreListener {
+        implements OnStopLoadListener, OnRefreshListener {
 
-    private static final String TAG = "BaseHttpRecyclerActivity";
 
     protected SmartRefreshLayout srlBaseHttpRecycler;
-
-    @Override
-    public void initView() {
-        super.initView();
-        srlBaseHttpRecycler = getSmartRefreshLayout();
-
+    protected void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout){
+        srlBaseHttpRecycler = smartRefreshLayout;
         setOnStopLoadListener(this);
 
+        srlBaseHttpRecycler.setEnableLoadMore(false);
         srlBaseHttpRecycler.setOnRefreshListener(this);
-        srlBaseHttpRecycler.setOnLoadMoreListener(this);
-    }
 
-    protected abstract SmartRefreshLayout getSmartRefreshLayout();
+    }
 
     @Override
     public void setAdapter(A adapter) {
-        if (adapter instanceof BaseAdapter) {
-            ((BaseAdapter) adapter).setOnLoadListener(new OnLoadListener() {
-                @Override
-                public void onRefresh() {
-                    srlBaseHttpRecycler.autoRefresh();
-                }
+        adapter.disableLoadMoreIfNotFullPage();
 
-                @Override
-                public void onLoadMore() {
-                    srlBaseHttpRecycler.autoLoadMore();
-                }
-            });
-        }
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                onLoadMore();
+            }
+        },rvBaseRecycler);
         super.setAdapter(adapter);
     }
 
@@ -88,33 +69,15 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
     public abstract void getListAsync(int page);
 
 
-    /**
-     * 重写后可自定义对这个事件的处理
-     *
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
-     */
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    }
-
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
         onRefresh();
-    }
-
-    @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        onLoadMore();
     }
 
 
     @Override
     public void onStopRefresh() {
         runUiThread(new Runnable() {
-
             @Override
             public void run() {
                 srlBaseHttpRecycler.finishRefresh();
@@ -125,13 +88,12 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
     @Override
     public void onStopLoadMore(final boolean isHaveMore) {
         runUiThread(new Runnable() {
-
             @Override
             public void run() {
                 if (isHaveMore) {
-                    srlBaseHttpRecycler.finishLoadMore();
+                    adapter.loadMoreComplete();
                 } else {
-                    srlBaseHttpRecycler.finishLoadMoreWithNoMoreData();
+                    adapter.loadMoreEnd();
                 }
             }
         });
@@ -139,18 +101,23 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
 
 
     /**
-     * 处理结果
+     * 处理网络请求加载成功结果
      *
      * @param page
      * @param list
+     */
+    public void onLoadSuccess(int page, List<T> list) {
+            onLoadSucceed(page, list);
+    }
+
+    /**
+     * 处理网络请求加载失败结果
+     *
+     * @param page
      * @param e
      */
-    public void onResponse(int page, List<T> list, Exception e) {
-        if ((list == null || list.isEmpty()) && e != null) {
-            onLoadFailed(page, e);
-        } else {
-            onLoadSucceed(page, list);
-        }
+    public void onLoadError(int page,Exception e){
+        onLoadFailed(page, e);
     }
 
 }
