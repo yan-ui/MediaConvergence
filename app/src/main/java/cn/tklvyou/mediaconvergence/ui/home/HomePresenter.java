@@ -20,20 +20,12 @@ public class HomePresenter extends BasePresenter<HomeContract.View> implements H
                .getHomeChannel()
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<List<String>>>() {
-                    @Override
-                    public void accept(BaseResult<List<String>> result) {
-                        if(result.getCode() ==1){
-                            mView.setHomeChannel(result.getData());
-                        }else {
-                            ToastUtils.showShort(result.getMsg());
-                        }
+                .subscribe(result -> {
+                    if(result.getCode() ==1){
+                        mView.setHomeChannel(result.getData());
+                    }else {
+                        ToastUtils.showShort(result.getMsg());
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                }, throwable -> throwable.printStackTrace());
     }
 }

@@ -1,0 +1,35 @@
+[
+  {
+    "name": "我的收藏",
+    "localImage": "icon_mine_collect"
+  },
+  {
+    "name": "最近浏览",
+    "localImage": "icon_mine_see_history"
+  },
+  {
+    "name": "我的贴子",
+    "localImage": "icon_mine_tiezi"
+  },
+  {
+    "name": "问政记录",
+    "localImage": "icon_mine_wenzheng"
+  },
+  {
+    "name": "我的消息",
+    "localImage": "icon_mine_msg"
+  },
+  {
+    "name": "兑换记录",
+    "localImage": "icon_mine_duihuan"
+  },
+  {
+    "name": "关注板块",
+    "localImage": "icon_mine_guanzhu"
+  },
+  {
+    "name": "关于我们",
+    "localImage": "icon_mine_about"
+  }
+]
+

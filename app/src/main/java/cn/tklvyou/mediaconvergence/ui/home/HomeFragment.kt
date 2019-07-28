@@ -4,24 +4,24 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NewsMultipleItem
+import cn.tklvyou.mediaconvergence.model.NewsMultipleItem
 import cn.tklvyou.mediaconvergence.base.fragment.BaseFragment
-import cn.tklvyou.mediaconvergence.common.Contacts
 import kotlinx.android.synthetic.main.fragment_home.*
 import cn.tklvyou.mediaconvergence.model.Channel
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.entity.LocalMedia
 import com.trello.rxlifecycle3.components.support.RxFragment
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ClipPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
-import net.lucode.hackware.magicindicator.buildins.UIUtil
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
-
-
 
 
 class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
@@ -40,9 +40,29 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
     private var mChannelPagerAdapter: ChannelPagerAdapter? = null
 
     private lateinit var commonNavigator: CommonNavigator
+    private var selectList: List<LocalMedia> = ArrayList()
 
     override fun initView() {
         homeTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
+        homeTitleBar.rightCustomView.setOnClickListener {
+            // 进入相册 以下是例子：不需要的api可以不写
+            PictureSelector.create(activity)
+                    .openGallery(PictureMimeType.ofVideo())
+                    .theme(R.style.picture_default_style)
+                    .maxSelectNum(1)
+                    .minSelectNum(1)
+                    .selectionMode(PictureConfig.SINGLE)
+                    .previewImage(true)
+                    .isCamera(true)
+                    .enableCrop(false)
+                    .compress(true)
+                    .previewEggs(true)
+                    .openClickSound(false)
+                    .selectionMedia(selectList)
+                    .forResult(PictureConfig.CHOOSE_REQUEST)
+
+        }
+
         initMagicIndicator()
         mPresenter.getHomeChannel()
     }
@@ -103,7 +123,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         for (channel in mSelectedChannels) {
             val newsFragment = NewsListFragment()
             val bundle = Bundle()
-            bundle.putInt("type",NewsMultipleItem.VIDEO)
+            bundle.putInt("type", NewsMultipleItem.VIDEO)
             newsFragment.arguments = bundle
             mChannelFragments.add(newsFragment)//添加到集合中
         }

@@ -60,6 +60,7 @@ public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresen
                 onLoadMore();
             }
         },rvBaseRecycler);
+        adapter.disableLoadMoreIfNotFullPage();
         super.setAdapter(adapter);
     }
 

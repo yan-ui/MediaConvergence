@@ -6,6 +6,7 @@ import android.util.Log;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.Gson;
+import com.netease.neliveplayer.playerkit.common.log.LogUtil;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -59,9 +60,9 @@ public class RetrofitHelper {
 
     private void resetApp() {
         String url;
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             url = Contacts.DEV_BASE_URL;
-        }else {
+        } else {
             url = Contacts.PRO_BASE_URL;
         }
         mRetrofit = new Retrofit.Builder()
@@ -103,6 +104,7 @@ public class RetrofitHelper {
                     .addHeader("X-APP-TYPE", "android")
                     .build();
             Response response = chain.proceed(request);
+            LogUtils.e(SPUtils.getInstance().getString("token"));
             return response;
         }
     }

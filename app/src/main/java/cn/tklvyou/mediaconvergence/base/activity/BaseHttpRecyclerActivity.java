@@ -50,8 +50,6 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
 
     @Override
     public void setAdapter(A adapter) {
-        adapter.disableLoadMoreIfNotFullPage();
-
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {

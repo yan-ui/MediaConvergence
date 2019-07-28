@@ -18,7 +18,7 @@
         titlebar:centerType="textView"
         titlebar:showBottomLine="false"
         titlebar:statusBarMode="dark"
-        titlebar:titleBarHeight="@dimen/dp_50" />
+        titlebar:titleBarHeight="@dimen/dp_40" />
 
 
     <LinearLayout

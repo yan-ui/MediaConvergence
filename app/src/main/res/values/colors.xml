@@ -15,6 +15,13 @@
 
     <color name="common_bg">#f4f4f4</color>
     <color name="common_divider">#e0e0e0</color>
+    <color name="default_clickable_color">#cccccc</color>
+    <color name="praise_item_default">#333333</color>
+    <color name="praise_item_selector_default">#cccccc</color>
+    <color name="im_social_dig_name_bg">#DDDDDD</color>
+    <color name="default_black_text_color">#333333</color>
+    <color name="default_gray_text_color">#999999</color>
+    <color name="bg_no_photo">#EEEEEE</color>
 
 
 </resources>

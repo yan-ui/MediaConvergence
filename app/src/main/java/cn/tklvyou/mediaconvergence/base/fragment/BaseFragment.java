@@ -114,7 +114,6 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
             isFirstResume = false;
             return;
         }
-        LogUtils.e(getUserVisibleHint());
         if (getUserVisibleHint()) {
             onUserVisible();
         }

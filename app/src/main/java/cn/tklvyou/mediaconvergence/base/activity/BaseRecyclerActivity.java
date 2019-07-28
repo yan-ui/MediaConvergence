@@ -104,6 +104,7 @@ public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter,
         adapter.setOnItemLongClickListener(this);
         this.adapter = adapter;
         rvBaseRecycler.setAdapter(adapter);
+        this.adapter.disableLoadMoreIfNotFullPage();
     }
 
     /**

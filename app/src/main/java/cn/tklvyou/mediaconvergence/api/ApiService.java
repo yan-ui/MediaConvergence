@@ -4,13 +4,20 @@ import java.util.List;
 
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
-import cn.tklvyou.mediaconvergence.model.NewListModel;
+import cn.tklvyou.mediaconvergence.model.BasePageModel;
+import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.model.User;
 import io.reactivex.Observable;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface ApiService {
+
+    /**
+     * 会员中心
+     */
+    @POST("api/user/index")
+    Observable<BaseResult<User.UserinfoBean>> getUser();
 
     /**
      * 注册会员
@@ -62,7 +69,7 @@ public interface ApiService {
      * 内容列表
      */
     @POST("api/article/index")
-    Observable<BaseResult<NewListModel>> getNewList(@Query("module") String module, @Query("p") int p);
+    Observable<BaseResult<BasePageModel<NewsBean>>> getNewList(@Query("module") String module, @Query("p") int p);
 
     /**
      * 顶部banner
@@ -70,5 +77,28 @@ public interface ApiService {
     @POST("api/banner/index")
     Observable<BaseResult<List<BannerModel>>> getBanner(@Query("module") String module);
 
+    /**
+     * 文章详情
+     */
+    @POST("api/article/detail")
+    Observable<BaseResult<NewsBean>> getArticleDetail(@Query("id") int id);
+
+    /**
+     * 点赞
+     */
+    @POST("api/like/add")
+    Observable<BaseResult<Object>> addLikeNews(@Query("article_id") int article_id);
+
+    /**
+     * 取消点赞
+     */
+    @POST("api/like/cancel")
+    Observable<BaseResult<Object>> cancelLikeNews(@Query("article_id") int article_id);
+
+    /**
+     * 发表评论
+     */
+    @POST("api/comment/add")
+    Observable<BaseResult<Object>> addComment(@Query("article_id") int article_id,@Query("detail") String detail);
 
 }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".ui.video_player.LiveActivity">
+
+    <FrameLayout
+        android:id="@+id/render_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.netease.neliveplayer.playerkit.sdk.view.AdvanceTextureView
+            android:id="@+id/textureView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/mBuffer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:text="缓冲中"
+                android:textColor="#FFFFFFFF"
+                android:textSize="13dp" />
+
+            <ProgressBar
+                style="@android:style/Widget.ProgressBar.Large"
+                android:layout_width="50dip"
+                android:layout_height="50dip" />
+        </LinearLayout>
+
+        <cn.tklvyou.mediaconvergence.widget.PlayPauseButton
+            android:id="@+id/mPlayPauseButton"
+            android:layout_centerInParent="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <ImageView
+            android:id="@+id/mAudioRemind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:src="@drawable/audio_remind"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:background="#88000000"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/mCurrentTime"
+                    android:layout_width="60dip"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:textColor="#bfbfbf"
+                    android:textSize="13dp"
+                    android:textStyle="bold" />
+
+                <SeekBar
+                    style="@style/MediaController_SeekBar"
+                    android:id="@+id/mProgressBar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:max="100" />
+
+                <TextView
+                    android:id="@+id/mEndTime"
+                    android:layout_width="wrap_content"
+                    android:minWidth="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="15dp"
+                    android:gravity="center"
+                    android:textColor="#bfbfbf"
+                    android:textSize="13dp"
+                    android:textStyle="bold" />
+
+
+                <ImageView
+                    android:id="@+id/mMuteButton"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_toLeftOf="@+id/mSnapshotButton"
+                    android:src="@drawable/nemediacontroller_mute02" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/mSnapshotButton"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="43dp"
+                    android:layout_toLeftOf="@+id/mSetPlayerScaleButton"
+                    android:focusable="true"
+                    android:src="@drawable/nemediacontroller_takesnap" />
+
+                <ImageView
+                    android:id="@+id/mSetPlayerScaleButton"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:focusable="true"
+                    android:gravity="right"
+                    android:src="@drawable/nemediacontroller_scale02" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

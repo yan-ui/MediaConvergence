@@ -23,18 +23,12 @@ public class AccountForgetPresenter extends BasePresenter<AccountContract.Forget
                 .sendSms(mobile,event)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<Object>>() {
-                    @Override
-                    public void accept(BaseResult<Object> result) throws Exception {
-                        ToastUtils.showShort(result.getMsg());
-                        if(result.getCode() ==1){
-                            mView.getCaptchaSuccess();
-                        }
+                .subscribe(result -> {
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() ==1){
+                        mView.getCaptchaSuccess();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                    }
+                }, throwable -> {
                 });
     }
 
@@ -45,20 +39,12 @@ public class AccountForgetPresenter extends BasePresenter<AccountContract.Forget
                 .resetpwd(mobile, newpassword, captcha)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<Object>>() {
-                    @Override
-                    public void accept(BaseResult<Object> result) throws Exception {
-                        mView.hideLoading();
-                        ToastUtils.showShort(result.getMsg());
-                        if(result.getCode() == 1){
-                            mView.resetpwdSuccess();
-                        }
+                .subscribe(result -> {
+                    mView.hideLoading();
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() == 1){
+                        mView.resetpwdSuccess();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mView.hideLoading();
-                    }
-                });
+                }, throwable -> mView.hideLoading());
     }
 }

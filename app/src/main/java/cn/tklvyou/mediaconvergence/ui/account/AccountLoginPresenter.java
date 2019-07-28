@@ -27,26 +27,17 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
                 .login(name, password)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<User>>() {
-                    @Override
-                    public void accept(BaseResult<User> result) throws Exception {
-                        mView.hideLoading();
-                        ToastUtils.showShort(result.getMsg());
-                        if(result.getCode() == 1){
-                            mView.loginSuccess();
-                            SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
-                            SPUtils.getInstance().put("login",true);
-                        }else {
-                            mView.loginError();
-                        }
+                .subscribe(result -> {
+                    mView.hideLoading();
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() == 1){
+                        mView.loginSuccess();
+                        SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
+                        SPUtils.getInstance().put("login",true);
+                    }else {
+                        mView.loginError();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                       mView.hideLoading();
-
-                    }
-                });
+                }, throwable -> mView.hideLoading());
     }
 
     @Override
@@ -56,26 +47,17 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
                 .thirdLogin(platform, code)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<User>>() {
-                    @Override
-                    public void accept(BaseResult<User> result) throws Exception {
-                        mView.hideLoading();
-                        ToastUtils.showShort(result.getMsg());
-                        if(result.getCode() == 1){
-                            mView.loginSuccess();
-                            SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
-                            SPUtils.getInstance().put("login",true);
-                        }else {
-                            mView.loginError();
-                        }
+                .subscribe(result -> {
+                    mView.hideLoading();
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() == 1){
+                        mView.loginSuccess();
+                        SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
+                        SPUtils.getInstance().put("login",true);
+                    }else {
+                        mView.loginError();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mView.hideLoading();
-
-                    }
-                });
+                }, throwable -> mView.hideLoading());
     }
 
 }

@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -332,6 +333,18 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         return this.bindToLifecycle();
     }
 
+
+    /**
+     * 显示软件盘
+     */
+    public void showSoftInput(EditText view) {
+        if (view != null) {
+            InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (im != null) {
+                im.showSoftInput(view,0);
+            }
+        }
+    }
 
     /**
      * 隐藏软件盘

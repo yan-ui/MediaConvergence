@@ -37,7 +37,7 @@ public class User {
         private String nickname;
         private String mobile;
         private String avatar;
-        private int score;
+        private String score;
         private String token;
         private int user_id;
         private int createtime;
@@ -84,11 +84,11 @@ public class User {
             this.avatar = avatar;
         }
 
-        public int getScore() {
+        public String getScore() {
             return score;
         }
 
-        public void setScore(int score) {
+        public void setScore(String score) {
             this.score = score;
         }
 

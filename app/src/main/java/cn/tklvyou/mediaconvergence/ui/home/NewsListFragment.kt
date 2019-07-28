@@ -1,38 +1,24 @@
 package cn.tklvyou.mediaconvergence.ui.home
 
 import android.content.Intent
-import android.text.TextUtils
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.LinearInterpolator
-import android.view.animation.RotateAnimation
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 
-
-import androidx.recyclerview.widget.RecyclerView
-
-import com.google.gson.Gson
-
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 import java.util.ArrayList
 
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.BaseContract
-import cn.tklvyou.mediaconvergence.base.NewsMultipleItem
-import cn.tklvyou.mediaconvergence.base.NewsMultipleItemQuickAdapter
-import cn.tklvyou.mediaconvergence.base.NullPresenter
+import cn.tklvyou.mediaconvergence.model.NewsMultipleItem
 import cn.tklvyou.mediaconvergence.base.fragment.BaseHttpRecyclerFragment
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.BannerModel
-import cn.tklvyou.mediaconvergence.model.NewListModel
+import cn.tklvyou.mediaconvergence.model.BasePageModel
+import cn.tklvyou.mediaconvergence.model.NewsBean
+import cn.tklvyou.mediaconvergence.ui.adapter.NewsMultipleItemQuickAdapter
+import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.BannerGlideImageLoader
-import cn.tklvyou.mediaconvergence.widget.RecycleViewDivider
-import com.blankj.utilcode.util.ToastUtils
+import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.youth.banner.Banner
 import com.youth.banner.BannerConfig
@@ -107,7 +93,10 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         banner.setIndicatorGravity(BannerConfig.RIGHT)
         banner.setOnBannerListener(object : OnBannerListener {
             override fun OnBannerClick(position: Int) {
-                ToastUtils.showShort("" + position)
+                val intent = Intent(context, BannerDetailsActivity::class.java)
+                intent.putExtra("title",bannerModelList[position].name )
+                intent.putExtra("content",bannerModelList[position].content )
+                startActivity(intent)
             }
 
         })
@@ -138,15 +127,34 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         mPresenter.getNewList("V视频", page)
     }
 
-    override fun setNewList(p: Int, model: NewListModel?) {
+    override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {
         if (model != null) {
             val newList = ArrayList<NewsMultipleItem>()
             model.data.forEach {
                 newList.add(NewsMultipleItem(it))
             }
             onLoadSucceed(p, newList)
+        }else{
+            onLoadFailed(p,null)
         }
     }
 
+
+    override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onItemChildClick(adapter, view, position)
+        if (view != null) {
+            when (view.id) {
+                R.id.videoLayout -> {
+                    //打开新的Activity
+                    val intent = Intent(context, VodActivity::class.java)
+//                    intent.putExtra("media_type", "livestream")
+                    intent.putExtra("videoPath", (adapter as NewsMultipleItemQuickAdapter).data[position].dataBean.video)
+                    startActivity(intent)
+                }
+                else -> {
+                }
+            }
+        }
+    }
 
 }

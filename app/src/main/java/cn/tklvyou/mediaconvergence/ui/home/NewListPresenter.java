@@ -10,11 +10,12 @@ import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
-import cn.tklvyou.mediaconvergence.model.NewListModel;
+import cn.tklvyou.mediaconvergence.model.BasePageModel;
+import cn.tklvyou.mediaconvergence.model.NewsBean;
 import io.reactivex.functions.Consumer;
 
 
-public class NewListPresenter extends BasePresenter<NewListContract.View> implements NewListContract.Presenter{
+public class NewListPresenter extends BasePresenter<NewListContract.View> implements NewListContract.Presenter {
 
     @Override
     public void getNewList(String module, int p) {
@@ -22,21 +23,17 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                 .getNewList(module, p)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<NewListModel>>() {
-                    @Override
-                    public void accept(BaseResult<NewListModel> result) {
-                        if(result.getCode() ==1){
-                            mView.setNewList(p,result.getData());
-                        }else {
-                            ToastUtils.showShort(result.getMsg());
+                .subscribe(result -> {
+                            if (result.getCode() == 1) {
+                                mView.setNewList(p, result.getData());
+                            } else {
+                                ToastUtils.showShort(result.getMsg());
+                            }
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            mView.setNewList(p,null);
                         }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                );
     }
 
     @Override
@@ -45,20 +42,12 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                 .getBanner(module)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<List<BannerModel>>>() {
-                    @Override
-                    public void accept(BaseResult<List<BannerModel>> result) {
-                        if(result.getCode() ==1){
-                            mView.setBanner(result.getData());
-                        }else {
-                            ToastUtils.showShort(result.getMsg());
-                        }
+                .subscribe(result -> {
+                    if (result.getCode() == 1) {
+                        mView.setBanner(result.getData());
+                    } else {
+                        ToastUtils.showShort(result.getMsg());
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                }, throwable -> throwable.printStackTrace());
     }
 }

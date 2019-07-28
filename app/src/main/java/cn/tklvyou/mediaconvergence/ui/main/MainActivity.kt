@@ -1,6 +1,10 @@
 package cn.tklvyou.mediaconvergence.ui.main
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Handler
+import android.os.Message
+import android.view.KeyEvent
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseBottomTabActivity
 import cn.tklvyou.mediaconvergence.base.NullPresenter
@@ -10,6 +14,7 @@ import cn.tklvyou.mediaconvergence.ui.camera.CameraFragment
 import cn.tklvyou.mediaconvergence.ui.mine.MineFragment
 import cn.tklvyou.mediaconvergence.ui.service.ServiceFragment
 import com.blankj.utilcode.util.SPUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.trello.rxlifecycle3.components.support.RxFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -67,5 +72,41 @@ class MainActivity : BaseBottomTabActivity<NullPresenter>() {
         selectFragment(0)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mFragments = null
+    }
+
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            appExit()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private var isExit: Boolean = false
+
+    @SuppressLint("HandlerLeak")
+    private val exitHandler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            isExit = false
+        }
+    }
+
+    private fun appExit() {
+        if (!isExit) {
+            isExit = true
+            ToastUtils.showShort("再按一次退出程序")
+            exitHandler.sendEmptyMessageDelayed(0, 2000)
+        } else {
+            val intent = Intent(Intent.ACTION_MAIN)
+            intent.addCategory(Intent.CATEGORY_HOME)
+            startActivity(intent)
+            System.exit(0)
+        }
+    }
 
 }

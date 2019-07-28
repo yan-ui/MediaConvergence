@@ -1,1 +1,1 @@
-include ':app', ':libtitlebar'
+include ':app', ':libtitlebar', ':playerkit', ':picture_library', ':ucrop'

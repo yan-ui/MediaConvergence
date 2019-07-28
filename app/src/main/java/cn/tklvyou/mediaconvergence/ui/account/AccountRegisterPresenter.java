@@ -24,18 +24,12 @@ public class AccountRegisterPresenter extends BasePresenter<AccountContract.Regi
               .sendSms(mobile,event)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<Object>>() {
-                    @Override
-                    public void accept(BaseResult<Object> result) throws Exception {
-                        ToastUtils.showShort(result.getMsg());
-                        if(result.getCode() ==1){
-                            mView.getCaptchaSuccess();
-                        }
+                .subscribe(result -> {
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() ==1){
+                        mView.getCaptchaSuccess();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                    }
+                }, throwable -> {
                 });
     }
 
@@ -46,22 +40,14 @@ public class AccountRegisterPresenter extends BasePresenter<AccountContract.Regi
                 .register(mobile, password, captcha)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
-                .subscribe(new Consumer<BaseResult<User>>() {
-                    @Override
-                    public void accept(BaseResult<User> result) throws Exception {
-                        mView.hideLoading();
-                        ToastUtils.showShort(result.getMsg());
-                        if(result.getCode() == 1){
-                            mView.registerSuccess();
-                            SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
-                            SPUtils.getInstance().put("login",true);
-                        }
+                .subscribe(result -> {
+                    mView.hideLoading();
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() == 1){
+                        mView.registerSuccess();
+                        SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
+                        SPUtils.getInstance().put("login",true);
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mView.hideLoading();
-                    }
-                });
+                }, throwable -> mView.hideLoading());
     }
 }

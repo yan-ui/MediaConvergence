@@ -24,7 +24,7 @@
         titlebar:rightTextSize="@dimen/sp_14"
         titlebar:showBottomLine="false"
         titlebar:statusBarMode="light"
-        titlebar:titleBarHeight="@dimen/dp_50" />
+        titlebar:titleBarHeight="@dimen/dp_40" />
 
     <!--内容容器-->
     <cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading
