@@ -38,8 +38,6 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
     private var imagesBuilder: StringBuilder = StringBuilder()
     private val imageFiles = ArrayList<File>()
     private var videoUrl = ""
-
-
     override fun initView() {
         commonTitleBar.toggleStatusBarMode()
         hideTitleBar()
