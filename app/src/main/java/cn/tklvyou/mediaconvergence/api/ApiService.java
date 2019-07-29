@@ -6,12 +6,31 @@ import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
+import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
+
+    /**
+     * 单文件上传接口
+     */
+    @Multipart
+    @POST("api/common/upload")
+    Observable<BaseResult<UploadModel>> upload(@Part MultipartBody.Part file);
+
+    /**
+     * 多文件上传接口
+     */
+    @Multipart
+    @POST("api/common/uploads")
+    Observable<BaseResult<UploadModel>> uploadFiles(@Part List<MultipartBody.Part> files);
+
 
     /**
      * 会员中心
@@ -33,6 +52,7 @@ public interface ApiService {
 
     /**
      * 第三方登录
+     *
      * @param platform wechat
      */
     @POST("api/user/third")
@@ -99,6 +119,21 @@ public interface ApiService {
      * 发表评论
      */
     @POST("api/comment/add")
-    Observable<BaseResult<Object>> addComment(@Query("article_id") int article_id,@Query("detail") String detail);
+    Observable<BaseResult<Object>> addComment(@Query("article_id") int article_id, @Query("detail") String detail);
+
+
+    /**
+     * 发布V视
+     */
+    @POST("api/article/addv")
+    Observable<BaseResult<Object>> publishVShi(@Query("name") String name, @Query("video") String video,
+                                               @Query("image") String image, @Query("time") String time);
+
+
+    /**
+     * 发布随手拍
+     */
+    @POST("api/article/adds")
+    Observable<BaseResult<Object>> publishSuiShouPai(@Query("name") String name, @Query("images") List<String> images);
 
 }

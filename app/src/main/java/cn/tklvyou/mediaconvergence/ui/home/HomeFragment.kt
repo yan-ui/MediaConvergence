@@ -1,6 +1,9 @@
 package cn.tklvyou.mediaconvergence.ui.home
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
@@ -9,12 +12,15 @@ import cn.tklvyou.mediaconvergence.base.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import cn.tklvyou.mediaconvergence.model.Channel
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
+import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
+import cn.tklvyou.mediaconvergence.utils.JSON
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle3.components.support.RxFragment
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
@@ -22,6 +28,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ClipPa
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
+import java.io.Serializable
 
 
 class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
@@ -40,26 +47,23 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
     private var mChannelPagerAdapter: ChannelPagerAdapter? = null
 
     private lateinit var commonNavigator: CommonNavigator
-    private var selectList: List<LocalMedia> = ArrayList()
 
     override fun initView() {
         homeTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
         homeTitleBar.rightCustomView.setOnClickListener {
-            // 进入相册 以下是例子：不需要的api可以不写
-            PictureSelector.create(activity)
-                    .openGallery(PictureMimeType.ofVideo())
-                    .theme(R.style.picture_default_style)
-                    .maxSelectNum(1)
-                    .minSelectNum(1)
-                    .selectionMode(PictureConfig.SINGLE)
-                    .previewImage(true)
-                    .isCamera(true)
-                    .enableCrop(false)
-                    .compress(true)
-                    .previewEggs(true)
-                    .openClickSound(false)
-                    .selectionMedia(selectList)
-                    .forResult(PictureConfig.CHOOSE_REQUEST)
+            RxPermissions(this)
+                    .request(Manifest.permission.CAMERA)
+                    .subscribe { granted ->
+                        if (granted) { // Always true pre-M
+                            PictureSelector.create(this)
+                                    .openCamera(PictureMimeType.ofVideo())
+                                    .recordVideoSecond(60)
+                                    .forResult(PictureConfig.CHOOSE_REQUEST)
+                        } else {
+                            ToastUtils.showShort("权限拒绝，无法使用")
+                        }
+                    }
+
 
         }
 
@@ -72,7 +76,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     }
 
-    private fun initMagicIndicator(){
+    private fun initMagicIndicator() {
         commonNavigator = CommonNavigator(context)
         commonNavigator.isSkimOver = true
         commonNavigator.adapter = object : CommonNavigatorAdapter() {
@@ -111,7 +115,6 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         mViewPager.offscreenPageLimit = mSelectedChannels.size
 
 
-
     }
 
 
@@ -127,6 +130,27 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
             newsFragment.arguments = bundle
             mChannelFragments.add(newsFragment)//添加到集合中
         }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PictureConfig.CHOOSE_REQUEST && data != null) {
+                // 图片、视频、音频选择结果回调
+                val selectList = PictureSelector.obtainMultipleResult(data)
+                // 例如 LocalMedia 里面返回三种path
+                // 1.media.getPath(); 为原图path
+                // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                val intent = Intent(context, VideoEditActivity::class.java)
+                intent.putExtra("data", selectList as Serializable)
+                startActivity(intent)
+
+            }
+        }
+
     }
 
 
