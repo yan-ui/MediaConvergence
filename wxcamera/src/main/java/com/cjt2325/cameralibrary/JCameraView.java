@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.VideoView;
@@ -278,7 +279,37 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
     @Override
     public void cameraHasOpened() {
         CameraInterface.getInstance().doStartPreview(mVideoView.getHolder(), screenProp);
+        setSuitableParams();
     }
+
+    private void setSuitableParams() {
+        if (screenProp > 1.8) { //屏幕的宽高比大于1.8的时候处理
+            float previewProp = CameraInterface.getInstance().getPrevewProp();
+            if (previewProp == 0 || mVideoView == null) {   //获取的size宽高比
+                return;
+            }
+            int measuredHeight = mVideoView.getMeasuredHeight();
+            int measuredWidth = mVideoView.getMeasuredWidth();
+            float clacWidth = measuredHeight / previewProp;   //计算出要显示的预览界面的宽度。
+            ViewGroup.LayoutParams layoutParams = mVideoView.getLayoutParams();
+            if (layoutParams == null) {
+                layoutParams = new ViewGroup.LayoutParams((int) clacWidth, measuredHeight);
+            }
+//            if (clacWidth > 800 && Math.abs(clacWidth - measuredWidth) > clacWidth * 0.1F) {  //计算的宽度大于 800 并且和显示正常的布局的误差超过10%
+            layoutParams.width = (int) clacWidth;
+//            }
+            final ViewGroup.LayoutParams finalLayoutParams = layoutParams;
+            mVideoView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mVideoView != null && finalLayoutParams != null) {
+                        mVideoView.setLayoutParams(finalLayoutParams);
+                    }
+                }
+            });
+        }
+    }
+
 
     //生命周期onResume
     public void onResume() {

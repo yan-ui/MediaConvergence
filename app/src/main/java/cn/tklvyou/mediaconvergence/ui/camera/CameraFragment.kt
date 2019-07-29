@@ -1,6 +1,8 @@
 package cn.tklvyou.mediaconvergence.ui.camera
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -15,6 +17,8 @@ import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
 import cn.tklvyou.mediaconvergence.ui.home.NewListContract
 import cn.tklvyou.mediaconvergence.ui.home.NewListPresenter
 import cn.tklvyou.mediaconvergence.ui.home.NewsDetailActivity
+import cn.tklvyou.mediaconvergence.ui.home.PublishNewsActivity
+import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
 import com.adorkable.iosdialog.BottomSheetDialog
 import com.adorkable.iosdialog.BottomSheetRadiusDialog
@@ -27,6 +31,7 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.fragment_camera.*
+import java.io.Serializable
 
 class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, BaseViewHolder, WxCircleAdapter>(), NewListContract.View {
 
@@ -43,7 +48,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         cameraTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
         cameraTitleBar.rightCustomView.setOnClickListener {
             RxPermissions(this)
-                    .request(Manifest.permission.CAMERA)
+                    .request(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA)
                     .subscribe { granted ->
                         if (granted) { // Always true pre-M
                             BottomSheetDialog(context)
@@ -54,13 +59,23 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
                                     .setDefaultItemStyle(BottomSheetDialog.SheetItemTextStyle("#000000", 16))
                                     .setBottomBtnStyle(BottomSheetDialog.SheetItemTextStyle("#ff0000", 18))
                                     .addSheetItem("拍摄") { which ->
-                                        PictureSelector.create(this)
-                                                .openCamera(PictureMimeType.ofAll())
-                                                .recordVideoSecond(60)
-                                                .forResult(PictureConfig.CHOOSE_REQUEST)
+                                        startActivity(Intent(context, TakePhotoActivity::class.java))
                                     }
                                     .addSheetItem("从手机相册选择") { which ->
-
+                                        // 进入相册 以下是例子：不需要的api可以不写
+                                        PictureSelector.create(this@CameraFragment)
+                                                .openGallery(PictureMimeType.ofImage())
+                                                .theme(R.style.picture_default_style)
+                                                .maxSelectNum(9)
+                                                .minSelectNum(1)
+                                                .selectionMode(PictureConfig.MULTIPLE)
+                                                .previewImage(true)
+                                                .isCamera(true)
+                                                .enableCrop(false)
+                                                .compress(true)
+                                                .previewEggs(true)
+                                                .openClickSound(false)
+                                                .forResult(PictureConfig.CHOOSE_REQUEST)
                                     }
                                     .show()
                         } else {
@@ -131,6 +146,30 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         val id = bean.id
         val type = if (bean.images != null && bean.images.size > 0) NewsDetailActivity.TYPE_PICTURE else NewsDetailActivity.TYPE_VIDEO
         NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+
+    }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PictureConfig.CHOOSE_REQUEST && data != null) {
+                // 图片、视频、音频选择结果回调
+                val selectList = PictureSelector.obtainMultipleResult(data)
+                // 例如 LocalMedia 里面返回三种path
+                // 1.media.getPath(); 为原图path
+                // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                val intent = Intent(context, PublishNewsActivity::class.java)
+                intent.putExtra("page","随手拍")
+                intent.putExtra("isVideo",false)
+                intent.putExtra("data", selectList as Serializable)
+                startActivity(intent)
+
+            }
+        }
 
     }
 

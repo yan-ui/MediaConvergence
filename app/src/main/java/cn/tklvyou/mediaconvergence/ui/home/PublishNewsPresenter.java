@@ -99,10 +99,9 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
+                    ToastUtils.showShort(result.getMsg());
                     if (result.getCode() == 1) {
-
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
+                        mView.publishSuccess();
                     }
                 }, throwable -> {
                     mView.hideLoading();

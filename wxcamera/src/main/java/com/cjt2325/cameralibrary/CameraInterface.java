@@ -349,6 +349,11 @@ public class CameraInterface implements Camera.PreviewCallback {
         doStartPreview(holder, screenProp);
     }
 
+    private float prevewProp;
+    public float getPrevewProp() {
+        return prevewProp;
+    }
+
     /**
      * doStartPreview
      */
@@ -371,6 +376,8 @@ public class CameraInterface implements Camera.PreviewCallback {
                 Camera.Size pictureSize = CameraParamUtil.getInstance().getPictureSize(mParams
                         .getSupportedPictureSizes(), 1200, screenProp);
 
+                prevewProp = (float) previewSize.width / (float) previewSize.height;
+
                 mParams.setPreviewSize(previewSize.width, previewSize.height);
 
                 preview_width = previewSize.width;
@@ -391,6 +398,7 @@ public class CameraInterface implements Camera.PreviewCallback {
                 mCamera.setParameters(mParams);
                 mParams = mCamera.getParameters();
                 mCamera.setPreviewDisplay(holder);  //SurfaceView
+
                 mCamera.setDisplayOrientation(cameraAngle);//浏览角度
                 mCamera.setPreviewCallback(this); //每一帧回调
                 mCamera.startPreview();//启动浏览

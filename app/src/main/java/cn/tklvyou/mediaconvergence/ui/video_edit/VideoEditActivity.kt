@@ -14,6 +14,7 @@ import cn.tklvyou.mediaconvergence.utils.mediaplayer.MPlayer
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MPlayerException
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MinimalDisplay
 import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.entity.LocalMedia
 import kotlinx.android.synthetic.main.activity_video_edit.*
@@ -49,39 +50,48 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
 
         setPositiveOnClickListener {
             showLoading()
-            val bitmap = getVideoThumbnail(file_path, mSeekBar.progress * 1000L)
-            if (bitmap == null) {
-                ToastUtils.showShort("选取失败，请重新选取")
-                return@setPositiveOnClickListener
-            }
-            val path = "$cacheDir/videoImage.png"
-            if (ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG)) {
-                hideLoading()
+            Thread {
+                val bitmap = getVideoThumbnail(file_path, mSeekBar.progress * 1000L)
+                if (bitmap == null) {
+                    runOnUiThread {
+                        hideLoading()
+                        ToastUtils.showShort("此处无法截取，请重新选取")
+                    }
 
-                if (hasBack) {
-                    val intent = Intent()
-                    intent.putExtra("videoImage", path)
-                    setResult(Activity.RESULT_OK,intent)
-                } else {
-                    val intent = Intent(this, PublishNewsActivity::class.java)
-                    intent.putExtra("isVideo", true)
-                    intent.putExtra("page",page)
-                    intent.putExtra("videoImage", path)
-                    intent.putExtra("data", selectList as Serializable)
-                    startActivity(intent)
+                }else{
+                    runOnUiThread {
+                        val path = "$cacheDir/videoImage.png"
+                        if (ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG)) {
+                            hideLoading()
+
+                            if (hasBack) {
+                                val intent = Intent()
+                                intent.putExtra("videoImage", path)
+                                setResult(Activity.RESULT_OK, intent)
+                            } else {
+                                val intent = Intent(this, PublishNewsActivity::class.java)
+                                intent.putExtra("isVideo", true)
+                                intent.putExtra("page", page)
+                                intent.putExtra("videoImage", path)
+                                intent.putExtra("data", selectList as Serializable)
+                                startActivity(intent)
+                            }
+                            finish()
+                        } else {
+                            hideLoading()
+                            ToastUtils.showShort("图片保存失败")
+                        }
+                    }
                 }
-                finish()
-            } else {
-                hideLoading()
-                ToastUtils.showShort("图片保存失败")
-            }
-
+            }.start()
         }
 
         page = intent.getStringExtra("page")
         hasBack = intent.getBooleanExtra("hasBack", false)
         selectList = if (intent.getSerializableExtra("data") == null) ArrayList() else intent.getSerializableExtra("data") as MutableList<LocalMedia>
         file_path = selectList[0].path
+
+        LogUtils.e(file_path)
 
         player = MPlayer()
         player!!.setDisplay(MinimalDisplay(mSurfaceView))
@@ -127,18 +137,17 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
      */
     fun getVideoThumbnail(filePath: String, time: Long): Bitmap? {
         var b: Bitmap? = null
-
         //FFmpegMediaMetadataRetriever
         val retriever = FFmpegMediaMetadataRetriever()
         val file = File(filePath)
         try {
             retriever.setDataSource(file.path)
-            b = retriever.getFrameAtTime(time)
+            b = retriever.getFrameAtTime(time, FFmpegMediaMetadataRetriever.OPTION_CLOSEST)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
+            LogUtils.e(e.message)
         } catch (e: RuntimeException) {
             e.printStackTrace()
-
         } finally {
             try {
                 retriever.release()
