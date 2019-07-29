@@ -1,1 +1,1 @@
-include ':app', ':libtitlebar', ':playerkit', ':picture_library', ':ucrop'
+include ':app', ':libtitlebar', ':playerkit', ':picture_library', ':ucrop', ':lib-ios-dialog', ':wxcamera'

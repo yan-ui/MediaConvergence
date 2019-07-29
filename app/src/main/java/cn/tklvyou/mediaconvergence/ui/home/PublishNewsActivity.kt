@@ -2,15 +2,10 @@ package cn.tklvyou.mediaconvergence.ui.home
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.ui.adapter.GridImageAdapter
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
@@ -22,8 +17,9 @@ import com.luck.picture.lib.entity.LocalMedia
 import kotlinx.android.synthetic.main.activity_publish_news.*
 import java.io.File
 import java.io.Serializable
+import java.lang.StringBuilder
 
-class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(),PublishNewsContract.View {
+class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsContract.View {
 
     override fun initPresenter(): PublishNewsPresenter {
         return PublishNewsPresenter()
@@ -37,6 +33,12 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(),PublishNewsCont
     private var adapter: GridImageAdapter? = null
     private var isVideo = false
     private var imagePath = ""
+    private var page = "V视"
+
+    private var imagesBuilder: StringBuilder = StringBuilder()
+    private val imageFiles = ArrayList<File>()
+    private var videoUrl = ""
+
 
     override fun initView() {
         commonTitleBar.toggleStatusBarMode()
@@ -44,7 +46,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(),PublishNewsCont
 
         selectList = if (intent.getSerializableExtra("data") == null) ArrayList() else intent.getSerializableExtra("data") as MutableList<LocalMedia>
         isVideo = intent.getBooleanExtra("isVideo", true)
-
+        page = intent.getStringExtra("page")
 
         if (!isVideo) {
             picRecyclerView.visibility = View.VISIBLE
@@ -101,19 +103,65 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(),PublishNewsCont
         }
 
         btnSubmit.setOnClickListener {
-            if(etContent.text.toString().trim().isEmpty()){
+            if (etContent.text.toString().trim().isEmpty()) {
                 ToastUtils.showShort("请输入内容")
                 return@setOnClickListener
             }
-            mPresenter.uploadMultiImage(File(imagePath),File(imagePath))
+
+            showLoading()
+            if (page == "V视") {
+                mPresenter.uploadFile(File(selectList!![0].path), true)
+            } else {
+
+                if (isVideo) {
+                    mPresenter.uploadFile(File(selectList!![0].path), true)
+                } else {
+                    selectList!!.forEach {
+                        if (it.isCompressed || (it.isCut && it.isCompressed)) {
+                            imageFiles.add(File(it.compressPath))
+                        } else {
+                            imageFiles.add(File(it.path))
+                        }
+                    }
+                    mPresenter.uploadMultiImage(imageFiles)
+                }
+
+
+            }
         }
 
     }
 
-    override fun uploadVideoSuccess(url: String) {
-//        mPresenter.publishVShi(name,)
+    override fun uploadImageSuccess(url: String) {
+        if (page == "V视") {
+            mPresenter.publishVShi(etContent.text.toString().trim(), videoUrl, url, "" + selectList!![0].duration / 1000)
+        } else {
+            mPresenter.publishSuiShouPai(etContent.text.toString().trim(), "", videoUrl, url, "" + selectList!![0].duration / 1000)
+        }
     }
 
+
+    override fun uploadVideoSuccess(url: String) {
+        this.videoUrl = url
+        mPresenter.uploadFile(File(imagePath), false)
+    }
+
+    override fun uploadImagesSuccess(urls: MutableList<String>) {
+        for ((index, item) in urls.withIndex()) {
+            if (index != urls.size - 1) {
+                imagesBuilder.append("$item,")
+            } else {
+                imagesBuilder.append(item)
+            }
+        }
+        mPresenter.publishSuiShouPai(etContent.text.toString().trim(), imagesBuilder.toString(), "", "", "")
+    }
+
+
+    override fun publishSuccess() {
+        hideLoading()
+        finish()
+    }
 
 
     private val onAddPicClickListener = object : GridImageAdapter.onAddPicClickListener {
@@ -153,11 +201,11 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(),PublishNewsCont
                     selectList = PictureSelector.obtainMultipleResult(data)
                     val intent = Intent(this, VideoEditActivity::class.java)
                     intent.putExtra("data", selectList as Serializable)
-                    intent.putExtra("hasBack",true)
-                    startActivityForResult(intent,12)
+                    intent.putExtra("hasBack", true)
+                    startActivityForResult(intent, 12)
                 }
 
-                12 ->{
+                12 -> {
                     videoLayout.visibility = View.VISIBLE
                     ivAddVideo.visibility = View.GONE
 

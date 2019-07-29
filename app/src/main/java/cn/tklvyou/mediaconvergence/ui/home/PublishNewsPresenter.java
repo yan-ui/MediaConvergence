@@ -19,7 +19,7 @@ import okhttp3.RequestBody;
 public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View> implements PublishNewsContract.Presenter {
 
     @Override
-    public void uploadVideo(File file) {
+    public void uploadFile(File file, boolean isVideo) {
 
         final RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
@@ -30,17 +30,22 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if (result.getCode() == 1) {
-                        mView.uploadVideoSuccess(result.getData().getUrl());
+                        if (isVideo) {
+                            mView.uploadVideoSuccess(result.getData().getUrl());
+                        } else {
+                            mView.uploadImageSuccess(result.getData().getUrl());
+                        }
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> {
+                    mView.hideLoading();
                     throwable.printStackTrace();
                 });
     }
 
     @Override
-    public void uploadMultiImage(File... files) {
+    public void uploadMultiImage(List<File> files) {
 
         List<MultipartBody.Part> bodys = new ArrayList();
         for (File file : files) {
@@ -49,14 +54,13 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
             bodys.add(body);
         }
 
-
         RetrofitHelper.getInstance().getServer()
                 .uploadFiles(bodys)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if (result.getCode() == 1) {
-                        mView.uploadVideoSuccess(result.getData().getUrl());
+                        mView.uploadImagesSuccess(result.getData());
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
@@ -76,18 +80,22 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if (result.getCode() == 1) {
+                            ToastUtils.showShort(result.getMsg());
+                            if (result.getCode() == 1) {
+                                mView.publishSuccess();
+                            }
+                        }, throwable -> {
+                            mView.hideLoading();
+                            throwable.printStackTrace();
+                        }
 
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
-                    }
-                }, throwable -> throwable.printStackTrace());
+                );
     }
 
     @Override
-    public void publishSuiShouPai(String name, List<String> images) {
+    public void publishSuiShouPai(String name,String images,String video,String image,String time) {
         RetrofitHelper.getInstance().getServer()
-                .publishSuiShouPai(name, images)
+                .publishSuiShouPai(name, images, video, image, time)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
@@ -96,7 +104,10 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> {
+                    mView.hideLoading();
+                    throwable.printStackTrace();
+                });
     }
 
 }

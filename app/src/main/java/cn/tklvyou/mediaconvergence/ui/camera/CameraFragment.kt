@@ -1,8 +1,9 @@
 package cn.tklvyou.mediaconvergence.ui.camera
 
-import android.content.Intent
+import android.Manifest
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.fragment.BaseHttpRecyclerFragment
@@ -11,15 +12,20 @@ import cn.tklvyou.mediaconvergence.model.BannerModel
 import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
-import cn.tklvyou.mediaconvergence.ui.home.ImagePagerActivity
 import cn.tklvyou.mediaconvergence.ui.home.NewListContract
 import cn.tklvyou.mediaconvergence.ui.home.NewListPresenter
 import cn.tklvyou.mediaconvergence.ui.home.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import com.adorkable.iosdialog.BottomSheetDialog
+import com.adorkable.iosdialog.BottomSheetRadiusDialog
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.fragment_camera.*
 
 class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, BaseViewHolder, WxCircleAdapter>(), NewListContract.View {
@@ -35,6 +41,33 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 
     override fun initView() {
         cameraTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
+        cameraTitleBar.rightCustomView.setOnClickListener {
+            RxPermissions(this)
+                    .request(Manifest.permission.CAMERA)
+                    .subscribe { granted ->
+                        if (granted) { // Always true pre-M
+                            BottomSheetDialog(context)
+                                    .init()
+                                    .setCancelable(true)    //设置手机返回按钮是否有效
+                                    .setCanceledOnTouchOutside(true)  //设置 点击空白处是否取消 Dialog 显示
+                                    //如果条目样式一样，可以直接设置默认样式
+                                    .setDefaultItemStyle(BottomSheetDialog.SheetItemTextStyle("#000000", 16))
+                                    .setBottomBtnStyle(BottomSheetDialog.SheetItemTextStyle("#ff0000", 18))
+                                    .addSheetItem("拍摄") { which ->
+                                        PictureSelector.create(this)
+                                                .openCamera(PictureMimeType.ofAll())
+                                                .recordVideoSecond(60)
+                                                .forResult(PictureConfig.CHOOSE_REQUEST)
+                                    }
+                                    .addSheetItem("从手机相册选择") { which ->
+
+                                    }
+                                    .show()
+                        } else {
+                            ToastUtils.showShort("权限拒绝，无法使用")
+                        }
+                    }
+        }
 
         initSmartRefreshLayout(cameraSmartRefreshLayout)
         initRecyclerView(cameraRecyclerView)
@@ -96,8 +129,8 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
-        val type = if(bean.images != null && bean.images.size > 0) NewsDetailActivity.TYPE_PICTURE else NewsDetailActivity.TYPE_VIDEO
-        NewsDetailActivity.startNewsDetailActivity(context!!,type,id)
+        val type = if (bean.images != null && bean.images.size > 0) NewsDetailActivity.TYPE_PICTURE else NewsDetailActivity.TYPE_VIDEO
+        NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
 
     }
 

@@ -29,7 +29,7 @@ public interface ApiService {
      */
     @Multipart
     @POST("api/common/uploads")
-    Observable<BaseResult<UploadModel>> uploadFiles(@Part List<MultipartBody.Part> files);
+    Observable<BaseResult<List<String>>> uploadFiles(@Part List<MultipartBody.Part> files);
 
 
     /**
@@ -134,6 +134,8 @@ public interface ApiService {
      * 发布随手拍
      */
     @POST("api/article/adds")
-    Observable<BaseResult<Object>> publishSuiShouPai(@Query("name") String name, @Query("images") List<String> images);
+    Observable<BaseResult<Object>> publishSuiShouPai(@Query("name") String name, @Query("images") String images,
+                                                     @Query("video") String video, @Query("image") String image, @Query("time") String time
+    );
 
 }

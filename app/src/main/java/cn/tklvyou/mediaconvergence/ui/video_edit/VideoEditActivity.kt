@@ -37,6 +37,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
     private lateinit var selectList: MutableList<LocalMedia>
 
     private var hasBack = false
+    private var page = ""
 
     override fun initView() {
         setTitle("封面选取")
@@ -64,6 +65,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
                 } else {
                     val intent = Intent(this, PublishNewsActivity::class.java)
                     intent.putExtra("isVideo", true)
+                    intent.putExtra("page",page)
                     intent.putExtra("videoImage", path)
                     intent.putExtra("data", selectList as Serializable)
                     startActivity(intent)
@@ -76,6 +78,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
 
         }
 
+        page = intent.getStringExtra("page")
         hasBack = intent.getBooleanExtra("hasBack", false)
         selectList = if (intent.getSerializableExtra("data") == null) ArrayList() else intent.getSerializableExtra("data") as MutableList<LocalMedia>
         file_path = selectList[0].path
