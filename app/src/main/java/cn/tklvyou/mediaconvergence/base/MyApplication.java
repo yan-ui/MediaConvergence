@@ -29,6 +29,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import cn.tklvyou.mediaconvergence.BuildConfig;
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.common.Contacts;
+import cn.tklvyou.mediaconvergence.crash.CrashManager;
 
 /**
  * Created by Administrator on 2019/2/27.
@@ -64,7 +65,8 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         mContext = this;
-
+        //异常处理初始化
+        CrashManager.init(mContext);
         //初始化微信相关配置
         initWx();
 

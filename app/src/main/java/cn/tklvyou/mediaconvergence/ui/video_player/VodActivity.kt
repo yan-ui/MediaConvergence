@@ -48,6 +48,9 @@ import cn.tklvyou.mediaconvergence.ui.services.PlayerService
 import kotlinx.android.synthetic.main.activity_player.*
 import java.lang.NullPointerException
 
+/**
+ * 播放页面
+ */
 
 class VodActivity : BaseActivity<NullPresenter>() {
 

@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         debug {
-            storeFile file('F:\\AndroidProject\\MediaConvergence\\media.jks')
+            storeFile file('../media.jks')
             storePassword 'tklvyou'
             keyAlias = 'media'
             keyPassword 'tklvyou'

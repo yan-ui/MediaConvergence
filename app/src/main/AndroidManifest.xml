@@ -77,7 +77,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <activity android:name=".ui.home.ImagePagerActivity" /> <!-- receiver中的请替换为自己的包名 -->
+        <activity android:name=".ui.home.ImagePagerActivity" />
+        <activity android:name=".crash.CrashErrorActivity" /> <!-- receiver中的请替换为自己的包名 -->
 
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>
