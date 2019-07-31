@@ -9,7 +9,6 @@ import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.widget.TimeCount
 import com.blankj.utilcode.util.ToastUtils
-import com.wuhenzhizao.titlebar.widget.CommonTitleBar
 import kotlinx.android.synthetic.main.activity_forget_password.*
 
 class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountContract.ForgetView,View.OnClickListener {

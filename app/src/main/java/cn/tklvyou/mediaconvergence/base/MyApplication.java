@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.base;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
@@ -57,7 +58,7 @@ public class MyApplication extends MultiDexApplication {
         });
     }
 
-    private static Context mContext;
+    private static Application mContext;
 
     private IWXAPI iwxapi;
 
@@ -69,7 +70,6 @@ public class MyApplication extends MultiDexApplication {
         CrashManager.init(mContext);
         //初始化微信相关配置
         initWx();
-
         // android 7.0系统解决拍照的问题
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -114,6 +114,11 @@ public class MyApplication extends MultiDexApplication {
 
 
     public static Context getAppContext() {
+        return mContext;
+    }
+
+
+    public static Application getInstance() {
         return mContext;
     }
 

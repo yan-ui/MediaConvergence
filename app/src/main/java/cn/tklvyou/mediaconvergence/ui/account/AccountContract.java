@@ -22,6 +22,7 @@ public interface AccountContract {
         void getCaptchaSuccess();
     }
 
+
     interface RegisterPresenter extends BaseContract.BasePresenter<RegisterView>{
         void getCaptcha(String mobile,String event);
         void register(String mobile,String password,String captcha);

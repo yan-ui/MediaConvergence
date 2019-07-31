@@ -51,6 +51,12 @@ public interface ApiService {
     Observable<BaseResult<User>> login(@Query("account") String account, @Query("password") String password);
 
     /**
+     * 修改密码
+     */
+    @POST("api/user/resetpwd")
+    Observable<BaseResult<Object>> resetPass(@Query("mobile") String mobile, @Query("newpassword") String password,@Query("captcha") String captcha);
+
+    /**
      * 第三方登录
      *
      * @param platform wechat

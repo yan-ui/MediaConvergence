@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF314E</color>
+    <color name="colorPrimary">#FF5230</color>
     <color name="colorPrimaryDark">#FF5230</color>
     <color name="colorAccent">#FF4A5C</color>
     <color name="colorWhite">#FFFFFF</color>
@@ -22,6 +22,17 @@
     <color name="default_black_text_color">#333333</color>
     <color name="default_gray_text_color">#999999</color>
     <color name="bg_no_photo">#EEEEEE</color>
+
+    <!--灰色区域-->
+    <color name="grayF4F5F7">#F4F5F7</color>
+    <color name="grayEEEEEE">#EEEEEE</color>
+    <color name="grayAAAAAA">#AAAAAA</color>
+
+
+    <!--黑色区域-->
+    <color name="black333333">#333333</color>
+    <color name="black171717">#171717</color>
+
 
 
 </resources>
