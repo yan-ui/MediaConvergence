@@ -2,12 +2,15 @@ package cn.tklvyou.mediaconvergence.ui.mine
 
 import android.content.Intent
 import android.graphics.Color
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.fragment.BaseRecyclerFragment
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.MineRvModel
 import cn.tklvyou.mediaconvergence.model.User
+import cn.tklvyou.mediaconvergence.ui.account.LoginActivity
+import cn.tklvyou.mediaconvergence.ui.account.data.PersonalDataActivity
 import cn.tklvyou.mediaconvergence.ui.setting.SettingActivity
 import cn.tklvyou.mediaconvergence.ui.adapter.MineRvAdapter
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
@@ -18,7 +21,25 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.fragment_mine.*
 
-class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel,BaseViewHolder, MineRvAdapter>(),MineContract.View {
+class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHolder, MineRvAdapter>(), MineContract.View, View.OnClickListener {
+    override fun onClick(v: View?) {
+        if (v == null) {
+            return
+        }
+        when (v.id) {
+            R.id.ivAvatar -> {
+                skipPersonalData()
+            }
+            R.id.tvMobile -> {
+                skipPersonalData()
+            }
+            R.id.tvNickName -> {
+                skipPersonalData()
+            }
+            else -> {
+            }
+        }
+    }
 
     override fun initPresenter(): MinePresenter {
         return MinePresenter()
@@ -33,15 +54,17 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel,BaseViewHol
         mineTitleBar.setPositiveListener {
             startActivity(Intent(context, SettingActivity::class.java))
         }
-
+        ivAvatar.setOnClickListener(this)
+        tvMobile.setOnClickListener(this)
+        tvNickName.setOnClickListener(this)
         initRecyclerView(mineRecyclerView)
-        mineRecyclerView.layoutManager = GridLayoutManager(context,4)
+        mineRecyclerView.layoutManager = GridLayoutManager(context, 4)
         mineRecyclerView.addItemDecoration(GridDividerItemDecoration(80, Color.WHITE))
 
         val json = ResourceUtils.readAssets2String("minelist.json")
-        val data = JSON.parseArray(json,MineRvModel::class.java)
+        val data = JSON.parseArray(json, MineRvModel::class.java)
 
-        onLoadSucceed(1,data)
+        onLoadSucceed(1, data)
 
         mPresenter.getUser()
     }
@@ -53,7 +76,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel,BaseViewHol
 
     override fun setUser(user: User.UserinfoBean) {
         val avatar = user.avatar
-        if(!avatar.isNullOrEmpty() && !avatar.contains("base64")) {
+        if (!avatar.isNullOrEmpty() && !avatar.contains("base64")) {
             Glide.with(this).load(avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(ivAvatar)
@@ -70,7 +93,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel,BaseViewHol
         setList(object : AdapterCallBack<MineRvAdapter> {
 
             override fun createAdapter(): MineRvAdapter {
-                return MineRvAdapter(R.layout.item_mine_rv_view,list)
+                return MineRvAdapter(R.layout.item_mine_rv_view, list)
             }
 
             override fun refreshAdapter() {
@@ -82,4 +105,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel,BaseViewHol
     override fun getListAsync(page: Int) {
     }
 
+    private fun skipPersonalData() {
+        startActivity(Intent(context, PersonalDataActivity::class.java))
+    }
 }

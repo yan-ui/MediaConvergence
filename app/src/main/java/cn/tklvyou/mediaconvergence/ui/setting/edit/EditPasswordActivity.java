@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity;
 import cn.tklvyou.mediaconvergence.helper.AccountHelper;
+import cn.tklvyou.mediaconvergence.model.User;
 import cn.tklvyou.mediaconvergence.utils.CommonUtil;
 import cn.tklvyou.mediaconvergence.widget.TimeCount;
 
@@ -29,6 +30,7 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
     private EditText etPassNew;
     private EditText etPassConfirm;
     private String mobile;
+    private TimeCount timeCount;
 
     @Override
     protected void initView() {
@@ -42,6 +44,7 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
         etPassNew = findViewById(R.id.etPassNew);
         etPassConfirm = findViewById(R.id.etPassConfirm);
         mobile = AccountHelper.getInstance().getPhone();
+
     }
 
     @Override
@@ -100,7 +103,7 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
 
     private void handleVCodeSendSuccess() {
         setClickEnable(false);
-        TimeCount timeCount = new TimeCount(TIME_INTERVAL, TIME_ONE_SECOND, new TimeCount.ITimeCountListener() {
+        timeCount = new TimeCount(TIME_INTERVAL, TIME_ONE_SECOND, new TimeCount.ITimeCountListener() {
             @Override
             public void onTick(long millisUntilFinished) {
                 showCountDownTiming(millisUntilFinished);
@@ -163,5 +166,14 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
             return;
         }
         mPresenter.edit(mobile, getTextValue(etPassNew), getTextValue(etVCode));
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(timeCount != null){
+            timeCount.cancel();
+        }
+        timeCount = null;
+        super.onDestroy();
     }
 }

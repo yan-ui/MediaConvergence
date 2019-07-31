@@ -80,7 +80,8 @@
         <activity android:name=".ui.home.ImagePagerActivity" />
         <activity android:name=".crash.CrashErrorActivity" />
         <activity android:name="cn.tklvyou.mediaconvergence.ui.setting.SettingActivity" />
-        <activity android:name=".ui.setting.edit.EditPasswordActivity" /> <!-- receiver中的请替换为自己的包名 -->
+        <activity android:name=".ui.setting.edit.EditPasswordActivity" />
+        <activity android:name=".ui.account.data.PersonalDataActivity" /> <!-- receiver中的请替换为自己的包名 -->
 
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>

@@ -8,6 +8,5 @@ package cn.tklvyou.mediaconvergence.common;
  * @Email: 971613168@qq.com
  */
 public class RequestConstant {
-
     public static final int CODE_REQUEST_SUCCESS = 1;
 }

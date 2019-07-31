@@ -107,6 +107,9 @@ dependencies {
     //图片选择器
     implementation project(path: ':picture_library')
 
+
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+
     //视频处理
     implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
     implementation project(path: ':lib-ios-dialog')

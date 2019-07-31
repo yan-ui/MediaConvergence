@@ -55,7 +55,7 @@ public interface ApiService {
      * 修改密码
      */
     @POST("api/user/resetpwd")
-    Observable<BaseResult<Object>> resetPass(@Query("mobile") String mobile, @Query("newpassword") String password,@Query("captcha") String captcha);
+    Observable<BaseResult<Object>> resetPass(@Query("mobile") String mobile, @Query("newpassword") String password, @Query("captcha") String captcha);
 
     /**
      * 第三方登录
@@ -153,4 +153,9 @@ public interface ApiService {
                                                      @Query("video") String video, @Query("image") String image, @Query("time") String time
     );
 
+
+    @POST("api/user/profile")
+    Observable<BaseResult<Object>> editUserInfo(@Query("avatar") String avatar, @Query("username") String username,
+                                                @Query("nickname") String nickname, @Query("bio") String bio
+    );
 }
