@@ -6,6 +6,7 @@ import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
+import cn.tklvyou.mediaconvergence.model.SuixiTvModel;
 import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
 import io.reactivex.Observable;
@@ -96,6 +97,14 @@ public interface ApiService {
      */
     @POST("api/article/index")
     Observable<BaseResult<BasePageModel<NewsBean>>> getNewList(@Query("module") String module, @Query("p") int p);
+
+
+    /**
+     * 濉溪TV
+     */
+    @POST("api/article/index")
+    Observable<BaseResult<BasePageModel<List<SuixiTvModel>>>> getSuixiTvNews(@Query("module") String module, @Query("p") int p);
+
 
     /**
      * 顶部banner

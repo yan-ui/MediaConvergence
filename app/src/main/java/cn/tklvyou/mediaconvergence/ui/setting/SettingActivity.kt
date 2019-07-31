@@ -19,6 +19,24 @@ import kotlinx.android.synthetic.main.activity_setting.*
  */
 class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
 
+
+    override fun initPresenter(): SettingPresenter {
+        return SettingPresenter()
+    }
+
+    override fun getActivityLayoutID(): Int {
+        return R.layout.activity_setting
+    }
+
+
+    override fun initView() {
+        setTitle("系统设置")
+        setNavigationImage()
+        setNavigationOnClickListener { finish() }
+        ivSkipEditPass.setOnClickListener(this)
+    }
+
+
     override fun onClick(v: View?) {
         if (v == null) {
             return
@@ -35,21 +53,6 @@ class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
             }
         }
 
-    }
-
-    override fun initPresenter(): SettingPresenter {
-        return SettingPresenter()
-    }
-
-    override fun getActivityLayoutID(): Int {
-        return R.layout.activity_setting
-    }
-
-
-    override fun initView() {
-        setTitle("系统设置")
-        setNavigationImage()
-        ivSkipEditPass.setOnClickListener(this)
     }
 
 

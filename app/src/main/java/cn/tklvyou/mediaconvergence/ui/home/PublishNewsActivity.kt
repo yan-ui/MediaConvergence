@@ -89,7 +89,6 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                 PictureSelector.create(this)
                         .openCamera(PictureMimeType.ofVideo())
                         .recordVideoSecond(60)
-                        .recordVideoSecond(3)
                         .forResult(10)
             }
 
@@ -198,6 +197,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                 10 -> {
                     selectList = PictureSelector.obtainMultipleResult(data)
                     val intent = Intent(this, VideoEditActivity::class.java)
+                    intent.putExtra("page",page)
                     intent.putExtra("data", selectList as Serializable)
                     intent.putExtra("hasBack", true)
                     startActivityForResult(intent, 12)

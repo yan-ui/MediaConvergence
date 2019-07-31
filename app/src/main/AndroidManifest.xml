@@ -79,10 +79,7 @@
 
         <activity android:name=".ui.home.ImagePagerActivity" />
         <activity android:name=".crash.CrashErrorActivity" />
-        <activity android:name="cn.tklvyou.mediaconvergence.ui.account.setting.EditPasswordActivity" />
-        <activity android:name="cn.tklvyou.mediaconvergence.ui.setting.SettingActivityold" />
         <activity android:name="cn.tklvyou.mediaconvergence.ui.setting.SettingActivity" />
-        <activity android:name="EditPasswordActivity" />
         <activity android:name=".ui.setting.edit.EditPasswordActivity" /> <!-- receiver中的请替换为自己的包名 -->
 
         <receiver android:name=".ui.receiver.IncomingCallReceiver">

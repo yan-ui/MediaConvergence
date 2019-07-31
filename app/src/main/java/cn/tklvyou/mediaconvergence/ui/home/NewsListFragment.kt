@@ -27,9 +27,7 @@ import com.youth.banner.listener.OnBannerListener
 import kotlinx.android.synthetic.main.fragment_news_list.*
 
 /**
- * @author ChayChan
  * @description: 展示每个频道新闻列表的fragment
- * @date 2017/6/16  21:22
  */
 
 class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultipleItem, BaseViewHolder, NewsMultipleItemQuickAdapter>(), NewListContract.View {
@@ -53,7 +51,16 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
     }
 
     override fun lazyData() {
-        mPresenter.getBanner("V视频")
+        when(type){
+            NewsMultipleItem.VIDEO ->{
+                mPresenter.getBanner("V视频")
+            }
+
+            NewsMultipleItem.TV ->{
+                mPresenter.getNewList("濉溪TV",1)
+            }
+
+        }
 
     }
 
