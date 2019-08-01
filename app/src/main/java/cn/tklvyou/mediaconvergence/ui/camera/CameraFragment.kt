@@ -13,6 +13,7 @@ import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.BannerModel
 import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
+import cn.tklvyou.mediaconvergence.model.SuixiTvModel
 import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
 import cn.tklvyou.mediaconvergence.ui.home.NewListContract
 import cn.tklvyou.mediaconvergence.ui.home.NewListPresenter
@@ -138,6 +139,9 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         //该页面用不上此方法
     }
 
+    override fun setSuixiTVNews(p: Int, datas: MutableList<SuixiTvModel>?) {
+        //该页面用不上此方法
+    }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)

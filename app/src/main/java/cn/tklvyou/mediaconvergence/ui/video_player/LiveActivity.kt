@@ -55,6 +55,32 @@ import kotlinx.android.synthetic.main.activity_player.*
 
 class LiveActivity : BaseActivity<NullPresenter>() {
 
+    override fun initPresenter(): NullPresenter {
+        return NullPresenter()
+    }
+
+    override fun getActivityLayoutID(): Int {
+        return R.layout.activity_player
+    }
+
+
+    override fun initView() {
+
+        hideTitleBar()
+        btnBack.setOnClickListener {
+            mBackPressed = true
+            releasePlayer()
+            finish()
+        }
+
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //保持屏幕常亮
+        PhoneCallStateObserver.getInstance().observeLocalPhoneObserver(localPhoneObserver, true)
+        parseIntent()
+        findViews()
+        initPlayer()
+    }
+
     private val surfaceView: AdvanceSurfaceView? = null
 
     protected var player: LivePlayer? = null
@@ -230,30 +256,7 @@ class LiveActivity : BaseActivity<NullPresenter>() {
         }
     }
 
-    override fun initPresenter(): NullPresenter {
-        return NullPresenter()
-    }
 
-    override fun getActivityLayoutID(): Int {
-        return R.layout.activity_player
-    }
-
-
-    override fun initView() {
-        setTitle("视频")
-        setNavigationImage()
-        setNavigationOnClickListener {
-            mBackPressed = true
-            releasePlayer()
-            finish()
-        }
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //保持屏幕常亮
-        PhoneCallStateObserver.getInstance().observeLocalPhoneObserver(localPhoneObserver, true)
-        parseIntent()
-        findViews()
-        initPlayer()
-    }
 
     private fun parseIntent() {
         //接收MainActivity传过来的参数

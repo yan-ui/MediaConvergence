@@ -120,11 +120,21 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
      * 初始化已选频道的fragment的集合
      */
     private fun initChannelFragments() {
-        LogUtils.e("initChannelFragments")
-        for (channel in mSelectedChannels) {
+        for ((index, item) in mSelectedChannels.withIndex()) {
             val newsFragment = NewsListFragment()
             val bundle = Bundle()
-            bundle.putInt("type", NewsMultipleItem.VIDEO)
+            when (index) {
+                0 -> {
+                    bundle.putInt("type", NewsMultipleItem.VIDEO)
+                }
+                1 -> {
+                    bundle.putInt("type", NewsMultipleItem.TV)
+                }
+                else -> {
+                    bundle.putInt("type", NewsMultipleItem.VIDEO)
+                }
+            }
+
             newsFragment.arguments = bundle
             mChannelFragments.add(newsFragment)//添加到集合中
         }
@@ -143,7 +153,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
                 // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
                 val intent = Intent(context, VideoEditActivity::class.java)
-                intent.putExtra("page","V视")
+                intent.putExtra("page", "V视")
                 intent.putExtra("data", selectList as Serializable)
                 startActivity(intent)
 

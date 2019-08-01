@@ -20,6 +20,7 @@ import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration;
 import cn.tklvyou.mediaconvergence.utils.YResourceUtils;
 
 /**
+ * 我的页面
  * Created by yiwei on 16/5/17.
  */
 public class MineRvAdapter extends BaseQuickAdapter<MineRvModel, BaseViewHolder> {

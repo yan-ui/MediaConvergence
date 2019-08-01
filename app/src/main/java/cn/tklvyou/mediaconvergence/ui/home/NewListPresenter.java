@@ -31,7 +31,26 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                             }
                         }, throwable -> {
                             throwable.printStackTrace();
-                            mView.setNewList(p,null);
+                            mView.setNewList(p, null);
+                        }
+                );
+    }
+
+    @Override
+    public void getSuixiTVNews(int p) {
+        RetrofitHelper.getInstance().getServer()
+                .getSuixiTvNews("濉溪TV", p)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                            if (result.getCode() == 1) {
+                                mView.setSuixiTVNews(p, result.getData());
+                            } else {
+                                ToastUtils.showShort(result.getMsg());
+                            }
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            mView.setSuixiTVNews(p, null);
                         }
                 );
     }

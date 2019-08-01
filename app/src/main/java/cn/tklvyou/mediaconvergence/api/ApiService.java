@@ -6,6 +6,7 @@ import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
+import cn.tklvyou.mediaconvergence.model.PointModel;
 import cn.tklvyou.mediaconvergence.model.SuixiTvModel;
 import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
@@ -103,7 +104,7 @@ public interface ApiService {
      * 濉溪TV
      */
     @POST("api/article/index")
-    Observable<BaseResult<BasePageModel<List<SuixiTvModel>>>> getSuixiTvNews(@Query("module") String module, @Query("p") int p);
+    Observable<BaseResult<List<SuixiTvModel>>> getSuixiTvNews(@Query("module") String module, @Query("p") int p);
 
 
     /**
@@ -152,6 +153,13 @@ public interface ApiService {
     Observable<BaseResult<Object>> publishSuiShouPai(@Query("name") String name, @Query("images") String images,
                                                      @Query("video") String video, @Query("image") String image, @Query("time") String time
     );
+
+
+    /**
+     * 商品列表
+     */
+    @POST("api/goods/index")
+    Observable<BaseResult<BasePageModel<PointModel>>> getGoodsPageList(@Query("p") int p);
 
 
     @POST("api/user/profile")

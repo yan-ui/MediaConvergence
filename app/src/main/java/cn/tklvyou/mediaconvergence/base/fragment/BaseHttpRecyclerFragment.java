@@ -35,7 +35,7 @@ import cn.tklvyou.mediaconvergence.base.interfaces.OnStopLoadListener;
  *       4.setList把列表数据绑定到adapter <br />
  *   </pre>
  */
-public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresenter, T, VH extends BaseViewHolder, A extends BaseQuickAdapter<T,VH>>
+public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresenter, T, VH extends BaseViewHolder, A extends BaseQuickAdapter<T, VH>>
         extends BaseRecyclerFragment<P, T, VH, A>
         implements OnStopLoadListener, OnRefreshListener {
 
@@ -43,7 +43,7 @@ public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresen
 
     protected SmartRefreshLayout srlBaseHttpRecycler;
 
-    protected void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout){
+    protected void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
         srlBaseHttpRecycler = smartRefreshLayout;
         setOnStopLoadListener(this);
 
@@ -59,7 +59,7 @@ public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresen
             public void onLoadMoreRequested() {
                 onLoadMore();
             }
-        },rvBaseRecycler);
+        }, rvBaseRecycler);
         adapter.disableLoadMoreIfNotFullPage();
         super.setAdapter(adapter);
     }
@@ -119,7 +119,7 @@ public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresen
      * @param page
      * @param e
      */
-    public void onLoadError(int page,Exception e){
+    public void onLoadError(int page, Exception e) {
         onLoadFailed(page, e);
     }
 

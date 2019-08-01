@@ -5,6 +5,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.webkit.*
 import cn.tklvyou.mediaconvergence.base.BaseContract
+import com.blankj.utilcode.util.ToastUtils
 import org.jsoup.Jsoup
 
 abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivity<P>() {
@@ -25,8 +26,9 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
                 super.onProgressChanged(view, newProgress)
             }
 
-            override fun onReceivedTitle(view: WebView?, title: String?) {
+            override fun onReceivedTitle(view: WebView?, title: String) {
                 super.onReceivedTitle(view, title)
+                setTitleContent(title)
             }
         }
         webView.webViewClient = object : WebViewClient() {
@@ -52,6 +54,9 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
     public fun loadHtml(html:String){
         imageFillWidth(webView,html)
     }
+
+
+    protected abstract fun setTitleContent(title:String)
 
     /**
      * 处理图片视频填充手机宽度
@@ -91,6 +96,7 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
             //页面内回退
             if (webView.canGoBack()) {
                 webView.goBack()
+                return true
             }
         }
 

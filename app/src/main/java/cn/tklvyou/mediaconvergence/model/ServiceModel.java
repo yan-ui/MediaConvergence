@@ -38,6 +38,7 @@ public class ServiceModel {
         private String imagename;
         private String title;
         private String subTitle;
+        private String url;
 
         public String getImagename() {
             return imagename;
@@ -61,6 +62,14 @@ public class ServiceModel {
 
         public void setSubTitle(String subTitle) {
             this.subTitle = subTitle;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
         }
     }
 }

@@ -5,7 +5,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 /**
  * https://github.com/CymChad/BaseRecyclerViewAdapterHelper
  */
-public class NewsMultipleItem implements MultiItemEntity {
+public class NewsMultipleItem<T> implements MultiItemEntity {
     public static final int VIDEO = 1;                              //视频
     public static final int TV = 2;                                 //濉溪TV
     public static final int TEXT = 3;                               //纯文字
@@ -17,10 +17,10 @@ public class NewsMultipleItem implements MultiItemEntity {
     public static final int LISTEN = 8;                              //悦听
 
     private int itemType;
-    private NewsBean dataBean;
+    private T dataBean;
 
-    public NewsMultipleItem(NewsBean dataBean) {
-        switch (dataBean.getModule()) {
+    public NewsMultipleItem(String model,T dataBean) {
+        switch (model) {
             case "V视频":
                 itemType = 1;
                 break;
@@ -34,11 +34,11 @@ public class NewsMultipleItem implements MultiItemEntity {
         this.dataBean = dataBean;
     }
 
-    public NewsBean getDataBean() {
+    public T getDataBean() {
         return dataBean;
     }
 
-    public void setDataBean(NewsBean dataBean) {
+    public void setDataBean(T dataBean) {
         this.dataBean = dataBean;
     }
 
