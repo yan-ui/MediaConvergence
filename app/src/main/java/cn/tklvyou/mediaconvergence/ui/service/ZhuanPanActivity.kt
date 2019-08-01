@@ -7,6 +7,13 @@ import androidx.appcompat.app.AlertDialog
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
+import cn.tklvyou.mediaconvergence.model.Entry
+import cn.tklvyou.mediaconvergence.model.LotteryModel
+import cn.tklvyou.mediaconvergence.model.LotteryResultModel
+import cn.tklvyou.mediaconvergence.utils.JSON
+import cn.tklvyou.mediaconvergence.widget.ConfirmDialog
+import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.SpanUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.cretin.www.wheelsruflibrary.listener.RotateListener
 import com.cretin.www.wheelsruflibrary.view.WheelSurfView
@@ -14,15 +21,20 @@ import kotlinx.android.synthetic.main.activity_zhuan_pan.*
 import java.util.*
 
 
-class ZhuanPanActivity : BaseActivity<NullPresenter>() {
+class ZhuanPanActivity : BaseActivity<ZhuanPanPresenter>(), ZhuanPanContract.View {
 
-    override fun initPresenter(): NullPresenter {
-        return NullPresenter()
+    override fun initPresenter(): ZhuanPanPresenter {
+        return ZhuanPanPresenter()
     }
 
     override fun getActivityLayoutID(): Int {
         return R.layout.activity_zhuan_pan
     }
+
+    private lateinit var idList: MutableList<Int>
+    private lateinit var scoreStr: String
+
+    private var num = 0
 
     override fun initView() {
         hideTitleBar()
@@ -31,6 +43,13 @@ class ZhuanPanActivity : BaseActivity<NullPresenter>() {
             finish()
         }
 
+        mPresenter.getLotteryModel()
+    }
+
+    override fun setLotteryModel(model: LotteryModel) {
+        num = model.num
+        tvNum.text = "剩余转盘次数：" + model.num
+
         //颜色
         val colors = arrayOf<Int>(Color.parseColor("#FFC6B1"),
                 Color.parseColor("#FCB195"),
@@ -38,8 +57,15 @@ class ZhuanPanActivity : BaseActivity<NullPresenter>() {
                 Color.parseColor("#FCB195"),
                 Color.parseColor("#FFC6B1"),
                 Color.parseColor("#FCB195"))
+
+        idList = model.data.map { it.id }.toMutableList()
+
+
         //文字
-        val des = arrayOf("王 者 皮 肤", "1 8 0 积 分", "L O L 皮 肤", "谢 谢 参 与", "2 8 积 分", "微 信 红 包")
+        val des = model.data.map { it.name }.toTypedArray()
+
+        LogUtils.e(JSON.toJSONString(idList), JSON.toJSONString(des))
+
 //        //图标
 //        var mListBitmap: List<Bitmap> = ArrayList()
 //        for (i in colors.indices) {
@@ -63,11 +89,21 @@ class ZhuanPanActivity : BaseActivity<NullPresenter>() {
         wheelSurfView.setRotateListener(object : RotateListener {
             override fun rotateEnd(position: Int, des: String) {
                 wheelSurfView.goBtn.isEnabled = true
-                ToastUtils.showShort("结束了 位置：$position   描述：$des")
+                val dialog = ConfirmDialog(this@ZhuanPanActivity)
+                dialog.setTitle("新增积分")
+                dialog.setStyleMessage(SpanUtils().append("转盘送积分活动获得积分")
+                        .append(scoreStr).setForegroundColor(resources.getColor(R.color.colorAccent))
+                        .create())
+
+                dialog.setYesOnclickListener("知道了") {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
             }
 
             override fun rotating(valueAnimator: ValueAnimator) {
-                wheelSurfView.goBtn.isEnabled = false
+
             }
 
             override fun rotateBefore(goImg: ImageView) {
@@ -75,9 +111,12 @@ class ZhuanPanActivity : BaseActivity<NullPresenter>() {
                 builder.setTitle("温馨提示")
                 builder.setMessage("确定要消耗一次抽奖机会？")
                 builder.setPositiveButton("确定") { dialog, which ->
-                    //模拟位置
-                    val position = Random().nextInt(6) + 1
-                    wheelSurfView.startRotate(position)
+                    if (num > 0) {
+                        wheelSurfView.goBtn.isEnabled = false
+                        mPresenter.startLottery()
+                    } else {
+                        ToastUtils.showShort("转盘次数不足")
+                    }
                 }
                 builder.setNegativeButton("取消") { dialog, which -> }
                 builder.show()
@@ -85,5 +124,19 @@ class ZhuanPanActivity : BaseActivity<NullPresenter>() {
             }
         })
     }
+
+    override fun setLotteryResult(model: LotteryResultModel?) {
+        if (model != null) {
+            num--
+            tvNum.text = "剩余转盘次数：$num"
+            scoreStr = model.name
+            LogUtils.e(idList.indexOf(model.id) + 1)
+            wheelSurfView.startRotate(idList.size - idList.indexOf(model.id) + 1)
+        } else {
+            wheelSurfView.goBtn.isEnabled = true
+        }
+
+    }
+
 
 }

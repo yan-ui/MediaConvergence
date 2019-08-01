@@ -1,27 +1,22 @@
 package cn.tklvyou.mediaconvergence.ui.service;
 
-
 import com.blankj.utilcode.util.ToastUtils;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.helper.AccountHelper;
-import cn.tklvyou.mediaconvergence.ui.home.HomeContract;
 
-
-public class PointPresenter extends BasePresenter<PointContract.View> implements PointContract.Presenter{
-
+public class GoodsDetailPresenter extends BasePresenter<GoodsDetailContract.View> implements GoodsDetailContract.Presenter{
 
     @Override
-    public void getGoodsPageList(int page) {
+    public void getGoodsDetails(int id) {
         RetrofitHelper.getInstance().getServer()
-                .getGoodsPageList(page)
+                .getGoodsDetail(id)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if(result.getCode() ==1){
-                        mView.setGoods(page,result.getData());
+                        mView.setGoodsDetail(result.getData());
                     }else {
                         ToastUtils.showShort(result.getMsg());
                     }
@@ -29,21 +24,14 @@ public class PointPresenter extends BasePresenter<PointContract.View> implements
     }
 
     @Override
-    public void getUser() {
+    public void exchangeGoods(int id) {
         RetrofitHelper.getInstance().getServer()
-                .getUser()
+                .exchangeGoods(id)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if (result.getCode() == 1) {
-                        mView.setUser(result.getData());
-                        AccountHelper.getInstance().setUserInfo(result.getData());
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
-                    }
+                    ToastUtils.showShort(result.getMsg());
 
-                }, throwable -> {
-                    throwable.printStackTrace();
-                });
+                }, throwable -> throwable.printStackTrace());
     }
 }

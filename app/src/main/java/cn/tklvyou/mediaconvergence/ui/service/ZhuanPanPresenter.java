@@ -1,49 +1,46 @@
 package cn.tklvyou.mediaconvergence.ui.service;
 
-
 import com.blankj.utilcode.util.ToastUtils;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.helper.AccountHelper;
-import cn.tklvyou.mediaconvergence.ui.home.HomeContract;
+import cn.tklvyou.mediaconvergence.model.Entry;
 
-
-public class PointPresenter extends BasePresenter<PointContract.View> implements PointContract.Presenter{
-
+public class ZhuanPanPresenter extends BasePresenter<ZhuanPanContract.View> implements ZhuanPanContract.Presenter {
 
     @Override
-    public void getGoodsPageList(int page) {
+    public void getLotteryModel() {
         RetrofitHelper.getInstance().getServer()
-                .getGoodsPageList(page)
+                .getLotteryModel()
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if(result.getCode() ==1){
-                        mView.setGoods(page,result.getData());
-                    }else {
+                    if (result.getCode() == 1) {
+                        mView.setLotteryModel(result.getData());
+                    } else {
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> throwable.printStackTrace());
     }
 
     @Override
-    public void getUser() {
+    public void startLottery() {
         RetrofitHelper.getInstance().getServer()
-                .getUser()
+                .startLottery()
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if (result.getCode() == 1) {
-                        mView.setUser(result.getData());
-                        AccountHelper.getInstance().setUserInfo(result.getData());
+                        mView.setLotteryResult(result.getData());
                     } else {
+                        mView.setLotteryResult(null);
                         ToastUtils.showShort(result.getMsg());
                     }
 
                 }, throwable -> {
                     throwable.printStackTrace();
+                    mView.setLotteryResult(null);
                 });
     }
 }
