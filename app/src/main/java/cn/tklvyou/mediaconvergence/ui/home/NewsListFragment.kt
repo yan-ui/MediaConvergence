@@ -1,23 +1,24 @@
 package cn.tklvyou.mediaconvergence.ui.home
 
 import android.content.Intent
+import android.graphics.Color
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-
-import java.util.ArrayList
 
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.model.NewsMultipleItem
 import cn.tklvyou.mediaconvergence.base.fragment.BaseHttpRecyclerFragment
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
-import cn.tklvyou.mediaconvergence.model.BannerModel
-import cn.tklvyou.mediaconvergence.model.BasePageModel
-import cn.tklvyou.mediaconvergence.model.NewsBean
+import cn.tklvyou.mediaconvergence.model.*
 import cn.tklvyou.mediaconvergence.ui.adapter.NewsMultipleItemQuickAdapter
+import cn.tklvyou.mediaconvergence.ui.adapter.SuixiHeaderRvAdapter
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.BannerGlideImageLoader
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.youth.banner.Banner
@@ -25,12 +26,14 @@ import com.youth.banner.BannerConfig
 import com.youth.banner.Transformer
 import com.youth.banner.listener.OnBannerListener
 import kotlinx.android.synthetic.main.fragment_news_list.*
+import java.util.*
 
 /**
  * @description: 展示每个频道新闻列表的fragment
  */
 
-class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultipleItem, BaseViewHolder, NewsMultipleItemQuickAdapter>(), NewListContract.View {
+class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultipleItem<Any>, BaseViewHolder, NewsMultipleItemQuickAdapter>(), NewListContract.View {
+
 
     override fun initPresenter(): NewListPresenter {
         return NewListPresenter()
@@ -51,13 +54,13 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
     }
 
     override fun lazyData() {
-        when(type){
-            NewsMultipleItem.VIDEO ->{
+        when (type) {
+            NewsMultipleItem.VIDEO -> {
                 mPresenter.getBanner("V视频")
             }
 
-            NewsMultipleItem.TV ->{
-                mPresenter.getNewList("濉溪TV",1)
+            NewsMultipleItem.TV -> {
+                mPresenter.getSuixiTVNews(1)
             }
 
         }
@@ -101,8 +104,8 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         banner.setOnBannerListener(object : OnBannerListener {
             override fun OnBannerClick(position: Int) {
                 val intent = Intent(context, BannerDetailsActivity::class.java)
-                intent.putExtra("title",bannerModelList[position].name )
-                intent.putExtra("content",bannerModelList[position].content )
+                intent.putExtra("title", bannerModelList[position].name)
+                intent.putExtra("content", bannerModelList[position].content)
                 startActivity(intent)
             }
 
@@ -111,38 +114,96 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         banner.start()
     }
 
-    override fun setList(list: MutableList<NewsMultipleItem>) {
+    override fun setList(list: MutableList<NewsMultipleItem<Any>>) {
         setList(object : AdapterCallBack<NewsMultipleItemQuickAdapter> {
 
             override fun createAdapter(): NewsMultipleItemQuickAdapter {
-                val view = View.inflate(context, R.layout.item_normal_banner, null)
                 val adapter = NewsMultipleItemQuickAdapter(context, list)
-                initBannerView(view, bannerModelList)
-                adapter.addHeaderView(view)
+                when (type) {
+                    NewsMultipleItem.VIDEO -> {
+                        val view = View.inflate(context, R.layout.item_normal_banner, null)
+                        initBannerView(view, bannerModelList)
+                        adapter.addHeaderView(view)
+                    }
+
+                    NewsMultipleItem.TV -> {
+
+                    }
+                }
                 return adapter
             }
 
             override fun refreshAdapter() {
-                adapter.setNewData(list)
+                when (type) {
+                    NewsMultipleItem.VIDEO -> {
+                        adapter.setNewData(list)
+                    }
+
+                    NewsMultipleItem.TV -> {
+                        adapter.removeAllHeaderView()
+
+                        val headerModelList = list.filter { (it.dataBean as SuixiTvModel).module_second == "置顶频道" }
+                                .toList()
+
+                        val contentList = list.filter { (it.dataBean as SuixiTvModel).module_second != "置顶频道" }
+                                .toList()
+
+                        val view = View.inflate(context, R.layout.item_suixi_tv_header, null)
+                        val suixiHeaderRecyclerView = view.findViewById<RecyclerView>(R.id.suixiHeaderRecyclerView)
+                        suixiHeaderRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayout.HORIZONTAL,false)
+                        suixiHeaderRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.HORIZONTAL, 20, Color.WHITE))
+
+                        suixiHeaderRecyclerView.adapter = SuixiHeaderRvAdapter(R.layout.item_suixi_tv_header_child, (headerModelList[0].dataBean as SuixiTvModel).data)
+
+                        adapter.addHeaderView(view)
+
+                        adapter.setNewData(contentList)
+                        adapter.loadMoreEnd()
+                    }
+
+                }
+
             }
         })
 
     }
 
 
+    /**
+     * 分页加载 自动调用的方法
+     */
     override fun getListAsync(page: Int) {
-        mPresenter.getNewList("V视频", page)
+        when (type) {
+            NewsMultipleItem.VIDEO -> {
+                mPresenter.getNewList("V视频", page)
+            }
+            NewsMultipleItem.TV -> {
+                mPresenter.getSuixiTVNews(page)
+            }
+        }
     }
 
     override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {
         if (model != null) {
-            val newList = ArrayList<NewsMultipleItem>()
+            val newList = ArrayList<NewsMultipleItem<Any>>()
             model.data.forEach {
-                newList.add(NewsMultipleItem(it))
+                newList.add(NewsMultipleItem("V视频", it))
             }
             onLoadSucceed(p, newList)
-        }else{
-            onLoadFailed(p,null)
+        } else {
+            onLoadFailed(p, null)
+        }
+    }
+
+    override fun setSuixiTVNews(p: Int, datas: MutableList<SuixiTvModel>?) {
+        if (datas != null) {
+            val newList = ArrayList<NewsMultipleItem<Any>>()
+            datas.forEach {
+                newList.add(NewsMultipleItem("濉溪TV", it))
+            }
+            onLoadSucceed(p, newList)
+        } else {
+            onLoadFailed(p, null)
         }
     }
 
@@ -155,7 +216,7 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
                     //打开新的Activity
                     val intent = Intent(context, VodActivity::class.java)
 //                    intent.putExtra("media_type", "livestream")
-                    intent.putExtra("videoPath", (adapter as NewsMultipleItemQuickAdapter).data[position].dataBean.video)
+                    intent.putExtra("videoPath", ((adapter as NewsMultipleItemQuickAdapter).data[position].dataBean as NewsBean).video)
                     startActivity(intent)
                 }
                 else -> {

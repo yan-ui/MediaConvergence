@@ -118,4 +118,10 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
         onLoadFailed(page, e);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        srlBaseHttpRecycler = null;
+    }
 }

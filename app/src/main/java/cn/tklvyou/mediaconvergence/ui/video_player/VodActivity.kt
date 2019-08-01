@@ -54,6 +54,29 @@ import java.lang.NullPointerException
 
 class VodActivity : BaseActivity<NullPresenter>() {
 
+    override fun initPresenter(): NullPresenter {
+        return NullPresenter()
+    }
+
+    override fun getActivityLayoutID(): Int {
+        return R.layout.activity_player
+    }
+
+
+    override fun initView() {
+        hideTitleBar()
+        btnBack.setOnClickListener {
+            releasePlayer()
+            finish()
+        }
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //保持屏幕常亮
+        PhoneCallStateObserver.getInstance().observeLocalPhoneObserver(localPhoneObserver, true)
+        parseIntent()
+        findViews()
+        initPlayer()
+    }
+
 
     private val surfaceView: AdvanceSurfaceView? = null
 
@@ -268,31 +291,6 @@ class VodActivity : BaseActivity<NullPresenter>() {
             mCurrentTime.text = stringForTime(position.toLong())
         }
         return position.toLong()
-    }
-
-
-    override fun initPresenter(): NullPresenter {
-        return NullPresenter()
-    }
-
-    override fun getActivityLayoutID(): Int {
-        return R.layout.activity_player
-    }
-
-
-    override fun initView() {
-        setTitle("视频")
-        setNavigationImage()
-        setNavigationOnClickListener {
-            releasePlayer()
-            finish()
-        }
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //保持屏幕常亮
-        PhoneCallStateObserver.getInstance().observeLocalPhoneObserver(localPhoneObserver, true)
-        parseIntent()
-        findViews()
-        initPlayer()
     }
 
 

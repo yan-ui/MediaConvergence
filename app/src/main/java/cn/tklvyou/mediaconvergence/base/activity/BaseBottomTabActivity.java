@@ -81,4 +81,10 @@ public abstract class BaseBottomTabActivity<P extends BaseContract.BasePresenter
      */
     protected abstract List<Fragment> getFragments();
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        fragments = null;
+    }
 }

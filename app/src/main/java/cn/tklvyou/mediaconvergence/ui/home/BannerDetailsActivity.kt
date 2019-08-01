@@ -30,5 +30,8 @@ class BannerDetailsActivity : BaseWebViewActivity<NullPresenter>() {
         loadHtml(html)
     }
 
+    override fun setTitleContent(title: String) {
+
+    }
 
 }

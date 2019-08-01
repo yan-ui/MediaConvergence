@@ -28,11 +28,11 @@
         android:supportsRtl="true"
         android:theme="@style/CustomAppTheme"
         tools:replace="android:theme">
-
-        <activity android:name=".ui.home.PublishNewsActivity">
-
+        <activity android:name=".ui.service.PointActivity"></activity>
+        <activity android:name=".ui.service.ZhuanPanActivity">
         </activity>
-
+        <activity android:name=".ui.service.ServiceWebviewActivity" />
+        <activity android:name=".ui.home.PublishNewsActivity" />
         <activity android:name=".ui.home.BannerDetailsActivity" />
 
         <activity android:name=".ui.video_edit.VideoEditActivity" />
@@ -79,10 +79,8 @@
 
         <activity android:name=".ui.home.ImagePagerActivity" />
         <activity android:name=".crash.CrashErrorActivity" />
-        <activity android:name="cn.tklvyou.mediaconvergence.ui.setting.SettingActivity" />
-        <activity android:name=".ui.setting.edit.EditPasswordActivity" />
-        <activity android:name=".ui.account.data.PersonalDataActivity" /> <!-- receiver中的请替换为自己的包名 -->
-
+        <activity android:name=".ui.setting.SettingActivity" />
+        <activity android:name=".ui.setting.edit.EditPasswordActivity" /> <!-- receiver中的请替换为自己的包名 -->
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />

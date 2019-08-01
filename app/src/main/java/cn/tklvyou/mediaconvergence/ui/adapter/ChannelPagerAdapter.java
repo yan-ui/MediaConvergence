@@ -14,9 +14,7 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.model.Channel;
 
 /**
- * @author ChayChan
  * @description: 频道的adapter
- * @date 2017/6/16  9:45
  */
 
 public class ChannelPagerAdapter extends FragmentStatePagerAdapter {

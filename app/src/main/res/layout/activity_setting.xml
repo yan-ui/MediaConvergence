@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:wheelSurfView="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grayF4F5F7"
@@ -48,15 +49,14 @@
                      android:gravity="right"
                      android:hint="请确认新密码" />-->
                 <ImageView
-                    android:padding="@dimen/dp_10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:padding="@dimen/dp_10"
                     android:src="@mipmap/ic_arrow_right" />
             </LinearLayout>
 
             <include layout="@layout/line_horizontal_gray_0_5_dp" />
-
 
         </LinearLayout>
 
@@ -66,5 +66,6 @@
             android:layout_alignParentBottom="true"
             android:text="退出登录"
             android:textSize="@dimen/sp_15" />
+
     </RelativeLayout>
 </LinearLayout>
