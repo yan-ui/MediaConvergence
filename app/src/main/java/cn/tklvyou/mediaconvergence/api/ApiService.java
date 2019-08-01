@@ -5,8 +5,11 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
+import cn.tklvyou.mediaconvergence.model.LotteryResultModel;
+import cn.tklvyou.mediaconvergence.model.LotteryModel;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.model.PointModel;
+import cn.tklvyou.mediaconvergence.model.PointRuleModel;
 import cn.tklvyou.mediaconvergence.model.SuixiTvModel;
 import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
@@ -160,6 +163,37 @@ public interface ApiService {
      */
     @POST("api/goods/index")
     Observable<BaseResult<BasePageModel<PointModel>>> getGoodsPageList(@Query("p") int p);
+
+
+    /**
+     * 商品详情
+     */
+    @POST("api/goods/detail")
+    Observable<BaseResult<PointModel>> getGoodsDetail(@Query("id") int id);
+
+    /**
+     * 积分规则
+     */
+    @POST("api/score/rule")
+    Observable<BaseResult<PointRuleModel>> getScoreRule();
+
+    /**
+     * 积分抽奖奖品列表
+     */
+    @POST("api/award/index")
+    Observable<BaseResult<LotteryModel>> getLotteryModel();
+
+    /**
+     * 抽奖
+     */
+    @POST("api/award/draw")
+    Observable<BaseResult<LotteryResultModel>> startLottery();
+
+    /**
+     * 积分商品兑换
+     */
+    @POST("api/goods/exchange")
+    Observable<BaseResult<Object>> exchangeGoods(@Query("id") int id);
 
 
     @POST("api/user/profile")

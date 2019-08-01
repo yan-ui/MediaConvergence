@@ -301,7 +301,6 @@ public class WheelSurfPanView extends View {
             @Override
             public float getInterpolation(float t) {
                 float f1 = ( float ) (Math.cos((t + 1) * Math.PI) / 2.0f) + 0.5f;
-                Log.e("HHHHHHHh", "" + t + "     " + (f[0] - f1));
                 f[0] = ( float ) (Math.cos((t + 1) * Math.PI) / 2.0f) + 0.5f;
                 return f[0];
             }

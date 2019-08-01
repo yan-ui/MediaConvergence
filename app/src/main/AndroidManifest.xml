@@ -13,11 +13,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
 
     <application
         android:name=".base.MyApplication"
@@ -28,39 +29,30 @@
         android:supportsRtl="true"
         android:theme="@style/CustomAppTheme"
         tools:replace="android:theme">
-        <activity android:name=".ui.service.PointActivity"></activity>
-        <activity android:name=".ui.service.ZhuanPanActivity">
-        </activity>
+        <activity android:name=".ui.service.PointRuleActivity"></activity>
+        <activity android:name=".ui.service.GoodsDetailsActivity" />
+        <activity android:name=".ui.service.PointActivity" />
+        <activity android:name=".ui.service.ZhuanPanActivity" />
         <activity android:name=".ui.service.ServiceWebviewActivity" />
         <activity android:name=".ui.home.PublishNewsActivity" />
         <activity android:name=".ui.home.BannerDetailsActivity" />
-
         <activity android:name=".ui.video_edit.VideoEditActivity" />
-
         <activity android:name=".ui.camera.TakePhotoActivity" />
-
-
         <activity
             android:name=".ui.main.MainActivity"
             android:launchMode="singleTask">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".ui.account.LoginActivity"
             android:configChanges="keyboard|orientation|keyboardHidden|screenSize|uiMode|screenLayout"
             android:launchMode="singleTask" />
-
         <activity android:name=".ui.account.RegisterActivity" />
-
         <activity android:name=".ui.account.ForgetPasswordActivity" />
-
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
@@ -76,7 +68,6 @@
             android:name=".ui.home.NewsDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity android:name=".ui.home.ImagePagerActivity" />
         <activity android:name=".crash.CrashErrorActivity" />
         <activity android:name=".ui.setting.SettingActivity" />

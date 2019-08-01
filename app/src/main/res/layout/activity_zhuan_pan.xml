@@ -55,6 +55,7 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/tvNum"
         android:layout_marginTop="@dimen/dp_30"
         android:layout_below="@id/panLayout"
         android:layout_centerHorizontal="true"
@@ -63,7 +64,7 @@
         android:layout_width="@dimen/dp_150"
         android:layout_height="@dimen/dp_35"
         android:gravity="center"
-        android:text="剩余转盘次数：3"
+        android:text="剩余转盘次数：0"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
 
