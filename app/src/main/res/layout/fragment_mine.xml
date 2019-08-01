@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/llMyPointDetail"
         android:layout_width="@dimen/dp_150"
         android:layout_height="@dimen/dp_37"
         android:layout_gravity="center_horizontal"

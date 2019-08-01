@@ -1,5 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.account.data;
 
+import java.io.File;
+
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 
 /**
@@ -12,21 +14,20 @@ import cn.tklvyou.mediaconvergence.base.BaseContract;
 public interface IDataContract {
 
     interface DataView extends BaseContract.BaseView {
-        void showAvatar();
+        void showInputDialog(String content);
         void editSuccess();
-        void editFailed();
+        void uploadSuccess(String url);
     }
 
 
     interface IDataPresenter extends BaseContract.BasePresenter<DataView> {
+        void editUserInfo(String avatar,String newNickName,String userName,String bio);
 
+        void doUploadImage(File file);
     }
 
 
 
 
-    interface editData extends BaseContract.BasePresenter<DataView> {
-        void requestEdit(String avatar, String username, String nickname, String bio);
 
-    }
 }

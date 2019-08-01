@@ -1,63 +1,56 @@
-package cn.tklvyou.mediaconvergence.ui.account.data;
-
+package cn.tklvyou.mediaconvergence.ui.service;
 
 import android.annotation.SuppressLint;
 
 import com.blankj.utilcode.util.ToastUtils;
 
-import java.io.File;
-
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
 import cn.tklvyou.mediaconvergence.common.RequestConstant;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
+import cn.tklvyou.mediaconvergence.helper.AccountHelper;
 
 /**
  * @author :JenkinsZhou
  * @description :
  * @company :途酷科技
- * @date 2019年07月31日17:20
+ * @date 2019年08月01日17:40
  * @Email: 971613168@qq.com
  */
 @SuppressLint("CheckResult")
-public class DataPresenter extends BasePresenter<IDataContract.DataView> implements IDataContract.IDataPresenter {
-
+public class PointDetailPresenter extends BasePresenter<PointDetailContract.View> implements PointDetailContract.Presenter {
 
     @Override
-    public void editUserInfo(String avatar, String newNickName, String userName, String bio) {
+    public void getPointPageList(int page) {
         RetrofitHelper.getInstance().getServer()
-                .editUserInfo(avatar, userName, newNickName, bio)
+                .getMyPointList(page)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    mView.hideLoading();
                     if (result.getCode() == RequestConstant.CODE_REQUEST_SUCCESS) {
-                        mView.editSuccess();
+                        mView.setPointDetails(page, result.getData());
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> mView.hideLoading());
+                }, throwable -> throwable.printStackTrace());
     }
 
     @Override
-    public void doUploadImage(File file) {
-        final RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+    public void getUser() {
         RetrofitHelper.getInstance().getServer()
-                .upload(body)
+                .getUser()
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if (result.getCode() == RequestConstant.CODE_REQUEST_SUCCESS) {
-                        mView.uploadSuccess(result.getData().getUrl());
+                        mView.setUser(result.getData());
+                        AccountHelper.getInstance().setUserInfo(result.getData());
+                        mView.setUser(result.getData());
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
+
                 }, throwable -> {
-                    mView.hideLoading();
                     throwable.printStackTrace();
                 });
     }

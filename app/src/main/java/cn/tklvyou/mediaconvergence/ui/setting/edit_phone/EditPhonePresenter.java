@@ -1,7 +1,8 @@
-package cn.tklvyou.mediaconvergence.ui.setting.edit;
+package cn.tklvyou.mediaconvergence.ui.setting.edit_phone;
 
 import android.annotation.SuppressLint;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
@@ -12,15 +13,14 @@ import static cn.tklvyou.mediaconvergence.common.RequestConstant.CODE_REQUEST_SU
 
 /**
  * @author :JenkinsZhou
- * @description :
+ * @description :修改手机号
  * @company :途酷科技
  * @date 2019年07月30日10:15
  * @Email: 971613168@qq.com
  */
 @SuppressLint("CheckResult")
-public class EditPassPresenter extends BasePresenter<EditPassContract.EditView> implements EditPassContract.EditPassPresenter {
-
-
+public class EditPhonePresenter extends BasePresenter<EditPhoneContract.EditView> implements EditPhoneContract.EditPassPresenter {
+     public static final String TAG = "EditPhonePresenter";
     @Override
     public void getCaptcha(String mobile, String event) {
         RetrofitHelper.getInstance().getServer()
@@ -37,19 +37,20 @@ public class EditPassPresenter extends BasePresenter<EditPassContract.EditView> 
     }
 
     @Override
-    public void edit(String mobile, String newPass, String vCode) {
+    public void edit(String mobile, String vCode) {
         RetrofitHelper.getInstance().getServer()
-                .resetPass(mobile, newPass, vCode)
+                .chaneMobile(mobile, vCode)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    ToastUtils.showShort(result.getMsg());
                     if (result.getCode() == CODE_REQUEST_SUCCESS) {
                         mView.editSuccess();
                     } else {
+                        ToastUtils.showShort(result.getMsg());
                         mView.editFailed();
                     }
                 }, throwable -> {
+                    LogUtils.e(TAG,"异常");
                 });
     }
 

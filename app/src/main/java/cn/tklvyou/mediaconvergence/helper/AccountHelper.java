@@ -43,4 +43,17 @@ public class AccountHelper {
     }
 
 
+    public String getNickName() {
+        if (userInfo != null) {
+            return CommonUtil.getNotNullValue(userInfo.getNickname());
+        }
+        return "";
+    }
+
+    public String getUserName() {
+        if (userInfo != null) {
+            return CommonUtil.getNotNullValue(userInfo.getUsername());
+        }
+        return "";
+    }
 }

@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.setting.edit;
+package cn.tklvyou.mediaconvergence.ui.setting.edit_phone;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 
@@ -9,7 +9,7 @@ import cn.tklvyou.mediaconvergence.base.BaseContract;
  * @date 2019年07月30日9:48
  * @Email: 971613168@qq.com
  */
-public interface EditPassContract {
+public interface EditPhoneContract {
 
     interface EditView extends BaseContract.BaseView {
         void getCaptchaSuccess();
@@ -23,6 +23,6 @@ public interface EditPassContract {
     interface EditPassPresenter extends BaseContract.BasePresenter<EditView> {
         void getCaptcha(String mobile, String event);
 
-        void edit(String mobile, String newPass, String vCode);
+        void edit(String mobile,  String vCode);
     }
 }

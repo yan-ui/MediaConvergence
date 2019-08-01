@@ -5,9 +5,11 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
-import cn.tklvyou.mediaconvergence.model.LotteryResultModel;
 import cn.tklvyou.mediaconvergence.model.LotteryModel;
+import cn.tklvyou.mediaconvergence.model.LotteryResultModel;
+import cn.tklvyou.mediaconvergence.model.MessageModel;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
+import cn.tklvyou.mediaconvergence.model.PointDetailModel;
 import cn.tklvyou.mediaconvergence.model.PointModel;
 import cn.tklvyou.mediaconvergence.model.PointRuleModel;
 import cn.tklvyou.mediaconvergence.model.SuixiTvModel;
@@ -61,6 +63,13 @@ public interface ApiService {
     @POST("api/user/resetpwd")
     Observable<BaseResult<Object>> resetPass(@Query("mobile") String mobile, @Query("newpassword") String password, @Query("captcha") String captcha);
 
+
+    /**
+     * 修改手机号
+     */
+    @POST("api/user/changemobile")
+    Observable<BaseResult<Object>> chaneMobile(@Query("mobile") String mobile, @Query("captcha") String captcha);
+
     /**
      * 第三方登录
      *
@@ -97,11 +106,27 @@ public interface ApiService {
 
 
     /**
+     * 积分明细
+     *
+     * @return
+     */
+    @POST("api/score/index")
+    Observable<BaseResult<BasePageModel<PointDetailModel>>> getMyPointList(@Query("p") int p);
+
+    /**
      * 内容列表
      */
     @POST("api/article/index")
     Observable<BaseResult<BasePageModel<NewsBean>>> getNewList(@Query("module") String module, @Query("p") int p);
 
+    /**
+     * 消息列表
+     *
+     * @param p
+     * @return
+     */
+    @POST("api/msg/index")
+    Observable<BaseResult<BasePageModel<MessageModel>>> getSystemMsgList(@Query("p") int p);
 
     /**
      * 濉溪TV

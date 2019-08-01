@@ -52,7 +52,7 @@ public class GlideManager {
     private static void setDrawable(GradientDrawable gd, float radius) {
         gd.setColor(mPlaceholderColor);
         gd.setCornerRadius(radius);
-        
+
     }
 
     /**

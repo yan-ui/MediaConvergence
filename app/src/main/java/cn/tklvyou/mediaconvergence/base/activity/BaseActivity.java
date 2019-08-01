@@ -52,8 +52,14 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     protected FragmentManager fragmentManager;
     protected Activity mContext;
     protected P mPresenter;
+    protected View mContentView;
 
     public FrameLayout4Loading mFrameLayout4Loading;
+
+    protected CommonTitleBar getBaseTitleBar() {
+        return baseTitleBar;
+    }
+
     private CommonTitleBar baseTitleBar;
 
     private boolean isAlive =false;
@@ -71,7 +77,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         isAlive = true;
         threadNameList = new ArrayList<String>();
 
-        View.inflate(this, getActivityLayoutID(), (ViewGroup) findViewById(R.id.base_content));
+        mContentView =  View.inflate(this, getActivityLayoutID(), (ViewGroup) findViewById(R.id.base_content));
         initBaseView();
         attachView();
         initView();

@@ -2,16 +2,13 @@ package cn.tklvyou.mediaconvergence.base;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Build;
 import android.os.StrictMode;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
-import com.netease.neliveplayer.playerkit.common.log.LogUtil;
 import com.netease.neliveplayer.playerkit.sdk.PlayerManager;
 import com.netease.neliveplayer.playerkit.sdk.model.SDKInfo;
 import com.netease.neliveplayer.playerkit.sdk.model.SDKOptions;
@@ -27,10 +24,10 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import cn.tklvyou.mediaconvergence.BuildConfig;
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.common.Contacts;
 import cn.tklvyou.mediaconvergence.crash.CrashManager;
+import cn.tklvyou.mediaconvergence.manager.FrameLifecycleCallbacks;
 
 /**
  * Created by Administrator on 2019/2/27.
@@ -108,6 +105,8 @@ public class MyApplication extends MultiDexApplication {
         //        config.thirdUserId = "your_id";
         config.privateConfig = new NEPlayerConfig();
         PlayerManager.init(this, config);
+        //注册activity生命周期
+        mContext.registerActivityLifecycleCallbacks(new FrameLifecycleCallbacks());
         SDKInfo sdkInfo = PlayerManager.getSDKInfo(this);
         LogUtils.i("NESDKInfo:version" + sdkInfo.version + ",deviceId:" + sdkInfo.deviceId);
     }

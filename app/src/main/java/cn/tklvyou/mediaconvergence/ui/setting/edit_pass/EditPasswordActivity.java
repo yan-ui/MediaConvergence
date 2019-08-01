@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.setting.edit;
+package cn.tklvyou.mediaconvergence.ui.setting.edit_pass;
 
 import android.text.TextUtils;
 import android.view.View;
@@ -6,13 +6,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import cn.tklvyou.mediaconvergence.R;
-import cn.tklvyou.mediaconvergence.base.activity.BaseActivity;
+import cn.tklvyou.mediaconvergence.base.activity.BaseTitleActivity;
 import cn.tklvyou.mediaconvergence.helper.AccountHelper;
-import cn.tklvyou.mediaconvergence.model.User;
 import cn.tklvyou.mediaconvergence.utils.CommonUtil;
 import cn.tklvyou.mediaconvergence.widget.TimeCount;
+
+import static cn.tklvyou.mediaconvergence.common.CommonConstant.TIME_INTERVAL;
+import static cn.tklvyou.mediaconvergence.common.CommonConstant.TIME_ONE_SECOND;
 
 /**
  * @author :JenkinsZhou
@@ -21,9 +24,7 @@ import cn.tklvyou.mediaconvergence.widget.TimeCount;
  * @date 2019年07月30日10:18
  * @Email: 971613168@qq.com
  */
-public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPassPresenter> implements EditPassContract.EditView, View.OnClickListener {
-    private static final Long TIME_ONE_SECOND = 1000L;
-    private static final Long TIME_INTERVAL = TIME_ONE_SECOND * 60L;
+public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.EditPassPresenter> implements EditPassContract.EditView, View.OnClickListener {
     private TextView tvSendVCode;
     private TextView tvConfirmEdit;
     private EditText etVCode;
@@ -34,8 +35,6 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
 
     @Override
     protected void initView() {
-        setTitle("修改密码");
-        setNavigationImage();
         tvSendVCode = findViewById(R.id.tvSendVCode);
         tvSendVCode.setOnClickListener(this);
         tvConfirmEdit = findViewById(R.id.tvConfirmEdit);
@@ -44,6 +43,8 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
         etPassNew = findViewById(R.id.etPassNew);
         etPassConfirm = findViewById(R.id.etPassConfirm);
         mobile = AccountHelper.getInstance().getPhone();
+
+
 
     }
 
@@ -170,10 +171,19 @@ public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPass
 
     @Override
     protected void onDestroy() {
-        if(timeCount != null){
+        if (timeCount != null) {
             timeCount.cancel();
         }
         timeCount = null;
         super.onDestroy();
     }
+
+
+    @Override
+    public void setTitleBar(CommonTitleBar titleBar) {
+        titleBar.setMainTitle("修改密码");
+    }
+
+
+
 }

@@ -13,12 +13,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
-
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
 
     <application
         android:name=".base.MyApplication"
@@ -70,8 +69,14 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".ui.home.ImagePagerActivity" />
         <activity android:name=".crash.CrashErrorActivity" />
-        <activity android:name=".ui.setting.SettingActivity" />
-        <activity android:name=".ui.setting.edit.EditPasswordActivity" /> <!-- receiver中的请替换为自己的包名 -->
+        <activity android:name="cn.tklvyou.mediaconvergence.ui.setting.SettingActivity" />
+        <activity android:name=".ui.account.data.PersonalDataActivity" />
+        <activity android:name=".ui.setting.edit_pass.EditPasswordActivity" />
+        <activity android:name=".ui.setting.edit_phone.EditPhoneActivity" />
+        <activity android:name=".ui.service.PointActivity" />
+        <activity android:name=".ui.service.MyPointDetailActivity" />
+        <activity android:name=".ui.service.MsgSystemActivity" /> <!-- receiver中的请替换为自己的包名 -->
+
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />

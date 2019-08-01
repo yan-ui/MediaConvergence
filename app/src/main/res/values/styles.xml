@@ -78,4 +78,21 @@
         <item name="android:paddingStart">@dimen/dp_20</item>
         <item name="android:paddingEnd">@dimen/dp_20</item>
     </style>
+
+    <style name="TextBlackColor333333Sp14Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black333333</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CustomAppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="CustomAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="CustomAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
