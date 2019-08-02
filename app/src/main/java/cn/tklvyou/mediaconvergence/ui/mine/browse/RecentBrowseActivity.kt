@@ -1,5 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.mine.collection
-
+package cn.tklvyou.mediaconvergence.ui.mine.browse
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseHttpRecyclerActivity
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
@@ -12,13 +11,21 @@ import kotlinx.android.synthetic.main.layout_recycler.*
 import kotlinx.android.synthetic.main.layout_refresh_recycler.*
 
 /**
- *@description :我的收藏
+ *@description :最近浏览
  *@company :途酷科技
  * @author :JenkinsZhou
- * @date 2019年08月02日11:04
+ * @date 2019年08月02日16:51
  * @Email: 971613168@qq.com
  */
-class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, BaseViewHolder, MyCollectionAdapter>(), CollectContract.View {
+class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean, BaseViewHolder, MyCollectionAdapter>(), BrowseContract.View {
+    override fun setBrowseList(page: Int, pageModel: BasePageModel<NewsBean>?) {
+        if (pageModel != null) {
+            onLoadSucceed(page, pageModel.data)
+        } else {
+            onLoadFailed(page, null)
+        }
+    }
+
     override fun setList(list: MutableList<NewsBean>?) {
         setList(object : AdapterCallBack<MyCollectionAdapter> {
 
@@ -38,16 +45,10 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
         }
     }
 
-    override fun setCollectList(page: Int, pageModel: BasePageModel<NewsBean>?) {
-        if (pageModel != null) {
-            onLoadSucceed(page, pageModel.data)
-        } else {
-            onLoadFailed(page, null)
-        }
-    }
 
-    override fun initPresenter(): CollectPresenter {
-        return CollectPresenter()
+
+    override fun initPresenter(): BrowsePresenter {
+        return BrowsePresenter()
     }
 
 
@@ -56,16 +57,16 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
     }
 
     override fun getListAsync(page: Int) {
-        mPresenter.getCollectPageList(page)
+        mPresenter.getBrowsePageList(page)
     }
 
     override fun initView() {
-        setTitle("我的收藏")
+        setTitle("最近浏览")
         setNavigationImage()
         setNavigationOnClickListener { finish() }
         initSmartRefreshLayout(smartLayoutRoot)
         initRecyclerView(recyclerViewRoot)
-        mPresenter.getCollectPageList(1)
+        mPresenter.getBrowsePageList(1)
     }
 
 

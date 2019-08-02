@@ -43,7 +43,7 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -78,7 +78,12 @@
         <activity android:name=".ui.mine.message.MyMessageActivity" />
         <activity android:name=".ui.mine.exchange.MyExchangeRecordActivity" />
         <activity android:name=".ui.setting.AboutUsActivity" />
-        <activity android:name=".ui.mine.collection.MyCollectActivity" /> <!-- receiver中的请替换为自己的包名 -->
+        <activity android:name=".ui.mine.collection.WenZhenActivity" />
+        <activity android:name=".ui.mine.browse.RecentBrowseActivity" />
+        <activity android:name=".ui.mine.wenzhen.MyWenZhenActivity" />
+        <activity android:name=".ui.mine.collection.MyCollectActivity" />
+
+        <!-- receiver中的请替换为自己的包名 -->
 
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>

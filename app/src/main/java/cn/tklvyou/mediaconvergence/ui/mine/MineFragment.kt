@@ -12,10 +12,12 @@ import cn.tklvyou.mediaconvergence.model.MineRvModel
 import cn.tklvyou.mediaconvergence.model.User
 import cn.tklvyou.mediaconvergence.ui.account.data.PersonalDataActivity
 import cn.tklvyou.mediaconvergence.ui.adapter.MineRvAdapter
+import cn.tklvyou.mediaconvergence.ui.mine.browse.RecentBrowseActivity
 import cn.tklvyou.mediaconvergence.ui.mine.collection.MyCollectActivity
 import cn.tklvyou.mediaconvergence.ui.mine.exchange.MyExchangeRecordActivity
 import cn.tklvyou.mediaconvergence.ui.mine.message.MyMessageActivity
 import cn.tklvyou.mediaconvergence.ui.mine.point.MyPointDetailActivity
+import cn.tklvyou.mediaconvergence.ui.mine.wenzhen.MyWenZhenActivity
 import cn.tklvyou.mediaconvergence.ui.setting.AboutUsActivity
 import cn.tklvyou.mediaconvergence.ui.setting.SettingActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
@@ -123,6 +125,14 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
                 //我的收藏
                 0 -> {
                     startActivity(Intent(context, MyCollectActivity::class.java))
+                }
+                //最近浏览
+                1 -> {
+                    startActivity(Intent(context, RecentBrowseActivity::class.java))
+                }
+                //问政记录
+                3 -> {
+                    startActivity(Intent(context, MyWenZhenActivity::class.java))
                 }
                 //我的消息
                 4 -> {

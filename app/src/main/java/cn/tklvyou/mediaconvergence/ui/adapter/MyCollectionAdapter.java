@@ -14,7 +14,7 @@ import cn.tklvyou.mediaconvergence.model.NewsBean;
 
 /**
  * @author :JenkinsZhou
- * @description :我的收藏
+ * @description :我的收藏和 最近浏览 公用的适配器
  * @company :途酷科技
  * @date 2019年08月02日15:00
  * @Email: 971613168@qq.com

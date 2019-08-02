@@ -246,4 +246,24 @@ public interface ApiService {
     @POST("api/collect/index")
     Observable<BaseResult<BasePageModel<NewsBean>>> getMyCollectList(@Query("p") int p);
 
+
+    /**
+     * 最近浏览
+     *
+     * @param p
+     * @return
+     */
+    @POST("api/userlog/index")
+    Observable<BaseResult<BasePageModel<NewsBean>>> getRecentBrowseList(@Query("p") int p);
+
+    /**
+     * 问政记录
+     *
+     * @param p
+     * @return
+     */
+    @POST("api/article/my")
+    Observable<BaseResult<BasePageModel<NewsBean>>> getWenZhenList(@Query("p") int p, @Query("module") String module);
+
+
 }

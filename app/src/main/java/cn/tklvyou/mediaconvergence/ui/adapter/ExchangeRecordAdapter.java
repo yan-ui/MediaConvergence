@@ -34,7 +34,7 @@ public class ExchangeRecordAdapter extends BaseQuickAdapter<ExchangeModel, BaseV
         GlideManager.loadRoundImg(item.getImage(), roundedImageView, 4);
         helper.setText(R.id.tvGoodsDesc, item.getName());
         helper.setText(R.id.tvDeduction, "消耗：" + item.getScore() + "分");
-        boolean buttonEnable = !STATUS_HIDDEN.equalsIgnoreCase(item.getStatus());
+        boolean buttonEnable = STATUS_HIDDEN.equalsIgnoreCase(item.getStatus());
         helper.setGone(R.id.tvWaitReceive, buttonEnable);
         helper.addOnClickListener(R.id.tvWaitReceive);
     }

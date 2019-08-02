@@ -1,29 +1,37 @@
-package cn.tklvyou.mediaconvergence.ui.mine.collection
+package cn.tklvyou.mediaconvergence.ui.mine.wenzhen
 
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseHttpRecyclerActivity
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
-import cn.tklvyou.mediaconvergence.ui.adapter.MyCollectionAdapter
+import cn.tklvyou.mediaconvergence.ui.adapter.WenZhenAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.layout_recycler.*
 import kotlinx.android.synthetic.main.layout_refresh_recycler.*
 
 /**
- *@description :我的收藏
+ *@description :问政记录
  *@company :途酷科技
  * @author :JenkinsZhou
  * @date 2019年08月02日11:04
  * @Email: 971613168@qq.com
  */
-class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, BaseViewHolder, MyCollectionAdapter>(), CollectContract.View {
-    override fun setList(list: MutableList<NewsBean>?) {
-        setList(object : AdapterCallBack<MyCollectionAdapter> {
+class MyWenZhenActivity : BaseHttpRecyclerActivity<WenZhenPresenter, NewsBean, BaseViewHolder, WenZhenAdapter>(), WenZhenContract.View {
+    override fun setDataList(page: Int, pageModel: BasePageModel<NewsBean>?) {
+        if (pageModel != null) {
+            onLoadSucceed(page, pageModel.data)
+        } else {
+            onLoadFailed(page, null)
+        }
+    }
 
-            override fun createAdapter(): MyCollectionAdapter {
-                return MyCollectionAdapter()
+    override fun setList(list: MutableList<NewsBean>?) {
+        setList(object : AdapterCallBack<WenZhenAdapter> {
+
+            override fun createAdapter(): WenZhenAdapter {
+                return WenZhenAdapter()
             }
 
             override fun refreshAdapter() {
@@ -38,16 +46,9 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
         }
     }
 
-    override fun setCollectList(page: Int, pageModel: BasePageModel<NewsBean>?) {
-        if (pageModel != null) {
-            onLoadSucceed(page, pageModel.data)
-        } else {
-            onLoadFailed(page, null)
-        }
-    }
 
-    override fun initPresenter(): CollectPresenter {
-        return CollectPresenter()
+    override fun initPresenter(): WenZhenPresenter {
+        return WenZhenPresenter()
     }
 
 
@@ -56,22 +57,22 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
     }
 
     override fun getListAsync(page: Int) {
-        mPresenter.getCollectPageList(page)
+        mPresenter.getDataPageList(page)
     }
 
     override fun initView() {
-        setTitle("我的收藏")
+        setTitle("问政")
         setNavigationImage()
         setNavigationOnClickListener { finish() }
         initSmartRefreshLayout(smartLayoutRoot)
         initRecyclerView(recyclerViewRoot)
-        mPresenter.getCollectPageList(1)
+        mPresenter.getDataPageList(1)
     }
 
 
     private fun initItemClick() {
         adapter.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-          //todo 点击事件
+            //todo 点击事件
         }
     }
 }
