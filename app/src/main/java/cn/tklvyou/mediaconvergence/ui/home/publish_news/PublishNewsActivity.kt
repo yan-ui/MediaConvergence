@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.home
+package cn.tklvyou.mediaconvergence.ui.home.publish_news
 
 import android.app.Activity
 import android.content.Intent

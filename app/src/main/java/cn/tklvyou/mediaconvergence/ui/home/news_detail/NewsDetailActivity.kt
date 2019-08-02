@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.home
+package cn.tklvyou.mediaconvergence.ui.home.news_detail
 
 import android.content.Context
 import android.content.Intent
@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.model.NewsBean
+import cn.tklvyou.mediaconvergence.ui.home.ImagePagerActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.GlideCircleTransform
 import cn.tklvyou.mediaconvergence.utils.UrlUtils

@@ -8,7 +8,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".ui.home.PublishNewsActivity">
+    tools:context=".ui.home.publish_news.PublishNewsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

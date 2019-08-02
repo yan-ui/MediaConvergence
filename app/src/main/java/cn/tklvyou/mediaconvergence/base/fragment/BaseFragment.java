@@ -15,6 +15,7 @@ import com.trello.rxlifecycle3.LifecycleTransformer;
 import com.trello.rxlifecycle3.components.support.RxFragment;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
+import cn.tklvyou.mediaconvergence.base.HookViewUtils;
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity;
 import cn.tklvyou.mediaconvergence.base.interfaces.LazyFragmentControl;
 

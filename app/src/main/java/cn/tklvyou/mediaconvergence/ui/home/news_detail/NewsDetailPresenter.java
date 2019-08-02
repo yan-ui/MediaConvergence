@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.home;
+package cn.tklvyou.mediaconvergence.ui.home.news_detail;
 
 
 import com.blankj.utilcode.util.ToastUtils;

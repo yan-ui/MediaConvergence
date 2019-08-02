@@ -38,6 +38,7 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.base.ConnectionLiveData;
+import cn.tklvyou.mediaconvergence.base.HookViewUtils;
 import cn.tklvyou.mediaconvergence.manager.ThreadManager;
 import cn.tklvyou.mediaconvergence.widget.BaseDialog;
 import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
@@ -62,22 +63,25 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
 
     private CommonTitleBar baseTitleBar;
 
-    private boolean isAlive =false;
+    private boolean isAlive = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.basehead_layout);
 
+        getWindow().getDecorView().postDelayed(() -> HookViewUtils.hook(this), 1000);
+
+
         //解决华为虚拟键盘关闭导致的Activity被重新创建闪退桌面的问题
         Configuration configuration = getResources().getConfiguration();
         configuration.screenLayout = 0x0100;
-        getResources().updateConfiguration(configuration,getResources().getDisplayMetrics());
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
 
         isAlive = true;
         threadNameList = new ArrayList<String>();
 
-        mContentView =  View.inflate(this, getActivityLayoutID(), (ViewGroup) findViewById(R.id.base_content));
+        mContentView = View.inflate(this, getActivityLayoutID(), (ViewGroup) findViewById(R.id.base_content));
         initBaseView();
         attachView();
         initView();
@@ -347,7 +351,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         if (view != null) {
             InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (im != null) {
-                im.showSoftInput(view,0);
+                im.showSoftInput(view, 0);
             }
         }
     }
@@ -375,10 +379,11 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     }
 
 
-
     //运行线程 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-    /**在UI线程中运行，建议用这个方法代替runOnUiThread
+    /**
+     * 在UI线程中运行，建议用这个方法代替runOnUiThread
+     *
      * @param action
      */
     public final void runUiThread(Runnable action) {
@@ -388,11 +393,15 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         }
         runOnUiThread(action);
     }
+
     /**
      * 线程名列表
      */
     protected List<String> threadNameList;
-    /**运行线程
+
+    /**
+     * 运行线程
+     *
      * @param name
      * @param runnable
      * @return

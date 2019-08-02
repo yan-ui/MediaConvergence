@@ -31,6 +31,10 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
     override fun initView() {
         hideTitleBar()
         pointTitleBar.setBackgroundColor(Color.TRANSPARENT)
+        pointTitleBar.setNavigationListener{
+            finish()
+        }
+
 
         initSmartRefreshLayout(pointRefreshLayout)
         initRecyclerView(pointRecyclerView)

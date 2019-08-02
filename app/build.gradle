@@ -114,5 +114,6 @@ dependencies {
     implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
     implementation project(path: ':lib-ios-dialog')
     implementation project(path: ':wxcamera')
+    implementation files('libs\\commons-lang-2.6.jar')
 
 }

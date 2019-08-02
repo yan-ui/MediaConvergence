@@ -90,8 +90,6 @@
         android:id="@+id/mineRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/dp_25"
-        android:paddingRight="@dimen/dp_25"
         android:layout_marginTop="@dimen/dp_345"
         android:overScrollMode="never"
         android:scrollbars="none">

@@ -38,7 +38,8 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
     private var imageList = ArrayList<String>()
     private var selectList: List<LocalMedia> = ArrayList()
     override fun setTitleBar(titleBar: CommonTitleBar?) {
-        titleBar!!.setMainTitle("个人资料")
+        setTitle("个人资料")
+//        titleBar!!.setMainTitle()
     }
 
     override fun showInputDialog(content: String) {

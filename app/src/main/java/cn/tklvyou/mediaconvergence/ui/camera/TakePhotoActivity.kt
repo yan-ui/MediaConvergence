@@ -2,16 +2,14 @@ package cn.tklvyou.mediaconvergence.ui.camera
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Environment
-import android.view.View
 import com.cjt2325.cameralibrary.JCameraView
 import com.cjt2325.cameralibrary.listener.JCameraListener
 import java.io.File
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
-import cn.tklvyou.mediaconvergence.ui.home.PublishNewsActivity
+import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import com.blankj.utilcode.util.ImageUtils
 import com.luck.picture.lib.entity.LocalMedia

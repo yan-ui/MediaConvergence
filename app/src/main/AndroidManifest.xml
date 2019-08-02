@@ -33,12 +33,13 @@
         <activity android:name=".ui.service.PointActivity" />
         <activity android:name=".ui.service.ZhuanPanActivity" />
         <activity android:name=".ui.service.ServiceWebviewActivity" />
-        <activity android:name=".ui.home.PublishNewsActivity" />
+        <activity android:name=".ui.home.publish_news.PublishNewsActivity" />
         <activity android:name=".ui.home.BannerDetailsActivity" />
         <activity android:name=".ui.video_edit.VideoEditActivity" />
         <activity android:name=".ui.camera.TakePhotoActivity" />
         <activity
             android:name=".ui.main.MainActivity"
+            android:configChanges="screenLayout"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,7 +65,7 @@
             android:name=".ui.video_player.VodActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" /> <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时，如果需要在App中处理播放器与本地电话的交互请加上此接收器 -->
         <activity
-            android:name=".ui.home.NewsDetailActivity"
+            android:name=".ui.home.news_detail.NewsDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".ui.home.ImagePagerActivity" />

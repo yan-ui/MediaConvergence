@@ -12,7 +12,7 @@ import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.model.PointDetailModel;
 import cn.tklvyou.mediaconvergence.model.PointModel;
 import cn.tklvyou.mediaconvergence.model.PointRuleModel;
-import cn.tklvyou.mediaconvergence.model.SuixiTvModel;
+import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel;
 import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
 import io.reactivex.Observable;
@@ -129,10 +129,10 @@ public interface ApiService {
     Observable<BaseResult<BasePageModel<MessageModel>>> getSystemMsgList(@Query("p") int p);
 
     /**
-     * 濉溪TV
+     * 濉溪TV,矩阵
      */
     @POST("api/article/index")
-    Observable<BaseResult<List<SuixiTvModel>>> getSuixiTvNews(@Query("module") String module, @Query("p") int p);
+    Observable<BaseResult<List<HaveSecondModuleNewsModel>>> getHaveSecondModuleNews(@Query("module") String module, @Query("module_second") String module_second, @Query("p") int p);
 
 
     /**

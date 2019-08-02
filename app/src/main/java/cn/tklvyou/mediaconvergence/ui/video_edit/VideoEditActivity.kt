@@ -9,7 +9,7 @@ import java.io.File
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
-import cn.tklvyou.mediaconvergence.ui.home.PublishNewsActivity
+import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MPlayer
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MPlayerException
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MinimalDisplay
@@ -19,7 +19,6 @@ import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.entity.LocalMedia
 import kotlinx.android.synthetic.main.activity_video_edit.*
 import wseemann.media.FFmpegMediaMetadataRetriever
-import java.io.ByteArrayOutputStream
 import java.io.Serializable
 
 class VideoEditActivity : BaseActivity<NullPresenter>() {

@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.blankj.utilcode.util.LogUtils;
+
 /**
  * Created by _SOLID
  * Date:2016/10/8
@@ -46,10 +48,22 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         int eachWidth = (spanCount - 1) * mDividerWidth / spanCount;
         int dl = mDividerWidth - eachWidth;
 
-        left = itemPosition % spanCount * dl;
-        right = eachWidth - left;
+        if (itemPosition % spanCount == 0) {
+            left = mDividerWidth;
+            right = eachWidth;
+        } else {
+            left = itemPosition % spanCount * dl;
+
+            if (itemPosition % spanCount == spanCount - 1) {
+                right = mDividerWidth;
+            } else {
+                right = eachWidth - left;
+            }
+        }
+
+
         bottom = mDividerWidth;
-        //Log.e("zzz", "itemPosition:" + itemPosition + " |left:" + left + " right:" + right + " bottom:" + bottom);
+        LogUtils.e("zzz", "itemPosition:" + itemPosition + " |left:" + left + " right:" + right + " bottom:" + bottom + " eachWidth:" + eachWidth + " d1:" + dl);
         if (isLastRow) {
             bottom = 0;
         }

@@ -36,7 +36,8 @@ class EditPhoneActivity : BaseTitleActivity<EditPhonePresenter>(), EditPhoneCont
     }
 
     override fun setTitleBar(titleBar: CommonTitleBar?) {
-        titleBar!!.setMainTitle("更换绑定")
+        setTitle("更换绑定")
+//        titleBar!!.setMainTitle("更换绑定")
     }
 
     override fun initView() {

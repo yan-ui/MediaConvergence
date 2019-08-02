@@ -3,16 +3,9 @@ package cn.tklvyou.mediaconvergence.ui.home;
 
 import com.blankj.utilcode.util.ToastUtils;
 
-import java.util.List;
-
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.base.BaseResult;
-import cn.tklvyou.mediaconvergence.model.BannerModel;
-import cn.tklvyou.mediaconvergence.model.BasePageModel;
-import cn.tklvyou.mediaconvergence.model.NewsBean;
-import io.reactivex.functions.Consumer;
 
 
 public class NewListPresenter extends BasePresenter<NewListContract.View> implements NewListContract.Presenter {
@@ -37,20 +30,20 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
     }
 
     @Override
-    public void getSuixiTVNews(int p) {
+    public void getHaveSecondModuleNews(int p, String module,String module_second) {
         RetrofitHelper.getInstance().getServer()
-                .getSuixiTvNews("濉溪TV", p)
+                .getHaveSecondModuleNews(module,module_second, p)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                             if (result.getCode() == 1) {
-                                mView.setSuixiTVNews(p, result.getData());
+                                mView.setHaveSecondModuleNews(p, result.getData());
                             } else {
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
                             throwable.printStackTrace();
-                            mView.setSuixiTVNews(p, null);
+                            mView.setHaveSecondModuleNews(p, null);
                         }
                 );
     }

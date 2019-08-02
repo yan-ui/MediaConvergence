@@ -181,7 +181,8 @@ public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.Edi
 
     @Override
     public void setTitleBar(CommonTitleBar titleBar) {
-        titleBar.setMainTitle("修改密码");
+        setTitle("修改密码");
+//        titleBar.setMainTitle("修改密码");
     }
 
 

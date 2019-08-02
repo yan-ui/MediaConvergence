@@ -2,7 +2,7 @@ package cn.tklvyou.mediaconvergence.model;
 
 import java.util.List;
 
-public class SuixiTvModel {
+public class HaveSecondModuleNewsModel {
 
 
     /**
@@ -44,6 +44,8 @@ public class SuixiTvModel {
 
         private int id;
         private String module;
+        private String nickname;
+        private String avatar;
         private String module_second;
         private String name;
         private String image;
@@ -51,6 +53,10 @@ public class SuixiTvModel {
         private String time;
         private int createtime;
         private String type;
+        private String begintime;
+        private String visit_num;
+        private String like_num;
+        private List<String> images;
 
         public int getId() {
             return id;
@@ -58,6 +64,22 @@ public class SuixiTvModel {
 
         public void setId(int id) {
             this.id = id;
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
+
+        public String getAvatar() {
+            return avatar;
+        }
+
+        public void setAvatar(String avatar) {
+            this.avatar = avatar;
         }
 
         public String getModule() {
@@ -122,6 +144,38 @@ public class SuixiTvModel {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public String getBegintime() {
+            return begintime;
+        }
+
+        public void setBegintime(String begintime) {
+            this.begintime = begintime;
+        }
+
+        public String getVisit_num() {
+            return visit_num;
+        }
+
+        public void setVisit_num(String visit_num) {
+            this.visit_num = visit_num;
+        }
+
+        public String getLike_num() {
+            return like_num;
+        }
+
+        public void setLike_num(String like_num) {
+            this.like_num = like_num;
+        }
+
+        public List<String> getImages() {
+            return images;
+        }
+
+        public void setImages(List<String> images) {
+            this.images = images;
         }
     }
 }

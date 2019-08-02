@@ -112,7 +112,6 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         mViewPager.adapter = mChannelPagerAdapter
         mViewPager.offscreenPageLimit = mSelectedChannels.size
 
-
     }
 
 
@@ -130,6 +129,27 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 1 -> {
                     bundle.putInt("type", NewsMultipleItem.TV)
                 }
+                2 -> {
+                    bundle.putInt("type", NewsMultipleItem.NEWS)
+                }
+                3 -> {
+                    bundle.putInt("type", NewsMultipleItem.SHI_XUN)
+                }
+                4 -> {
+                    bundle.putInt("type", NewsMultipleItem.WEN_ZHENG)
+                }
+                5 -> {
+                    bundle.putInt("type", NewsMultipleItem.JU_ZHENG)
+                }
+                6 -> {
+                    bundle.putInt("type", NewsMultipleItem.WECHAT_MOMENTS)
+                }
+                7 -> {
+                    bundle.putInt("type", NewsMultipleItem.READING)
+                }
+//                8 -> {
+//                    bundle.putInt("type", NewsMultipleItem.LISTEN)
+//                }
                 else -> {
                     bundle.putInt("type", NewsMultipleItem.VIDEO)
                 }

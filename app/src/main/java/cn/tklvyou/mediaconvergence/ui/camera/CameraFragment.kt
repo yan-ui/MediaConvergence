@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.fragment.BaseHttpRecyclerFragment
@@ -13,16 +12,14 @@ import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.BannerModel
 import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
-import cn.tklvyou.mediaconvergence.model.SuixiTvModel
+import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel
 import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
 import cn.tklvyou.mediaconvergence.ui.home.NewListContract
 import cn.tklvyou.mediaconvergence.ui.home.NewListPresenter
-import cn.tklvyou.mediaconvergence.ui.home.NewsDetailActivity
-import cn.tklvyou.mediaconvergence.ui.home.PublishNewsActivity
-import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
+import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
+import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
 import com.adorkable.iosdialog.BottomSheetDialog
-import com.adorkable.iosdialog.BottomSheetRadiusDialog
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -139,7 +136,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         //该页面用不上此方法
     }
 
-    override fun setSuixiTVNews(p: Int, datas: MutableList<SuixiTvModel>?) {
+    override fun setHaveSecondModuleNews(p: Int, datas: MutableList<HaveSecondModuleNewsModel>?) {
         //该页面用不上此方法
     }
 

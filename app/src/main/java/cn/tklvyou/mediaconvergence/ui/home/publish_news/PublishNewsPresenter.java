@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.home;
+package cn.tklvyou.mediaconvergence.ui.home.publish_news;
 
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -9,8 +9,6 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.base.BaseResult;
-import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

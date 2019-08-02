@@ -71,6 +71,11 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
         rvBaseRecycler.setLayoutManager(new LinearLayoutManager(mActivity));
     }
 
+    public void initRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager) {
+        rvBaseRecycler = recyclerView;
+        rvBaseRecycler.setLayoutManager(layoutManager);
+    }
+
     /**
      * 设置adapter
      *
