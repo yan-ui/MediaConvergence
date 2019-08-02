@@ -12,11 +12,16 @@ import cn.tklvyou.mediaconvergence.model.MineRvModel
 import cn.tklvyou.mediaconvergence.model.User
 import cn.tklvyou.mediaconvergence.ui.account.data.PersonalDataActivity
 import cn.tklvyou.mediaconvergence.ui.adapter.MineRvAdapter
-import cn.tklvyou.mediaconvergence.ui.service.MsgSystemActivity
-import cn.tklvyou.mediaconvergence.ui.service.MyPointDetailActivity
+import cn.tklvyou.mediaconvergence.ui.mine.collection.MyCollectActivity
+import cn.tklvyou.mediaconvergence.ui.mine.exchange.MyExchangeRecordActivity
+import cn.tklvyou.mediaconvergence.ui.mine.message.MyMessageActivity
+import cn.tklvyou.mediaconvergence.ui.mine.point.MyPointDetailActivity
+import cn.tklvyou.mediaconvergence.ui.setting.AboutUsActivity
+import cn.tklvyou.mediaconvergence.ui.setting.SettingActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import cn.tklvyou.mediaconvergence.utils.JSON
 import com.blankj.utilcode.util.ResourceUtils
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.fragment_mine.*
 
@@ -54,10 +59,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
     override fun initView() {
         mineTitleBar.setBackgroundResource(android.R.color.transparent)
         mineTitleBar.setPositiveListener {
-            //todo 暂时修改跳转入口
-//            startActivity(Intent(context, SettingActivity::class.java))
-            startActivity(Intent(context, MsgSystemActivity::class.java))
-
+            startActivity(Intent(context, SettingActivity::class.java))
         }
         ivAvatar.setOnClickListener(this)
         tvMobile.setOnClickListener(this)
@@ -65,12 +67,10 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
         llMyPointDetail.setOnClickListener(this)
         initRecyclerView(mineRecyclerView)
         mineRecyclerView.layoutManager = GridLayoutManager(context, 4)
-        mineRecyclerView.addItemDecoration(GridDividerItemDecoration(80, Color.WHITE))
+        mineRecyclerView.addItemDecoration(GridDividerItemDecoration(50, Color.WHITE))
         val json = ResourceUtils.readAssets2String("minelist.json")
         val data = JSON.parseArray(json, MineRvModel::class.java)
-
         onLoadSucceed(1, data)
-
         mPresenter.getUser()
     }
 
@@ -104,6 +104,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
 
             override fun refreshAdapter() {
                 adapter.setNewData(list)
+                initItemClick()
             }
         })
     }
@@ -116,5 +117,29 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
     }
 
 
+    private fun initItemClick() {
+        adapter.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
+            when (position) {
+                //我的收藏
+                0 -> {
+                    startActivity(Intent(context, MyCollectActivity::class.java))
+                }
+                //我的消息
+                4 -> {
+                    startActivity(Intent(context, MyMessageActivity::class.java))
+                }
+                //兑换记录
+                5 -> {
+                    startActivity(Intent(context, MyExchangeRecordActivity::class.java))
+                }
 
+                //兑换记录
+                7 -> {
+                    startActivity(Intent(context, AboutUsActivity::class.java))
+                }
+                else -> {
+                }
+            }
+        }
+    }
 }

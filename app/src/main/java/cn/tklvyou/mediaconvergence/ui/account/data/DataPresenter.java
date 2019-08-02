@@ -28,6 +28,7 @@ public class DataPresenter extends BasePresenter<IDataContract.DataView> impleme
 
     @Override
     public void editUserInfo(String avatar, String newNickName, String userName, String bio) {
+        mView.showLoading();
         RetrofitHelper.getInstance().getServer()
                 .editUserInfo(avatar, userName, newNickName, bio)
                 .compose(RxSchedulers.applySchedulers())

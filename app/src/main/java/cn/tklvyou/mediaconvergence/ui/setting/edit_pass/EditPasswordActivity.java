@@ -32,6 +32,7 @@ public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.Edi
     private EditText etPassConfirm;
     private String mobile;
     private TimeCount timeCount;
+    public static final String EXTRA_MESSAGE_ID = "EditPasswordActivity";
 
     @Override
     protected void initView() {

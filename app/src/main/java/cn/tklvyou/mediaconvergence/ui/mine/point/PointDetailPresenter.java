@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.service;
+package cn.tklvyou.mediaconvergence.ui.mine.point;
 
 import android.annotation.SuppressLint;
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@mipmap/default_avatar" />
+
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_20"
+            android:textColor="@color/black333333"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:id="@+id/tvAppVersion"
+            style="@style/TextGrayColor99999Sp12Style"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_12" />
+
+
+        <TextView
+            style="@style/TextGrayColor99999Sp12Style"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_135"
+            android:text="版权所有 © 2004-2019 京ICP证050806号" />
+
+        <TextView
+            style="@style/TextGrayColor99999Sp12Style"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="京ICP备05051578号-1" />
+
+    </LinearLayout>
+</RelativeLayout>

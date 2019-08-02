@@ -74,9 +74,11 @@
         <activity android:name=".ui.account.data.PersonalDataActivity" />
         <activity android:name=".ui.setting.edit_pass.EditPasswordActivity" />
         <activity android:name=".ui.setting.edit_phone.EditPhoneActivity" />
-        <activity android:name=".ui.service.PointActivity" />
-        <activity android:name=".ui.service.MyPointDetailActivity" />
-        <activity android:name=".ui.service.MsgSystemActivity" /> <!-- receiver中的请替换为自己的包名 -->
+        <activity android:name=".ui.mine.point.MyPointDetailActivity" />
+        <activity android:name=".ui.mine.message.MyMessageActivity" />
+        <activity android:name=".ui.mine.exchange.MyExchangeRecordActivity" />
+        <activity android:name=".ui.setting.AboutUsActivity" />
+        <activity android:name=".ui.mine.collection.MyCollectActivity" /> <!-- receiver中的请替换为自己的包名 -->
 
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>

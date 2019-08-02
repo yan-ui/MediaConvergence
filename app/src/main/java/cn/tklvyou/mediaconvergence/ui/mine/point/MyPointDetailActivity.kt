@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.service;
+package cn.tklvyou.mediaconvergence.ui.mine.point;
 
 import android.graphics.Color
 import android.widget.LinearLayout
@@ -59,11 +59,15 @@ class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, Poi
 
     override fun initView() {
         hideTitleBar()
+        pointTitleBar.setNavigationListener {
+            finish()
+        }
+        setNavigationOnClickListener { finish() }
         pointTitleBar.setBackgroundColor(Color.TRANSPARENT)
         initSmartRefreshLayout(pointRefreshLayout)
         initRecyclerView(pointDetailRecyclerView)
         pointDetailRecyclerView.layoutManager = LinearLayoutManager(this)
-        val divider = CustomRecycleViewDivider(mContext, LinearLayout.HORIZONTAL, 1, CommonUtil.getColor(R.color.grayF4F4F4)).setDividerMarginLeft(10)
+        val divider = CustomRecycleViewDivider(mContext, LinearLayout.HORIZONTAL, 0.5f, CommonUtil.getColor(R.color.grayF4F4F4)).setDividerMarginLeft(10)
         pointDetailRecyclerView.addItemDecoration(divider)
         mPresenter.getUser()
         mPresenter.getPointPageList(1)
@@ -77,7 +81,6 @@ class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, Poi
     override fun getListAsync(page: Int) {
         mPresenter.getPointPageList(page)
     }
-
 
 
 }

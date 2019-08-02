@@ -90,4 +90,25 @@ public class CommonUtil {
         }
     }
 
+
+    /**
+     * [获取应用程序版本名称信息]
+     *
+     * @param context
+     * @return 当前应用的版本名称
+     */
+    public static String getVersionName(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            if (null != packageManager) {
+                PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+                if (null != packageInfo) {
+                    return packageInfo.versionName;
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

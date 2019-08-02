@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.service
+package cn.tklvyou.mediaconvergence.ui.mine.message
 
 /**
  *@description :
@@ -27,7 +27,8 @@ import kotlinx.android.synthetic.main.layout_refresh_recycler.*
  * @date 2019年08月01日17:47
  * @Email: 971613168@qq.com
  */
-class MsgSystemActivity : BaseHttpRecyclerActivity<MsgPresenter, MessageModel, BaseViewHolder, SystemMsgAdapter>(), MsgContract.View {
+class MyMessageActivity : BaseHttpRecyclerActivity<MessagePresenter, MessageModel, BaseViewHolder, SystemMsgAdapter>(), MessageContract.View {
+    val EXTRA_KEY_MESSAGE_ID = "EXTRA_KEY_MESSAGE_ID"
     override fun setList(list: MutableList<MessageModel>?) {
 
         setList(object : AdapterCallBack<SystemMsgAdapter> {
@@ -41,8 +42,8 @@ class MsgSystemActivity : BaseHttpRecyclerActivity<MsgPresenter, MessageModel, B
             }
         })
         if (list != null) {
-            if(list.isEmpty()){
-            showNoData()
+            if (list.isEmpty()) {
+                showNoData()
             }
         }
 
@@ -57,15 +58,18 @@ class MsgSystemActivity : BaseHttpRecyclerActivity<MsgPresenter, MessageModel, B
     }
 
 
-    override fun initPresenter(): MsgPresenter {
-        return MsgPresenter()
+    override fun initPresenter(): MessagePresenter {
+        return MessagePresenter()
     }
 
     override fun getActivityLayoutID(): Int {
-        return R.layout.layout_title_refresh_recycler
+        return R.layout.layout_refresh_recycler
     }
 
     override fun initView() {
+        setTitle("我的消息")
+        setNavigationImage()
+        setNavigationOnClickListener { finish() }
         initSmartRefreshLayout(smartLayoutRoot)
         initRecyclerView(recyclerViewRoot)
         recyclerViewRoot.layoutManager = LinearLayoutManager(this)

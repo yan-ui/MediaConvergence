@@ -41,7 +41,12 @@ public class AccountHelper {
         }
         return "";
     }
-
+    public String getAvatar() {
+        if (userInfo != null) {
+            return CommonUtil.getNotNullValue(userInfo.getAvatar());
+        }
+        return "";
+    }
 
     public String getNickName() {
         if (userInfo != null) {

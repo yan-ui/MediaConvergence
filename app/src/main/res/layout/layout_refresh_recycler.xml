@@ -2,6 +2,7 @@
 <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/smartLayoutRoot"
     android:layout_width="match_parent"
+    android:background="@color/grayF4F5F7"
     android:layout_height="match_parent">
 
     <include layout="@layout/layout_recycler" />

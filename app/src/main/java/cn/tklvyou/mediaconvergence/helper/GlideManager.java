@@ -134,10 +134,22 @@ public class GlideManager {
                 .dontAnimate()).into(iv);
     }
 
+    public static void loadImgCenterInside(Object obj, ImageView iv, Drawable placeholder) {
+        Glide.with(iv.getContext()).load(obj).apply(getRequestOptionsCenterInside()
+                .error(placeholder)
+                .placeholder(placeholder)
+                .fallback(placeholder)
+                .dontAnimate()).into(iv);
+    }
 
     public static void loadImg(Object obj, ImageView iv, int placeholderResource) {
         Drawable drawable = getDrawable(iv.getContext(), placeholderResource);
         loadImg(obj, iv, drawable != null ? drawable : sCommonPlaceholderDrawable);
+    }
+
+    public static void loadImgCenterInside(Object obj, ImageView iv, int placeholderResource) {
+        Drawable drawable = getDrawable(iv.getContext(), placeholderResource);
+        loadImgCenterInside(obj, iv, drawable != null ? drawable : sCommonPlaceholderDrawable);
     }
 
     public static void loadImg(Object obj, ImageView iv) {
@@ -206,7 +218,6 @@ public class GlideManager {
     }
 
 
-
     public static void loadRoundImg(Object obj, ImageView iv) {
         loadRoundImg(obj, iv, true);
     }
@@ -220,6 +231,17 @@ public class GlideManager {
                 //缓存策略
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         return requestOptions;
+    }
+
+
+    private static RequestOptions getRequestOptionsCenterInside() {
+        return new RequestOptions()
+                // 填充方式
+                .centerInside()
+                //优先级
+                .priority(Priority.HIGH)
+                //缓存策略
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
     }
 
     private static int dp2px(float dipValue) {

@@ -116,4 +116,5 @@ dependencies {
     implementation project(path: ':wxcamera')
     implementation files('libs\\commons-lang-2.6.jar')
 
+
 }

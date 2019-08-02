@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.service;
+package cn.tklvyou.mediaconvergence.ui.mine.point;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;

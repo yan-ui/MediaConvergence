@@ -10,7 +10,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -26,9 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.DrawableRes;
 
 import com.wuhenzhizao.titlebar.R;
 import com.wuhenzhizao.titlebar.statusbar.StatusBarUtils;
@@ -1293,5 +1289,11 @@ public class CommonTitleBar extends RelativeLayout implements View.OnClickListen
      */
     public interface OnTitleBarDoubleClickListener {
         void onClicked(View v);
+    }
+
+
+    public CommonTitleBar setMainTitle(String title) {
+        getCenterTextView().setText(title);
+        return this;
     }
 }

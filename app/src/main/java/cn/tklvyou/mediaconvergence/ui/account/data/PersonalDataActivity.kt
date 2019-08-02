@@ -186,8 +186,8 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
     private fun doEdit() {
         val avatarPath = parsePath(imageList)
         if (avatarPath.isEmpty()) {
-            //用户没有重置头像
-            ToastUtils.showShort("用户没有重置头像")
+            //用户没有重置头像 则上传原头像
+            imageList.add(AccountHelper.getInstance().avatar)
             edit()
         } else {
             //需要先上传头像

@@ -5,6 +5,8 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
+import cn.tklvyou.mediaconvergence.model.ExchangeModel;
+import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel;
 import cn.tklvyou.mediaconvergence.model.LotteryModel;
 import cn.tklvyou.mediaconvergence.model.LotteryResultModel;
 import cn.tklvyou.mediaconvergence.model.MessageModel;
@@ -12,7 +14,6 @@ import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.model.PointDetailModel;
 import cn.tklvyou.mediaconvergence.model.PointModel;
 import cn.tklvyou.mediaconvergence.model.PointRuleModel;
-import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel;
 import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
 import io.reactivex.Observable;
@@ -129,6 +130,15 @@ public interface ApiService {
     Observable<BaseResult<BasePageModel<MessageModel>>> getSystemMsgList(@Query("p") int p);
 
     /**
+     * 兑换记录
+     *
+     * @param p
+     * @return
+     */
+    @POST("api/goods/record")
+    Observable<BaseResult<BasePageModel<ExchangeModel>>> getExchangeList(@Query("p") int p);
+
+    /**
      * 濉溪TV,矩阵
      */
     @POST("api/article/index")
@@ -225,4 +235,15 @@ public interface ApiService {
     Observable<BaseResult<Object>> editUserInfo(@Query("avatar") String avatar, @Query("username") String username,
                                                 @Query("nickname") String nickname, @Query("bio") String bio
     );
+
+
+    /**
+     * 我的收藏
+     *
+     * @param p
+     * @return
+     */
+    @POST("api/collect/index")
+    Observable<BaseResult<BasePageModel<NewsBean>>> getMyCollectList(@Query("p") int p);
+
 }

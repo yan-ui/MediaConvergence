@@ -82,7 +82,7 @@ public class CustomRecycleViewDivider extends RecyclerView.ItemDecoration {
      * @param dividerHeightDp 分割线高度
      * @param dividerColor    分割线颜色
      */
-    public CustomRecycleViewDivider(Context context, int orientation, int dividerHeightDp, int dividerColor) {
+    public CustomRecycleViewDivider(Context context, int orientation, float dividerHeightDp, int dividerColor) {
         this(context, orientation);
         mDividerHeight = SizeUtil.dp2px(dividerHeightDp);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
