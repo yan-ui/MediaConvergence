@@ -16,13 +16,13 @@ import cn.tklvyou.mediaconvergence.ui.mine.browse.RecentBrowseActivity
 import cn.tklvyou.mediaconvergence.ui.mine.collection.MyCollectActivity
 import cn.tklvyou.mediaconvergence.ui.mine.exchange.MyExchangeRecordActivity
 import cn.tklvyou.mediaconvergence.ui.mine.message.MyMessageActivity
+import cn.tklvyou.mediaconvergence.ui.mine.my_article.MyArticleActivity
 import cn.tklvyou.mediaconvergence.ui.mine.point.MyPointDetailActivity
 import cn.tklvyou.mediaconvergence.ui.mine.wenzhen.MyWenZhenActivity
 import cn.tklvyou.mediaconvergence.ui.setting.AboutUsActivity
 import cn.tklvyou.mediaconvergence.ui.setting.SettingActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import cn.tklvyou.mediaconvergence.utils.JSON
-import com.blankj.utilcode.util.ConvertUtils
 import com.blankj.utilcode.util.ResourceUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -137,6 +137,10 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
                 //最近浏览
                 1 -> {
                     startActivity(Intent(context, RecentBrowseActivity::class.java))
+                }
+                //我的帖子
+                2 -> {
+                    startActivity(Intent(context, MyArticleActivity::class.java))
                 }
                 //问政记录
                 3 -> {

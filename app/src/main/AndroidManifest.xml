@@ -93,7 +93,8 @@
         <activity
             android:name=".ui.video_player.VodActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/CustomVideoAppTheme" /> <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时，如果需要在App中处理播放器与本地电话的交互请加上此接收器 -->
+            android:theme="@style/CustomVideoAppTheme" />
+        <activity android:name=".ui.mine.my_article.MyArticleActivity" /> <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时，如果需要在App中处理播放器与本地电话的交互请加上此接收器 -->
         <!-- receiver中的请替换为自己的包名 -->
         <receiver android:name=".ui.receiver.IncomingCallReceiver">
             <intent-filter>

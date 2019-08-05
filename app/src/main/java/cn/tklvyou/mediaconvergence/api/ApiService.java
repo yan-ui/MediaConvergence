@@ -285,13 +285,13 @@ public interface ApiService {
     Observable<BaseResult<BasePageModel<NewsBean>>> getRecentBrowseList(@Query("p") int p);
 
     /**
-     * 问政记录
+     * 我的文章相关
      *
      * @param p
      * @return
      */
     @POST("api/article/my")
-    Observable<BaseResult<BasePageModel<NewsBean>>> getWenZhenList(@Query("p") int p, @Query("module") String module);
+    Observable<BaseResult<BasePageModel<NewsBean>>> getMyArticleList(@Query("p") int p, @Query("module") String module);
 
 
 }

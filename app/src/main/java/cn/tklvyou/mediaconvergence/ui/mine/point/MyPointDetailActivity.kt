@@ -67,7 +67,7 @@ class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, Poi
         initSmartRefreshLayout(pointRefreshLayout)
         initRecyclerView(pointDetailRecyclerView)
         pointDetailRecyclerView.layoutManager = LinearLayoutManager(this)
-        val divider = CustomRecycleViewDivider(mContext, LinearLayout.HORIZONTAL, 0.5f, CommonUtil.getColor(R.color.grayF4F4F4)).setDividerMarginLeft(10)
+        val divider = CustomRecycleViewDivider(mContext, LinearLayout.HORIZONTAL, 0.5f, CommonUtil.getColor(R.color.grayF4F4F4)).setDividerMarginLeft(10f)
         pointDetailRecyclerView.addItemDecoration(divider)
         mPresenter.getUser()
         mPresenter.getPointPageList(1)

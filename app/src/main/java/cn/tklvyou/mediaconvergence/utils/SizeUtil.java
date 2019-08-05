@@ -52,9 +52,9 @@ public class SizeUtil {
      * @param dpValue
      * @return
      */
-    public static int dp2px(float dpValue) {
+    public static float dp2px(float dpValue) {
         final float scale = getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+        return  (dpValue * scale + 0.5f);
     }
 
     /**
@@ -74,9 +74,9 @@ public class SizeUtil {
      * @param spValue
      * @return
      */
-    public static int sp2px(float spValue) {
+    public static float sp2px(float spValue) {
         final float fontScale = getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
+        return  (spValue * fontScale + 0.5f);
     }
 
 }
