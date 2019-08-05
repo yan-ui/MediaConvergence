@@ -15,6 +15,8 @@ public class NewsMultipleItem<T> implements MultiItemEntity {
     public static final int WECHAT_MOMENTS = 7;                     //微信朋友圈
     public static final int READING = 8;                            //悦读（瀑布流卡片）
     public static final int LISTEN = 9;                              //悦听
+    public static final int DANG_JIAN = 10;                              //悦听
+    public static final int ZHUAN_LAN = 11;                              //专栏
 
     private int itemType;
     private T dataBean;
@@ -48,8 +50,14 @@ public class NewsMultipleItem<T> implements MultiItemEntity {
             case "悦听":
                 itemType = LISTEN;
                 break;
+            case "党建":
+                itemType = DANG_JIAN;
+                break;
+            case "专栏":
+                itemType = ZHUAN_LAN;
+                break;
             default:
-                itemType = 3;
+                itemType = WEN_ZHENG;
                 break;
         }
         this.dataBean = dataBean;

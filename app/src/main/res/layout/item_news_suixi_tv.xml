@@ -23,6 +23,7 @@
             android:textSize="@dimen/sp_14" />
 
         <TextView
+            android:id="@+id/tvSuixiTvAll"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawableRight="@mipmap/icon_mini_right"
@@ -48,6 +49,7 @@
 
 
         <LinearLayout
+            android:id="@+id/llSuixiTvFirst"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_15"
@@ -77,6 +79,13 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_9" />
 
+                <ImageView
+                    android:id="@+id/ivSuiXiTVFirstStartPlayer"
+                    android:layout_width="@dimen/dp_25"
+                    android:layout_height="@dimen/dp_25"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_start_play" />
+
             </FrameLayout>
 
 
@@ -93,7 +102,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llSecondLayout"
+            android:id="@+id/llSuixiTvSecond"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_15"
@@ -124,6 +133,13 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_9" />
+
+                <ImageView
+                    android:id="@+id/ivSuiXiTVSecondStartPlayer"
+                    android:layout_width="@dimen/dp_25"
+                    android:layout_height="@dimen/dp_25"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_start_play" />
 
             </FrameLayout>
 

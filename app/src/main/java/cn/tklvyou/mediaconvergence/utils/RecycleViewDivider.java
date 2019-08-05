@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RecycleViewDivider extends RecyclerView.ItemDecoration {
- 
+
+    private boolean enableTop;
     private Paint mPaint;
     private Drawable mDivider;
     private int mDividerHeight = 1;//分割线高度，默认为1px
     private int mOrientation;//列表的方向：LinearLayoutManager.VERTICAL或LinearLayoutManager.HORIZONTAL
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
- 
+
     /**
      * 默认分割线：高度为1px，颜色为灰色
      *
@@ -31,12 +32,12 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
             throw new IllegalArgumentException("请输入正确的参数！");
         }
         mOrientation = orientation;
- 
+
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();
     }
- 
+
     /**
      * 自定义分割线
      *
@@ -49,7 +50,7 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
         mDivider = ContextCompat.getDrawable(context, drawableId);
         mDividerHeight = mDivider.getIntrinsicHeight();
     }
- 
+
     /**
      * 自定义分割线
      *
@@ -65,19 +66,46 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
         mPaint.setColor(dividerColor);
         mPaint.setStyle(Paint.Style.FILL);
     }
- 
- 
+
+    /**
+     * 自定义分割线
+     *
+     * @param context
+     * @param orientation   列表方向
+     * @param dividerHeight 分割线高度
+     * @param dividerColor  分割线颜色
+     * @param enableTop     是否支持顶部添加分割线（在LinearLayoutManager.VERTICAL 时有效）
+     */
+    public RecycleViewDivider(Context context, int orientation, int dividerHeight, int dividerColor, boolean enableTop) {
+        this(context, orientation);
+        mDividerHeight = dividerHeight;
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setColor(dividerColor);
+        mPaint.setStyle(Paint.Style.FILL);
+        this.enableTop = enableTop;
+    }
+
+
     //获取分割线尺寸
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         if (mOrientation == LinearLayoutManager.VERTICAL) {
-            outRect.set(0, 0, 0, mDividerHeight);
+            if(enableTop){
+                int itemPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewLayoutPosition();
+                if (itemPosition == 0) {
+                    outRect.set(0, mDividerHeight, 0, mDividerHeight);
+                } else {
+                    outRect.set(0, 0, 0, mDividerHeight);
+                }
+            }else {
+                outRect.set(0, 0, 0, mDividerHeight);
+            }
         } else {
             outRect.set(0, 0, mDividerHeight, 0);
         }
     }
- 
+
     //绘制分割线
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
@@ -88,10 +116,11 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
             drawHorizontal(c, parent);
         }
     }
- 
+
     /**
      * 绘制纵向列表时的分隔线  这时分隔线是横着的
      * 每次 left相同，top根据child变化，right相同，bottom也变化
+     *
      * @param canvas
      * @param parent
      */
@@ -113,10 +142,11 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
             }
         }
     }
- 
+
     /**
      * 绘制横向列表时的分隔线  这时分隔线是竖着的
      * l、r 变化； t、b 不变
+     *
      * @param canvas
      * @param parent
      */

@@ -45,6 +45,7 @@ import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.ui.receiver.Observer
 import cn.tklvyou.mediaconvergence.ui.receiver.PhoneCallStateObserver
 import cn.tklvyou.mediaconvergence.ui.services.PlayerService
+import com.blankj.utilcode.util.LogUtils
 import kotlinx.android.synthetic.main.activity_player.*
 import java.lang.NullPointerException
 
@@ -228,13 +229,13 @@ class VodActivity : BaseActivity<NullPresenter>() {
         getSnapshot()
     }
 
+    //todo:放大缩小后存在视频画面卡住不动问题，暂时禁用
     private val mSetPlayerScaleListener = View.OnClickListener {
         player!!.setupRenderView(null, VideoScaleMode.NONE)
         if (mIsFullScreen) {
-            mSetPlayerScaleButton!!.setImageResource(R.drawable.nemediacontroller_scale01)
+            mSetPlayerScaleButton.setImageResource(R.drawable.nemediacontroller_scale01)
             mIsFullScreen = false
             player!!.setupRenderView(textureView, VideoScaleMode.FIT)
-
         } else {
             mSetPlayerScaleButton!!.setImageResource(R.drawable.nemediacontroller_scale02)
             mIsFullScreen = true
@@ -335,8 +336,8 @@ class VodActivity : BaseActivity<NullPresenter>() {
         mEndTime!!.text = "--:--:--"
         mCurrentTime!!.text = "--:--:--"
         mHandler.sendEmptyMessage(SHOW_PROGRESS)
-        mSnapshotButton!!.setOnClickListener(mSnapShotListener)
-        mSetPlayerScaleButton!!.setOnClickListener(mSetPlayerScaleListener)
+        mSnapshotButton.setOnClickListener(mSnapShotListener)
+        mSetPlayerScaleButton.setOnClickListener(mSetPlayerScaleListener)
 
     }
 

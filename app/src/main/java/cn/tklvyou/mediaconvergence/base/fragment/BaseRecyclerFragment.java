@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack;
 import cn.tklvyou.mediaconvergence.base.interfaces.CacheCallBack;
@@ -51,7 +52,7 @@ import cn.tklvyou.mediaconvergence.manager.CacheManager;
  *   </pre>
  */
 public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter, T, VH extends BaseViewHolder, A extends BaseQuickAdapter<T, VH>>
-        extends BaseFragment<P> implements BaseQuickAdapter.OnItemClickListener,BaseQuickAdapter.OnItemChildClickListener, BaseQuickAdapter.OnItemLongClickListener {
+        extends BaseFragment<P> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemChildClickListener, BaseQuickAdapter.OnItemLongClickListener {
 
     private static final String TAG = "BaseRecyclerFragment";
 
@@ -87,6 +88,8 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
         adapter.setOnItemLongClickListener(this);
         this.adapter = adapter;
         rvBaseRecycler.setAdapter(this.adapter);
+        this.adapter.setEmptyView(R.layout.common_empty_view,rvBaseRecycler);
+        this.adapter.setHeaderAndEmpty(true);
     }
 
     /**
@@ -447,7 +450,6 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
     public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
         return false;
     }
-
 
 
     //生命周期、onActivityResult<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

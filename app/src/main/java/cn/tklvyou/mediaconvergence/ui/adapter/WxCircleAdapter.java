@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.tklvyou.mediaconvergence.R;
+import cn.tklvyou.mediaconvergence.helper.GlideManager;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.ui.home.ImagePagerActivity;
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity;
@@ -63,29 +64,18 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
         Drawable[] drawables = tvGoodNum.getCompoundDrawables();
 
         if (item.getLike_status() == 1) {
-            //SDK > 23 可用
-//        tvGoodNum.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#ff9708")));
-
-            //drawableLeft
-//            drawables[0].setColorFilter(Color.parseColor("#AAAAAA"), PorterDuff.Mode.SRC_ATOP);
             Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
             redGoodDrawable.setBounds(drawables[0].getBounds());
             tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
         }else {
             Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
             grayGoodDrawable.setBounds(drawables[0].getBounds());
-//            drawables[0].setColorFilter(Color.parseColor("#FF4A5C"), PorterDuff.Mode.SRC_ATOP);
             tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
         }
 
 
-
         if (!StringUtils.isEmpty(item.getAvatar().trim())) {
-            Glide.with(mContext).load(item.getAvatar())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.color.bg_no_photo)
-                    .transform(new GlideCircleTransform())
-                    .into((ImageView) helper.getView(R.id.headIv));
+            GlideManager.loadRoundImg(item.getAvatar(),helper.getView(R.id.headIv),5f);
         }
 
         ExpandTextView expandTextView = helper.getView(R.id.contentTv);

@@ -118,7 +118,7 @@ public interface ApiService {
      * 内容列表
      */
     @POST("api/article/index")
-    Observable<BaseResult<BasePageModel<NewsBean>>> getNewList(@Query("module") String module, @Query("p") int p);
+    Observable<BaseResult<BasePageModel<NewsBean>>> getNewList(@Query("module") String module, @Query("module_second") String module_second, @Query("p") int p);
 
     /**
      * 消息列表
@@ -142,7 +142,7 @@ public interface ApiService {
      * 濉溪TV,矩阵
      */
     @POST("api/article/index")
-    Observable<BaseResult<List<HaveSecondModuleNewsModel>>> getHaveSecondModuleNews(@Query("module") String module, @Query("module_second") String module_second, @Query("p") int p);
+    Observable<BaseResult<List<HaveSecondModuleNewsModel>>> getHaveSecondModuleNews(@Query("module") String module, @Query("p") int p);
 
 
     /**
@@ -191,6 +191,14 @@ public interface ApiService {
     Observable<BaseResult<Object>> publishSuiShouPai(@Query("name") String name, @Query("images") String images,
                                                      @Query("video") String video, @Query("image") String image, @Query("time") String time
     );
+
+
+    /**
+     * 发布问政
+     */
+    @POST("api/article/addw")
+    Observable<BaseResult<Object>> publishWenZheng(@Query("module_second") String module_second, @Query("name") String name,
+                                                     @Query("content") String content, @Query("images") String images);
 
 
     /**
@@ -245,6 +253,26 @@ public interface ApiService {
      */
     @POST("api/collect/index")
     Observable<BaseResult<BasePageModel<NewsBean>>> getMyCollectList(@Query("p") int p);
+
+
+    /**
+     * 添加收藏
+     *
+     * @param article_id
+     * @return
+     */
+    @POST("api/collect/add")
+    Observable<BaseResult<BasePageModel<Object>>> addCollect(@Query("article_id") int article_id);
+
+
+    /**
+     * 取消收藏
+     *
+     * @param article_id
+     * @return
+     */
+    @POST("api/collect/cancel")
+    Observable<BaseResult<BasePageModel<Object>>> cancelCollect(@Query("article_id") int article_id);
 
 
     /**

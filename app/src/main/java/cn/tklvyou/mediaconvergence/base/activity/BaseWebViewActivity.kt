@@ -31,6 +31,8 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
                 setTitleContent(title)
             }
         }
+
+
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 webView.loadUrl(url)
@@ -40,6 +42,15 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
             override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
                 super.onReceivedSslError(view, handler, error)
                 handler?.proceed()
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                //为webView 添加Padding
+                webView.loadUrl("javascript:document.body.style.padding=\"5%\"; void 0")
+                //解决网页可无限下拉出现大片空白的问题
+//                webView.loadUrl("javascript:(function(){"+"document.getElementsByTagName('body')[0].style.height = window.innerHeight+'px';"+"})()")
+                super.onPageFinished(view, url)
+
             }
 
         }

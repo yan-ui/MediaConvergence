@@ -8,6 +8,7 @@
 	<dimen name="dp_m_40">-113.7778dp</dimen>
 	<dimen name="dp_m_35">-99.5556dp</dimen>
 	<dimen name="dp_m_30">-85.3333dp</dimen>
+	<dimen name="dp_m_24">-68.2667dp</dimen>
 	<dimen name="dp_m_23">-65.4222dp</dimen>
 	<dimen name="dp_m_20">-56.8889dp</dimen>
 	<dimen name="dp_m_12">-34.1333dp</dimen>
@@ -422,4 +423,5 @@
 	<dimen name="sp_40">113.7778sp</dimen>
 	<dimen name="sp_42">119.4667sp</dimen>
 	<dimen name="sp_48">136.5333sp</dimen>
+	<dimen name="fab_margin">45.5111dp</dimen>
 </resources>

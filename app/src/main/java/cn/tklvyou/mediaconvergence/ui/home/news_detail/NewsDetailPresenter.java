@@ -71,4 +71,36 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
                 }, throwable -> throwable.printStackTrace());
     }
 
+    @Override
+    public void setCollectStatus(int id,boolean isCollect) {
+        if(isCollect){
+            RetrofitHelper.getInstance().getServer()
+                    .addCollect(id)
+                    .compose(RxSchedulers.applySchedulers())
+                    .compose(mView.bindToLife())
+                    .subscribe(result -> {
+                        if (result.getCode() == 1) {
+                            ToastUtils.showShort("收藏成功");
+                            mView.setCollectStatusSuccess(true);
+                        }else {
+                            ToastUtils.showShort(result.getMsg());
+                        }
+                    }, throwable -> throwable.printStackTrace());
+        }else {
+            RetrofitHelper.getInstance().getServer()
+                    .cancelCollect(id)
+                    .compose(RxSchedulers.applySchedulers())
+                    .compose(mView.bindToLife())
+                    .subscribe(result -> {
+                        if (result.getCode() == 1) {
+                            ToastUtils.showShort("取消成功");
+                            mView.setCollectStatusSuccess(false);
+                        }else {
+                            ToastUtils.showShort(result.getMsg());
+                        }
+                    }, throwable -> throwable.printStackTrace());
+        }
+
+    }
+
 }

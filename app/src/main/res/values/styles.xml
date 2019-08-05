@@ -4,7 +4,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/white</item>
         <!--<item name="android:windowAnimationStyle">@style/WindowsAnim</item>-->
         <item name="android:fitsSystemWindows">false</item>
@@ -13,7 +13,13 @@
     </style>
 
 
-    <style name="CustomAppTheme" parent="AppTheme.Base"></style>
+    <style name="CustomAppTheme" parent="AppTheme.Base">
+
+    </style>
+
+    <style name="CustomVideoAppTheme" parent="AppTheme.Base">
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
 
     <style name="WindowsAnim" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/slide_left_in</item>

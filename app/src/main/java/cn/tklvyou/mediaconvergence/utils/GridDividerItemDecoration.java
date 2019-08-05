@@ -24,12 +24,18 @@ import com.blankj.utilcode.util.LogUtils;
 public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Paint mPaint;
     private int mDividerWidth;
+    private boolean enableTop;
 
     public GridDividerItemDecoration(int height, @ColorInt int color) {
+        this(height, color, false);
+    }
+
+    public GridDividerItemDecoration(int height, @ColorInt int color, boolean enableTop) {
         mDividerWidth = height;
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(color);
         mPaint.setStyle(Paint.Style.FILL);
+        this.enableTop = enableTop;
     }
 
     @Override
@@ -42,6 +48,7 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         boolean isLastRow = isLastRow(parent, itemPosition, spanCount, childCount);
         boolean isLastColumn = isLastColumn(parent, itemPosition, spanCount, childCount);
 
+        int top;
         int left;
         int right;
         int bottom;
@@ -52,13 +59,27 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
             left = mDividerWidth;
             right = eachWidth;
         } else {
-            left = itemPosition % spanCount * dl;
+            //0 30 15
+            //1 15
+//            left = itemPosition % spanCount * dl;
+            left = dl;
 
             if (itemPosition % spanCount == spanCount - 1) {
                 right = mDividerWidth;
             } else {
-                right = eachWidth - left;
+//                right = eachWidth - left;
+                right = eachWidth;
             }
+        }
+
+        if (enableTop) {
+            if(itemPosition < spanCount){
+                top = mDividerWidth;
+            }else {
+                top = 0;
+            }
+        } else {
+            top = 0;
         }
 
 
@@ -67,7 +88,7 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         if (isLastRow) {
             bottom = 0;
         }
-        outRect.set(left, 0, right, bottom);
+        outRect.set(left, top, right, bottom);
 
     }
 
@@ -158,7 +179,6 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         int spanCount = -1;
         RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
-
             spanCount = ((GridLayoutManager) layoutManager).getSpanCount();
         } else if (layoutManager instanceof StaggeredGridLayoutManager) {
             spanCount = ((StaggeredGridLayoutManager) layoutManager)

@@ -56,8 +56,6 @@ public class GlobalClickCallbacks implements Application.ActivityLifecycleCallba
     }
 
 
-
-
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         fixViewMutiClickInShortTime(activity);

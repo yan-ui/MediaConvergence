@@ -59,10 +59,11 @@ class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
 
     }
 
-   private fun handleLogout() {
+    private fun handleLogout() {
         SPUtils.getInstance().put(PREF_KEY_TOKEN, "")
-        StackUtil.getInstance().popAll()
+        SPUtils.getInstance().put("login", false)
         startActivity(Intent(this, LoginActivity::class.java))
+        StackUtil.getInstance().popAll()
         finish()
     }
 

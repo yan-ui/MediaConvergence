@@ -39,6 +39,10 @@
 
     </LinearLayout>
 
+    <View
+        android:background="@color/common_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/mViewPager"

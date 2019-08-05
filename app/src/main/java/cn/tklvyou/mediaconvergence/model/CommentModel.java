@@ -22,8 +22,8 @@ public class CommentModel {
     private String nickname;
     private String avatar;
     private String status;
-    private int createtime;
-    private int updatetime;
+    private String createtime;
+    private String updatetime;
 
     public int getId() {
         return id;
@@ -81,19 +81,19 @@ public class CommentModel {
         this.status = status;
     }
 
-    public int getCreatetime() {
+    public String getCreatetime() {
         return createtime;
     }
 
-    public void setCreatetime(int createtime) {
+    public void setCreatetime(String createtime) {
         this.createtime = createtime;
     }
 
-    public int getUpdatetime() {
+    public String getUpdatetime() {
         return updatetime;
     }
 
-    public void setUpdatetime(int updatetime) {
+    public void setUpdatetime(String updatetime) {
         this.updatetime = updatetime;
     }
 }

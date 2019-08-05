@@ -38,7 +38,6 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.base.ConnectionLiveData;
-import cn.tklvyou.mediaconvergence.base.HookViewUtils;
 import cn.tklvyou.mediaconvergence.manager.ThreadManager;
 import cn.tklvyou.mediaconvergence.widget.BaseDialog;
 import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
@@ -68,12 +67,9 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.basehead_layout);
+        setContentView(R.layout.basehead_layout);
 
-        getWindow().getDecorView().postDelayed(() -> HookViewUtils.hook(this), 1000);
-
-
-        //解决华为虚拟键盘关闭导致的Activity被重新创建闪退桌面的问题
+//        解决华为虚拟键盘关闭导致的Activity被重新创建闪退桌面的问题
         Configuration configuration = getResources().getConfiguration();
         configuration.screenLayout = 0x0100;
         getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());

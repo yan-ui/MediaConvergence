@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.ui.home;
+package cn.tklvyou.mediaconvergence.ui.home.new_list;
 
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -11,9 +11,9 @@ import cn.tklvyou.mediaconvergence.base.BasePresenter;
 public class NewListPresenter extends BasePresenter<NewListContract.View> implements NewListContract.Presenter {
 
     @Override
-    public void getNewList(String module, int p) {
+    public void getNewList(String module, String module_second, int p) {
         RetrofitHelper.getInstance().getServer()
-                .getNewList(module, p)
+                .getNewList(module,module_second, p)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
@@ -30,9 +30,9 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
     }
 
     @Override
-    public void getHaveSecondModuleNews(int p, String module,String module_second) {
+    public void getHaveSecondModuleNews(int p, String module) {
         RetrofitHelper.getInstance().getServer()
-                .getHaveSecondModuleNews(module,module_second, p)
+                .getHaveSecondModuleNews(module, p)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {

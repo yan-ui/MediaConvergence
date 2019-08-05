@@ -116,5 +116,7 @@ dependencies {
     implementation project(path: ':wxcamera')
     implementation files('libs\\commons-lang-2.6.jar')
 
+    //音频处理
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.0'
 
 }

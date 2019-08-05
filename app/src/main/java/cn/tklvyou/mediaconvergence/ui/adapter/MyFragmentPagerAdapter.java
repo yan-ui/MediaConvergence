@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 
 import com.trello.rxlifecycle3.components.support.RxFragment;
@@ -16,14 +17,13 @@ import java.util.List;
  * Created by Administrator on 2018/11/28.
  */
 
-public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+public class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     private List<RxFragment> data;
 
     public MyFragmentPagerAdapter(FragmentManager fm, List<RxFragment> data) {
         super(fm);
         this.data = data;
-        Log.e("test","--- 1 ---");
     }
 
     @Override
@@ -35,5 +35,10 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         return data.get(position);
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 }

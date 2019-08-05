@@ -14,8 +14,8 @@ import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel
 import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
-import cn.tklvyou.mediaconvergence.ui.home.NewListContract
-import cn.tklvyou.mediaconvergence.ui.home.NewListPresenter
+import cn.tklvyou.mediaconvergence.ui.home.new_list.NewListContract
+import cn.tklvyou.mediaconvergence.ui.home.new_list.NewListPresenter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
@@ -99,7 +99,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
             }
         })
 
-        mPresenter.getNewList("随手拍", 1)
+        mPresenter.getNewList("随手拍", null,1)
     }
 
     override fun lazyData() {
@@ -107,7 +107,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
     }
 
     override fun getListAsync(page: Int) {
-        mPresenter.getNewList("随手拍", page)
+        mPresenter.getNewList("随手拍", null,page)
     }
 
     override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {
@@ -145,7 +145,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
-        val type = if (bean.images != null && bean.images.size > 0) NewsDetailActivity.TYPE_PICTURE else NewsDetailActivity.TYPE_VIDEO
+        val type = if (bean.images != null && bean.images.size > 0) "图片" else "视频"
         NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
 
     }

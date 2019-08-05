@@ -56,6 +56,7 @@ public class HaveSecondModuleNewsModel {
         private String begintime;
         private String visit_num;
         private String like_num;
+        private int like_status;
         private List<String> images;
 
         public int getId() {
@@ -168,6 +169,14 @@ public class HaveSecondModuleNewsModel {
 
         public void setLike_num(String like_num) {
             this.like_num = like_num;
+        }
+
+        public int getLike_status() {
+            return like_status;
+        }
+
+        public void setLike_status(int like_status) {
+            this.like_status = like_status;
         }
 
         public List<String> getImages() {

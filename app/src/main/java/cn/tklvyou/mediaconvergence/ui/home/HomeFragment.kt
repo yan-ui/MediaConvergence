@@ -12,14 +12,12 @@ import cn.tklvyou.mediaconvergence.base.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import cn.tklvyou.mediaconvergence.model.Channel
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
+import cn.tklvyou.mediaconvergence.ui.home.new_list.NewsListFragment
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
-import cn.tklvyou.mediaconvergence.utils.JSON
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
-import com.luck.picture.lib.entity.LocalMedia
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle3.components.support.RxFragment
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -147,12 +145,16 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 7 -> {
                     bundle.putInt("type", NewsMultipleItem.READING)
                 }
-//                8 -> {
-//                    bundle.putInt("type", NewsMultipleItem.LISTEN)
-//                }
-                else -> {
-                    bundle.putInt("type", NewsMultipleItem.VIDEO)
+                8 -> {
+                    bundle.putInt("type", NewsMultipleItem.LISTEN)
                 }
+//                9 -> {
+//                    bundle.putInt("type", NewsMultipleItem.DANG_JIAN)
+//                }
+                9 -> {
+                    bundle.putInt("type", NewsMultipleItem.ZHUAN_LAN)
+                }
+
             }
 
             newsFragment.arguments = bundle

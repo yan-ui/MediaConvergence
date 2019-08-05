@@ -22,6 +22,7 @@ import cn.tklvyou.mediaconvergence.ui.setting.AboutUsActivity
 import cn.tklvyou.mediaconvergence.ui.setting.SettingActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import cn.tklvyou.mediaconvergence.utils.JSON
+import com.blankj.utilcode.util.ConvertUtils
 import com.blankj.utilcode.util.ResourceUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -69,7 +70,14 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
         llMyPointDetail.setOnClickListener(this)
         initRecyclerView(mineRecyclerView)
         mineRecyclerView.layoutManager = GridLayoutManager(context, 4)
-        mineRecyclerView.addItemDecoration(GridDividerItemDecoration(50, Color.WHITE))
+        mineRecyclerView.addItemDecoration(GridDividerItemDecoration(60, Color.WHITE))
+
+
+        //todo:待添加
+        //{
+        //  "name": "关注板块",
+        //  "localImage": "icon_mine_guanzhu"
+        //},
         val json = ResourceUtils.readAssets2String("minelist.json")
         val data = JSON.parseArray(json, MineRvModel::class.java)
         onLoadSucceed(1, data)
@@ -143,8 +151,8 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
                     startActivity(Intent(context, MyExchangeRecordActivity::class.java))
                 }
 
-                //兑换记录
-                7 -> {
+                //关于我们
+                6 -> {
                     startActivity(Intent(context, AboutUsActivity::class.java))
                 }
                 else -> {

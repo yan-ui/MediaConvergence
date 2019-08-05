@@ -50,8 +50,8 @@ public class NewsBean implements Serializable {
     private int visit_num;
     private int comment_num;
     private int like_num;
-    private int createtime;
-    private int updatetime;
+    private String createtime;
+    private String updatetime;
     private int vote_id;
     private int weigh;
     private String time;
@@ -60,7 +60,9 @@ public class NewsBean implements Serializable {
     private int like_status;
     private int collect_status;
     private List<String> images;
+    private List<TelModel> tel_list;
     private boolean isExpand;
+    private boolean playStatus;
 
     public int getId() {
         return id;
@@ -190,19 +192,19 @@ public class NewsBean implements Serializable {
         this.like_num = like_num;
     }
 
-    public int getCreatetime() {
+    public String getCreatetime() {
         return createtime;
     }
 
-    public void setCreatetime(int createtime) {
+    public void setCreatetime(String createtime) {
         this.createtime = createtime;
     }
 
-    public int getUpdatetime() {
+    public String getUpdatetime() {
         return updatetime;
     }
 
-    public void setUpdatetime(int updatetime) {
+    public void setUpdatetime(String updatetime) {
         this.updatetime = updatetime;
     }
 
@@ -270,11 +272,27 @@ public class NewsBean implements Serializable {
         this.images = images;
     }
 
+    public List<TelModel> getTel_list() {
+        return tel_list;
+    }
+
+    public void setTel_list(List<TelModel> tel_list) {
+        this.tel_list = tel_list;
+    }
+
     public boolean isExpand() {
         return isExpand;
     }
 
     public void setExpand(boolean expand) {
         isExpand = expand;
+    }
+
+    public boolean getPlayStatus() {
+        return playStatus;
+    }
+
+    public void setPlayStatus(boolean playStatus) {
+        this.playStatus = playStatus;
     }
 }

@@ -1,6 +1,8 @@
 package cn.tklvyou.mediaconvergence.ui.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -31,6 +33,21 @@ public class MyCollectionAdapter extends BaseQuickAdapter<NewsBean, BaseViewHold
         helper.setText(R.id.tvTime, bean.getBegintime());
         helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
         helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
+
+        TextView tvGoodNum = helper.getView(R.id.tvGoodNum);
+
+        Drawable[] drawables = tvGoodNum.getCompoundDrawables();
+
+        if (bean.getLike_status() == 1) {
+            Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
+            redGoodDrawable.setBounds(drawables[0].getBounds());
+            tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
+        } else {
+            Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
+            grayGoodDrawable.setBounds(drawables[0].getBounds());
+            tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
+        }
+
 
         if (!StringUtils.isEmpty(bean.getImage())) {
             //一张图片

@@ -12,6 +12,7 @@ import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.PointModel
 import cn.tklvyou.mediaconvergence.model.User
 import cn.tklvyou.mediaconvergence.ui.adapter.PointRvAdapter
+import cn.tklvyou.mediaconvergence.ui.mine.point.MyPointDetailActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -31,7 +32,7 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
     override fun initView() {
         hideTitleBar()
         pointTitleBar.setBackgroundColor(Color.TRANSPARENT)
-        pointTitleBar.setNavigationListener{
+        pointTitleBar.setNavigationListener {
             finish()
         }
 
@@ -47,7 +48,7 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
         }
 
         btnRule.setOnClickListener {
-            startActivity(Intent(this,PointRuleActivity::class.java))
+            startActivity(Intent(this, PointRuleActivity::class.java))
         }
 
         mPresenter.getUser()
@@ -61,7 +62,9 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
 
         tvNickName.text = bean.nickname
         tvPointScore.text = "积分：${bean.score}"
-
+        tvPointScore.setOnClickListener {
+            startActivity(Intent(this,MyPointDetailActivity::class.java))
+        }
     }
 
     override fun setGoods(page: Int, pageModel: BasePageModel<PointModel>?) {

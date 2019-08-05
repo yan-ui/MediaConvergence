@@ -38,6 +38,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                     }
                 }, throwable -> {
                     mView.hideLoading();
+                    ToastUtils.showShort("上传失败");
                     throwable.printStackTrace();
                 });
     }
@@ -65,6 +66,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                     mView.hideLoading();
                 }, throwable -> {
                     mView.hideLoading();
+                    ToastUtils.showShort("上传失败");
                     throwable.printStackTrace();
                 });
 
@@ -91,7 +93,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
     }
 
     @Override
-    public void publishSuiShouPai(String name,String images,String video,String image,String time) {
+    public void publishSuiShouPai(String name, String images, String video, String image, String time) {
         RetrofitHelper.getInstance().getServer()
                 .publishSuiShouPai(name, images, video, image, time)
                 .compose(RxSchedulers.applySchedulers())

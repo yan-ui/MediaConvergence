@@ -260,8 +260,10 @@ class LiveActivity : BaseActivity<NullPresenter>() {
 
     private fun parseIntent() {
         //接收MainActivity传过来的参数
-        mMediaType = intent.getStringExtra("media_type")
-        mDecodeType = intent.getStringExtra("decode_type")
+//        mMediaType = intent.getStringExtra("media_type")
+//        mDecodeType = intent.getStringExtra("decode_type")
+        mMediaType = "livestream"
+        mDecodeType = "hardware"
         mVideoPath = intent.getStringExtra("videoPath")
         mUri = Uri.parse(mVideoPath)
 
