@@ -59,7 +59,7 @@ public abstract class BaseBottomTabActivity<P extends BaseContract.BasePresenter
         //全局的fragmentTransaction因为already committed 崩溃
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.hide(fragments.get(currentPosition));
-        if (fragments.get(position).isAdded() == false) {
+        if (!fragments.get(position).isAdded()) {
             ft.add(getFragmentContainerResId(), fragments.get(position));
         }
         ft.show(fragments.get(position)).commit();

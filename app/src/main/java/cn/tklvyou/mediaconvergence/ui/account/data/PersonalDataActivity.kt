@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.account.data
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import cn.tklvyou.mediaconvergence.R
@@ -9,6 +10,7 @@ import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import cn.tklvyou.mediaconvergence.helper.GlideManager
 import cn.tklvyou.mediaconvergence.ui.setting.edit_phone.EditPhoneActivity
 import cn.tklvyou.mediaconvergence.utils.CommonUtil
+import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager
 import cn.tklvyou.mediaconvergence.widget.dailog.InputDialog
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
@@ -29,17 +31,41 @@ import java.util.*
  * @Email: 971613168@qq.com
  */
 class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.DataView, View.OnClickListener {
+    override fun setQiniuToken(token: String) {
+        this.qiniuToken = token
+    }
 
-    override fun uploadSuccess(url: String?) {
-        edit()
+    override fun initPresenter(): DataPresenter {
+        return DataPresenter()
+    }
+
+    override fun getActivityLayoutID(): Int {
+        return R.layout.activity_personal_data
+    }
+
+    override fun setTitleBar(titleBar: CommonTitleBar?) {
+        setTitle("个人资料")
+//        titleBar!!.setMainTitle()
     }
 
 
     private var imageList = ArrayList<String>()
     private var selectList: List<LocalMedia> = ArrayList()
-    override fun setTitleBar(titleBar: CommonTitleBar?) {
-        setTitle("个人资料")
-//        titleBar!!.setMainTitle()
+    private var qiniuToken = ""
+
+
+    override fun initView(savedInstanceState: Bundle?) {
+        showData()
+        civAvatar.setOnClickListener(this)
+        tvSave.setOnClickListener(this)
+        llNickName.setOnClickListener(this)
+        llChangePhone.setOnClickListener(this)
+        mPresenter.getQiniuToken()
+    }
+
+
+    override fun uploadSuccess(url: String) {
+        edit(url)
     }
 
     override fun showInputDialog(content: String) {
@@ -60,14 +86,6 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
 
     private fun setTextValue(textView: TextView, value: String) {
         textView.text = value
-    }
-
-    override fun initPresenter(): DataPresenter {
-        return DataPresenter()
-    }
-
-    override fun getActivityLayoutID(): Int {
-        return R.layout.activity_personal_data
     }
 
 
@@ -94,14 +112,6 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
         }
     }
 
-    override fun initView() {
-        showData()
-        civAvatar.setOnClickListener(this)
-        tvSave.setOnClickListener(this)
-        llNickName.setOnClickListener(this)
-        llChangePhone.setOnClickListener(this)
-    }
-
 
     private fun selectPic() {
         PictureSelector.create(mContext)
@@ -113,7 +123,7 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
                 // 每行显示个数
                 .imageSpanCount(4)
                 // 多选 or 单选
-                .selectionMode(PictureConfig.MULTIPLE)
+                .selectionMode(PictureConfig.SINGLE)
                 // 是否可预览图片
                 .previewImage(true)
                 // 是否可播放音频
@@ -188,14 +198,13 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
         if (avatarPath.isEmpty()) {
             //用户没有重置头像 则上传原头像
             imageList.add(AccountHelper.getInstance().avatar)
-            edit()
+            edit(AccountHelper.getInstance().avatar)
         } else {
             //需要先上传头像
             val file = File(avatarPath)
-            mPresenter.doUploadImage(file)
+            mPresenter.doUploadImage(file, qiniuToken, "" + AccountHelper.getInstance().uid, QiniuUploadManager.getInstance(this))
         }
     }
-
 
     private fun parsePath(imageList: List<String>?): String {
         if (imageList == null || imageList.isEmpty()) {
@@ -210,9 +219,8 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
         return editText.text.toString()
     }
 
-
-    private fun edit() {
+    private fun edit(url:String) {
         val userName = AccountHelper.getInstance().userName
-        mPresenter.editUserInfo(parsePath(imageList), getTextValue(tvNickName), userName, "")
+        mPresenter.editUserInfo(url, getTextValue(tvNickName), userName, "")
     }
 }

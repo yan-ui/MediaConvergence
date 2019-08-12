@@ -16,33 +16,15 @@
         titlebar:statusBarMode="light"
         titlebar:titleBarHeight="@dimen/dp_40" />
 
-
-    <LinearLayout
+    <net.lucode.hackware.magicindicator.MagicIndicator
+        android:id="@+id/magicIndicator"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        android:orientation="horizontal">
-
-        <net.lucode.hackware.magicindicator.MagicIndicator
-            android:id="@+id/magicIndicator"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_operation"
-            android:layout_width="@dimen/dp_50"
-            android:layout_height="match_parent"
-            android:background="@mipmap/shadow_add_titlebar_new"
-            android:paddingLeft="@dimen/dp_5"
-            android:scaleType="centerInside"
-            android:src="@mipmap/add_channel" />
-
-    </LinearLayout>
+        android:layout_height="@dimen/dp_40" />
 
     <View
-        android:background="@color/common_bg"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1"/>
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/common_bg" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/mViewPager"

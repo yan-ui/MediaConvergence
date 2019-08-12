@@ -63,7 +63,7 @@
                 <ImageView
                     android:id="@+id/ivImageFirst"
                     android:layout_width="match_parent"
-                    android:scaleType="fitXY"
+                    android:scaleType="centerCrop"
                     android:layout_height="@dimen/dp_94"
                     android:background="@color/common_bg" />
 
@@ -116,7 +116,7 @@
 
                 <ImageView
                     android:id="@+id/ivImageSecond"
-                    android:scaleType="fitXY"
+                    android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_94"
                     android:background="@color/common_bg" />

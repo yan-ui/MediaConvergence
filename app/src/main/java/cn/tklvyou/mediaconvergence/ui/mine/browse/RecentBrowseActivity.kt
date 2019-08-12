@@ -1,10 +1,14 @@
 package cn.tklvyou.mediaconvergence.ui.mine.browse
+import android.os.Bundle
+import android.view.View
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseHttpRecyclerActivity
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.MyCollectionAdapter
+import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
+import cn.tklvyou.mediaconvergence.ui.home.tv_news_detail.TVNewsDetailActivity
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.layout_recycler.*
@@ -35,7 +39,6 @@ class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean,
 
             override fun refreshAdapter() {
                 adapter.setNewData(list)
-                initItemClick()
             }
         })
         if (list != null) {
@@ -60,7 +63,7 @@ class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean,
         mPresenter.getBrowsePageList(page)
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("最近浏览")
         setNavigationImage()
         setNavigationOnClickListener { finish() }
@@ -70,9 +73,57 @@ class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean,
     }
 
 
-    private fun initItemClick() {
-        adapter.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-          //todo 点击事件
+    override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onItemClick(adapter, view, position)
+        val bean = (adapter as MyCollectionAdapter).data[position]
+        val id = bean.id
+
+        when(bean.module){
+            "V视频" ->{
+                val type = "视频"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+            "濉溪TV" ->{
+                if(bean.module_second =="置顶频道"){
+                    val type = if (bean.type == "tv") "电视" else "广播"
+                    TVNewsDetailActivity.startTVNewsDetailActivity(this, type, id)
+                }else{
+                    val type = "电视"
+                    NewsDetailActivity.startNewsDetailActivity(this, type, id)
+                }
+            }
+            "新闻","矩阵","专栏","党建" ->{
+                val type = "文章"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+            "视讯" ->{
+                val type = "视讯"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+            "问政" ->{
+                val type = "问政"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+
+            "原创","随手拍" ->{
+                val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+            "悦读" ->{
+                val type = "悦读"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+            "悦听" ->{
+                val type = "悦听"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+            "公告" ->{
+                val type = "公告"
+                NewsDetailActivity.startNewsDetailActivity(this, type, id)
+            }
+
         }
+
+
     }
 }

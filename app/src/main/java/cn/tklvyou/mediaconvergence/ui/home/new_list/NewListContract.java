@@ -15,6 +15,11 @@ public interface NewListContract {
         void setHaveSecondModuleNews(int p, List<HaveSecondModuleNewsModel> datas);
 
         void setBanner(List<BannerModel> bannerModelList);
+
+        void deleteSuccess(int position);
+
+        void setJuZhengHeader(List<NewsBean> beans);
+
     }
 
     interface Presenter extends BaseContract.BasePresenter<View> {
@@ -23,5 +28,13 @@ public interface NewListContract {
         void getHaveSecondModuleNews(int p, String module);
 
         void getBanner(String module);
+
+        void getDetailsById(int id);
+
+        void deleteArticle(int id, int position);
+
+        void getJuZhengHeader(String module);
+
+        void searchNewList(String module, String name, int p);
     }
 }

@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.home
 
+import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
@@ -15,7 +16,7 @@ class BannerDetailsActivity : BaseWebViewActivity<NullPresenter>() {
         return R.layout.activity_banner_details
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         val title = intent.getStringExtra("title")
         val html = intent.getStringExtra("content")
 

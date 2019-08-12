@@ -2,7 +2,6 @@ package cn.tklvyou.mediaconvergence.ui.home.all_juzheng
 
 import android.content.Context
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
@@ -34,7 +33,7 @@ class AllJuZhengActivity : BaseActivity<NullPresenter>() {
 
 
     private var position = 0
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("全部文章")
         setNavigationImage()
         setNavigationOnClickListener { finish() }

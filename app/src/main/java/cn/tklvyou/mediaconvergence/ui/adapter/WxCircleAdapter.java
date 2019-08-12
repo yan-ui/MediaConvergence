@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.tklvyou.mediaconvergence.R;
+import cn.tklvyou.mediaconvergence.helper.AccountHelper;
 import cn.tklvyou.mediaconvergence.helper.GlideManager;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.ui.home.ImagePagerActivity;
@@ -52,6 +53,12 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, NewsBean item) {
+        if(AccountHelper.getInstance().getGroupId() == 3){
+            helper.setVisible(R.id.deleteBtn,true);
+        }else {
+            helper.setVisible(R.id.deleteBtn,false);
+        }
+        helper.addOnClickListener(R.id.deleteBtn);
 
         helper.setText(R.id.nameTv, item.getNickname());
         helper.setText(R.id.timeTv, item.getBegintime());

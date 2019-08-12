@@ -1,4 +1,4 @@
-package cn.tklvyou.mediaconvergence.widget;
+package cn.tklvyou.mediaconvergence.widget.dailog;
 
 import android.app.Dialog;
 import android.content.Context;

@@ -2,7 +2,6 @@ package cn.tklvyou.mediaconvergence.ui.home.all_tv
 
 import android.content.Context
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
@@ -34,7 +33,7 @@ class AllTvActivity : BaseActivity<NullPresenter>() {
 
 
     private var position = 0
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("全部视频")
         setNavigationImage()
         setNavigationOnClickListener { finish() }
@@ -46,7 +45,7 @@ class AllTvActivity : BaseActivity<NullPresenter>() {
         mChannels.add("政务直通车")
         mChannels.add("聚焦问政")
         mChannels.add("旗帜")
-        mChannels.add("法制栏目")
+        mChannels.add("法治栏目")
 
         initMagicIndicator()
 

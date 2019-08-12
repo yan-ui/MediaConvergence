@@ -1,16 +1,11 @@
 package cn.tklvyou.mediaconvergence.ui.service
 
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.WindowManager
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NullPresenter
-import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
 import cn.tklvyou.mediaconvergence.helper.GlideManager
 import cn.tklvyou.mediaconvergence.model.PointModel
-import cn.tklvyou.mediaconvergence.widget.ConfirmDialog
+import cn.tklvyou.mediaconvergence.widget.dailog.ConfirmDialog
 import com.blankj.utilcode.util.SpanUtils
 import kotlinx.android.synthetic.main.activity_goods_details.*
 
@@ -26,7 +21,7 @@ class GoodsDetailsActivity : BaseWebViewActivity<GoodsDetailPresenter>(), GoodsD
 
     private var id = 0
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("商品详情")
         setNavigationImage()
         setNavigationOnClickListener { finish() }

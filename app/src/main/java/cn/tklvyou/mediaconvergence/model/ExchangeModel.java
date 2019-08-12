@@ -33,6 +33,7 @@ public class ExchangeModel {
     private String createtime;
     private int updatetime;
     private int admin_id;
+    private int register_status;
 
     public int getId() {
         return id;
@@ -112,5 +113,13 @@ public class ExchangeModel {
 
     public void setAdmin_id(int admin_id) {
         this.admin_id = admin_id;
+    }
+
+    public int getRegister_status() {
+        return register_status;
+    }
+
+    public void setRegister_status(int register_status) {
+        this.register_status = register_status;
     }
 }

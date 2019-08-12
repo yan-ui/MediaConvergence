@@ -19,5 +19,6 @@ public interface TVNewsDetailContract {
         void cancelLikeNews(int id);
         void addComment(int id, String detail);
         void setCollectStatus(int id, boolean isCollect);
+        void getScoreByRead(int id);
     }
 }

@@ -38,14 +38,15 @@
                     android:textColor="@color/default_black_text_color"
                     android:textSize="@dimen/sp_14" />
 
-                <EditText
-                    android:id="@+id/etModuleSecond"
+                <TextView
+                    android:id="@+id/tvModuleSecond"
                     android:layout_width="0dp"
+                    android:textColor="@color/default_black_text_color"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@null"
                     android:gravity="right|center"
-                    android:hint="输入问政对象"
+                    android:hint="选择问政对象"
                     android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
@@ -101,7 +102,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/shape_gray_radius_8_bg"
                     android:gravity="top"
-                    android:hint="输入问政内容"
+                    android:maxLength="20"
+                    android:hint="输入问政内容（限20字以内）"
                     android:padding="@dimen/dp_10"
                     android:textSize="@dimen/sp_14" />
 

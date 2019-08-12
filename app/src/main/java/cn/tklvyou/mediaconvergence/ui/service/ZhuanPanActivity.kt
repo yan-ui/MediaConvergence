@@ -2,23 +2,20 @@ package cn.tklvyou.mediaconvergence.ui.service
 
 import android.animation.ValueAnimator
 import android.graphics.Color
+import android.os.Bundle
 import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
-import cn.tklvyou.mediaconvergence.model.Entry
 import cn.tklvyou.mediaconvergence.model.LotteryModel
 import cn.tklvyou.mediaconvergence.model.LotteryResultModel
 import cn.tklvyou.mediaconvergence.utils.JSON
-import cn.tklvyou.mediaconvergence.widget.ConfirmDialog
+import cn.tklvyou.mediaconvergence.widget.dailog.ConfirmDialog
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SpanUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.cretin.www.wheelsruflibrary.listener.RotateListener
 import com.cretin.www.wheelsruflibrary.view.WheelSurfView
 import kotlinx.android.synthetic.main.activity_zhuan_pan.*
-import java.util.*
 
 
 class ZhuanPanActivity : BaseActivity<ZhuanPanPresenter>(), ZhuanPanContract.View {
@@ -36,7 +33,7 @@ class ZhuanPanActivity : BaseActivity<ZhuanPanPresenter>(), ZhuanPanContract.Vie
 
     private var num = 0
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
 
         btnBack.setOnClickListener {
@@ -107,19 +104,27 @@ class ZhuanPanActivity : BaseActivity<ZhuanPanPresenter>(), ZhuanPanContract.Vie
             }
 
             override fun rotateBefore(goImg: ImageView) {
-                val builder = AlertDialog.Builder(this@ZhuanPanActivity)
-                builder.setTitle("温馨提示")
-                builder.setMessage("确定要消耗一次抽奖机会？")
-                builder.setPositiveButton("确定") { dialog, which ->
-                    if (num > 0) {
-                        wheelSurfView.goBtn.isEnabled = false
-                        mPresenter.startLottery()
-                    } else {
-                        ToastUtils.showShort("转盘次数不足")
-                    }
+                if (num > 0) {
+                    wheelSurfView.goBtn.isEnabled = false
+                    mPresenter.startLottery()
+                } else {
+                    ToastUtils.showShort("转盘次数不足")
                 }
-                builder.setNegativeButton("取消") { dialog, which -> }
-                builder.show()
+
+
+//                val builder = AlertDialog.Builder(this@ZhuanPanActivity)
+//                builder.setTitle("温馨提示")
+//                builder.setMessage("确定要消耗一次抽奖机会？")
+//                builder.setPositiveButton("确定") { dialog, which ->
+//                    if (num > 0) {
+//                        wheelSurfView.goBtn.isEnabled = false
+//                        mPresenter.startLottery()
+//                    } else {
+//                        ToastUtils.showShort("转盘次数不足")
+//                    }
+//                }
+//                builder.setNegativeButton("取消") { dialog, which -> }
+//                builder.show()
 
             }
         })

@@ -2,10 +2,12 @@ package cn.tklvyou.mediaconvergence.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.view.KeyEvent
 import cn.tklvyou.mediaconvergence.R
+import cn.tklvyou.mediaconvergence.base.MyApplication
 import cn.tklvyou.mediaconvergence.base.activity.BaseBottomTabActivity
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.ui.home.HomeFragment
@@ -38,22 +40,39 @@ class MainActivity : BaseBottomTabActivity<NullPresenter>() {
     }
 
     private var isLogin = false
-    private var mFragments: MutableList<RxFragment>? = null
-    override fun initView() {
+    private var mFragments: MutableList<RxFragment> = ArrayList()
+
+    private var homeFragment: HomeFragment? = null
+    private var cameraFragment: CameraFragment? = null
+    private var serviceFragment: ServiceFragment? = null
+    private var mineFragment: MineFragment? = null
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(Bundle())
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
 
         isLogin = SPUtils.getInstance().getBoolean("login")
-
         if (!isLogin) {
             startActivity(Intent(this, LoginActivity::class.java))
-            return
+        } else {
+            if (MyApplication.showSplash) {
+                startActivity(Intent(this, SplashActivity::class.java))
+            }
         }
 
-        mFragments = ArrayList()
-        mFragments!!.add(HomeFragment())
-        mFragments!!.add(CameraFragment())
-        mFragments!!.add(ServiceFragment())
-        mFragments!!.add(MineFragment())
+        homeFragment = HomeFragment()
+        cameraFragment = CameraFragment()
+        serviceFragment = ServiceFragment()
+        mineFragment = MineFragment()
+
+        mFragments.add(homeFragment!!)
+        mFragments.add(cameraFragment!!)
+        mFragments.add(serviceFragment!!)
+        mFragments.add(mineFragment!!)
+
 
         bottomNavigationView.enableAnimation(false)
         bottomNavigationView.enableShiftingMode(false)
@@ -72,11 +91,11 @@ class MainActivity : BaseBottomTabActivity<NullPresenter>() {
         selectFragment(0)
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
-        mFragments = null
+        mFragments.clear()
     }
-
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

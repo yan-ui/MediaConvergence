@@ -14,8 +14,10 @@ import cn.tklvyou.mediaconvergence.model.NewsBean;
 import cn.tklvyou.mediaconvergence.model.PointDetailModel;
 import cn.tklvyou.mediaconvergence.model.PointModel;
 import cn.tklvyou.mediaconvergence.model.PointRuleModel;
+import cn.tklvyou.mediaconvergence.model.SystemConfigModel;
 import cn.tklvyou.mediaconvergence.model.UploadModel;
 import cn.tklvyou.mediaconvergence.model.User;
+import cn.tklvyou.mediaconvergence.model.VoteOptionModel;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Multipart;
@@ -24,6 +26,12 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
+
+    /**
+     * 获取七牛云上传token
+     */
+    @POST("api/index/qiniutoken")
+    Observable<BaseResult<Object>> getQiniuToken();
 
     /**
      * 单文件上传接口
@@ -76,9 +84,14 @@ public interface ApiService {
      *
      * @param platform wechat
      */
-    @POST("api/user/third")
+    @POST("api/third/login")
     Observable<BaseResult<User>> thirdLogin(@Query("platform") String platform, @Query("code") String code);
 
+    /**
+     * 绑定手机号
+     */
+    @POST("api/third/bindmobile")
+    Observable<BaseResult<User>> bindMobile(@Query("third_id") int third_id, @Query("mobile") String mobile, @Query("captcha") String captcha);
 
     /**
      * 注销登录
@@ -86,6 +99,11 @@ public interface ApiService {
     @POST("api/user/logout")
     Observable<BaseResult<Object>> logout();
 
+    /**
+     * 获取系统配置信息
+     */
+    @POST("api/index/sysconfig")
+    Observable<BaseResult<SystemConfigModel>> getSystemConfig();
 
     /**
      * 重置密码
@@ -115,10 +133,42 @@ public interface ApiService {
     Observable<BaseResult<BasePageModel<PointDetailModel>>> getMyPointList(@Query("p") int p);
 
     /**
+     * 阅读内容获取积分
+     *
+     * @return
+     */
+    @POST("api/score/read")
+    Observable<BaseResult<BasePageModel<Object>>> getScoreByRead(@Query("id") int id);
+
+    /**
+     * 分享转发获取积分
+     *
+     * @return
+     */
+    @POST("api/score/share")
+    Observable<BaseResult<BasePageModel<Object>>> getScoreByShare(@Query("id") int id);
+
+    /**
+     * 现场领取
+     *
+     * @return
+     */
+    @POST("api/goods/receive")
+    Observable<BaseResult<BasePageModel<Object>>> receiveGoods(@Query("id") int id);
+
+
+    /**
      * 内容列表
      */
     @POST("api/article/index")
     Observable<BaseResult<BasePageModel<NewsBean>>> getNewList(@Query("module") String module, @Query("module_second") String module_second, @Query("p") int p);
+
+    /**
+     * 搜索文章
+     */
+    @POST("api/article/index")
+    Observable<BaseResult<BasePageModel<NewsBean>>> searchNewList(@Query("module") String module, @Query("name") String name, @Query("p") int p);
+
 
     /**
      * 消息列表
@@ -151,11 +201,24 @@ public interface ApiService {
     @POST("api/banner/index")
     Observable<BaseResult<List<BannerModel>>> getBanner(@Query("module") String module);
 
+
+    /**
+     * 获取矩阵号数据
+     */
+    @POST("api/article/admin")
+    Observable<BaseResult<List<NewsBean>>> getJuZhengHeader(@Query("module") String module);
+
     /**
      * 文章详情
      */
     @POST("api/article/detail")
     Observable<BaseResult<NewsBean>> getArticleDetail(@Query("id") int id);
+
+    /**
+     * 删除文章
+     */
+    @POST("api/article/dels")
+    Observable<BaseResult<Object>> deleteArticle(@Query("id") int id);
 
     /**
      * 点赞
@@ -198,7 +261,13 @@ public interface ApiService {
      */
     @POST("api/article/addw")
     Observable<BaseResult<Object>> publishWenZheng(@Query("module_second") String module_second, @Query("name") String name,
-                                                     @Query("content") String content, @Query("images") String images);
+                                                   @Query("content") String content, @Query("images") String images);
+
+    /**
+     * 发起投票
+     */
+    @POST("api/vote/vote")
+    Observable<BaseResult<List<VoteOptionModel>>> sendVote(@Query("id") int id, @Query("option_id") int option_id);
 
 
     /**

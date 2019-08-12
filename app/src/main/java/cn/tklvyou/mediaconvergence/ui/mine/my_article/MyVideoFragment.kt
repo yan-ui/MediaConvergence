@@ -92,9 +92,9 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
 
-        val bean = (adapter as WxCircleAdapter).data[position]
+        val bean = (adapter as MyVideoAdapter).data[position]
         val id = bean.id
-        val type = if (bean.images != null && bean.images.size > 0) "图片" else "视频"
+        val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
         NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
 
     }

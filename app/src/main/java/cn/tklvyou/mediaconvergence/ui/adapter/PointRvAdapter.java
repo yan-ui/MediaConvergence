@@ -30,7 +30,7 @@ public class PointRvAdapter extends BaseQuickAdapter<PointModel, BaseViewHolder>
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, PointModel item) {
-        GlideManager.loadRoundImg(item.getImage(),helper.getView(R.id.ivGoods),10);
+        GlideManager.loadImg(item.getImage(),helper.getView(R.id.ivGoods));
         helper.setText(R.id.tvTitle,item.getName());
         helper.setText(R.id.tvPoint,item.getScore()+"积分");
     }

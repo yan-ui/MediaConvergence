@@ -34,5 +34,19 @@ public class ExchangePresenter extends BasePresenter<ExchangeRecordContract.View
                 }, throwable -> throwable.printStackTrace());
     }
 
+    @Override
+    public void receiveGoods(int id,int position) {
+        RetrofitHelper.getInstance().getServer()
+                .receiveGoods(id)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                    ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() == 1){
+                        mView.receiveGoodsSuccess(position);
+                    }
+                }, throwable -> throwable.printStackTrace());
+    }
+
 
 }

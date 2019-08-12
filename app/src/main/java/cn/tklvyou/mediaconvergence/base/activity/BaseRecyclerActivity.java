@@ -51,7 +51,7 @@ import cn.tklvyou.mediaconvergence.manager.CacheManager;
  *   </pre>
  */
 public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter, T, VH extends BaseViewHolder, A extends BaseQuickAdapter<T, VH>>
-        extends BaseActivity<P> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
+        extends BaseActivity<P> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener , BaseQuickAdapter.OnItemChildClickListener {
 
     private static final String TAG = "BaseRecyclerActivity";
 
@@ -101,6 +101,7 @@ public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter,
      */
     public void setAdapter(A adapter) {
         adapter.setOnItemClickListener(this);
+        adapter.setOnItemChildClickListener(this);
         adapter.setOnItemLongClickListener(this);
         this.adapter = adapter;
         rvBaseRecycler.setAdapter(adapter);
@@ -416,6 +417,10 @@ public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter,
 
     }
 
+    @Override
+    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+
+    }
 
     /**
      * 重写后可自定义对这个事件的处理，如果要在长按后不触发onItemClick，则需要 return true;

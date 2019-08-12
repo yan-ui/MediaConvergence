@@ -2,13 +2,12 @@ package cn.tklvyou.mediaconvergence.ui.account
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NullContract
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
-import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.ui.main.MainActivity
 import cn.tklvyou.mediaconvergence.widget.TimeCount
 import com.blankj.utilcode.util.ToastUtils
@@ -24,7 +23,7 @@ class RegisterActivity : BaseActivity<AccountRegisterPresenter>(), AccountContra
         return AccountRegisterPresenter()
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
 
         etMobile.addTextChangedListener(object : TextWatcher {
@@ -85,7 +84,7 @@ class RegisterActivity : BaseActivity<AccountRegisterPresenter>(), AccountContra
         }
         when (p0.id) {
             R.id.btnProtocol -> {
-                ToastUtils.showShort("阅读协议")
+                startActivity(Intent(this,AgreementActivity::class.java))
             }
 
             R.id.btnBack -> {

@@ -91,7 +91,7 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
 
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
-        val type = if (bean.images != null && bean.images.size > 0) "图片" else "视频"
+        val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
         NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
 
     }

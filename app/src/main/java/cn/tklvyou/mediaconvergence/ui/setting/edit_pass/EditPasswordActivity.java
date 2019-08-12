@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.setting.edit_pass;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -35,7 +36,7 @@ public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.Edi
     public static final String EXTRA_MESSAGE_ID = "EditPasswordActivity";
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         tvSendVCode = findViewById(R.id.tvSendVCode);
         tvSendVCode.setOnClickListener(this);
         tvConfirmEdit = findViewById(R.id.tvConfirmEdit);

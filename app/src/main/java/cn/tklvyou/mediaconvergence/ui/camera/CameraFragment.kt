@@ -19,7 +19,9 @@ import cn.tklvyou.mediaconvergence.ui.home.new_list.NewListPresenter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import cn.tklvyou.mediaconvergence.widget.dailog.CommonDialog
 import com.adorkable.iosdialog.BottomSheetDialog
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -32,6 +34,8 @@ import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.Serializable
 
 class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, BaseViewHolder, WxCircleAdapter>(), NewListContract.View {
+    override fun setJuZhengHeader(beans: MutableList<NewsBean>?) {
+    }
 
 
     override fun initPresenter(): NewListPresenter {
@@ -103,8 +107,21 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
     }
 
     override fun lazyData() {
-        ToastUtils.showShort("camera")
+
     }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(!hidden && !isFirstResume){
+            mPresenter.getNewList("随手拍", null,1)
+        }
+    }
+
+    override fun onUserVisible() {
+        super.onUserVisible()
+        mPresenter.getNewList("随手拍", null,1)
+    }
+
 
     override fun getListAsync(page: Int) {
         mPresenter.getNewList("随手拍", null,page)
@@ -132,6 +149,11 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 
     }
 
+    override fun deleteSuccess(position: Int) {
+        adapter.remove(position)
+    }
+
+
     override fun setBanner(bannerModelList: MutableList<BannerModel>?) {
         //该页面用不上此方法
     }
@@ -145,11 +167,24 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
-        val type = if (bean.images != null && bean.images.size > 0) "图片" else "视频"
+        val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
         NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
 
     }
 
+    override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onItemChildClick(adapter, view, position)
+        if(view!!.id == R.id.deleteBtn){
+            val dialog = CommonDialog(context)
+            dialog.setTitle("温馨提示")
+            dialog.setMessage("是否删除？")
+            dialog.setYesOnclickListener("确认"){
+                val bean = (adapter as WxCircleAdapter).data[position]
+                mPresenter.deleteArticle(bean.id,position)
+                dialog.dismiss()
+            }
+        }
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

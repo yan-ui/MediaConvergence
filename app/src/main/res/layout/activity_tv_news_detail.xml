@@ -189,28 +189,31 @@
         android:id="@+id/editTextBodyLl"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_50"
-        android:background="#f6f6f6"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone">
 
         <EditText
             android:id="@+id/circleEt"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_8"
-            android:layout_weight="1"
-            android:background="@null"
-            android:hint="说点什么..."
-            android:padding="@dimen/dp_4" />
-
-        <ImageView
-            android:id="@+id/sendIv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="@dimen/dp_35"
-            android:layout_marginLeft="4dp"
-            android:contentDescription="@null"
-            android:src="@drawable/selector_send" />
+            android:layout_marginLeft="@dimen/dp_13"
+            android:layout_weight="1"
+            android:background="@drawable/shape_gray_radius_5_bg"
+            android:hint="发布评论..."
+            android:paddingLeft="@dimen/dp_10"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/sendIv"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_35"
+            android:gravity="center"
+            android:text="发送"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/sp_16" />
+
     </LinearLayout>
 
     <LinearLayout

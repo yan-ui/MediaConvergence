@@ -2,6 +2,7 @@ package cn.tklvyou.mediaconvergence.ui.service
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.tklvyou.mediaconvergence.R
@@ -29,7 +30,7 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
         return R.layout.activity_point
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
         pointTitleBar.setBackgroundColor(Color.TRANSPARENT)
         pointTitleBar.setNavigationListener {

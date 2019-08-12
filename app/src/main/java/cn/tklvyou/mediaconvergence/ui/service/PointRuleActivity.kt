@@ -1,10 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.service
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NullPresenter
-import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
 import cn.tklvyou.mediaconvergence.model.PointRuleModel
 import kotlinx.android.synthetic.main.activity_point_rule.*
@@ -19,7 +16,7 @@ class PointRuleActivity : BaseWebViewActivity<PointRulePresenter>(),PointRuleCon
        return R.layout.activity_point_rule
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("积分规则")
         setNavigationImage()
         setNavigationOnClickListener { finish() }

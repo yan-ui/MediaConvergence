@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitHelper {
     private static String TAG = "RetrofitHelper";
     private long CONNECT_TIMEOUT = 60L;
-    private long READ_TIMEOUT = 30L;
+    private long READ_TIMEOUT = 15L;
     private long WRITE_TIMEOUT = 30L;
     private static RetrofitHelper mInstance = null;
     private Retrofit mRetrofit = null;

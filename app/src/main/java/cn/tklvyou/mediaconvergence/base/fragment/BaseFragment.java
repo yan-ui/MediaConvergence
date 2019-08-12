@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.netease.neliveplayer.playerkit.common.log.LogUtil;
 import com.trello.rxlifecycle3.LifecycleTransformer;
 import com.trello.rxlifecycle3.components.support.RxFragment;
 
@@ -30,12 +32,12 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
 
     private static final long DEFAULT_TIME_INTERVAL = 5 * 1000;//默认间隔时间30秒
 
-    private boolean isAlive =false;
+    private boolean isAlive = false;
     private boolean isPrepared;
     /**
      * 第一次onResume中的调用onUserVisible避免操作与onFirstUserVisible操作重复
      */
-    private boolean isFirstResume = true;
+    protected boolean isFirstResume = true;
     private boolean isFirstVisible = true;
     private boolean isFirstInvisible = true;
 
@@ -128,6 +130,11 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
     }
 
 
+    /**
+     * 当fragment结合viewpager使用的时候 这个方法会调用
+     *
+     * @param isVisibleToUser
+     */
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -191,17 +198,22 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
 
     //运行线程<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-    /**在UI线程中运行，建议用这个方法代替runOnUiThread
+    /**
+     * 在UI线程中运行，建议用这个方法代替runOnUiThread
+     *
      * @param action
      */
     public final void runUiThread(Runnable action) {
         if (isAlive == false) {
-            LogUtils.w( "runUiThread  isAlive() == false >> return;");
+            LogUtils.w("runUiThread  isAlive() == false >> return;");
             return;
         }
         mActivity.runUiThread(action);
     }
-    /**运行线程
+
+    /**
+     * 运行线程
+     *
      * @param name
      * @param runnable
      * @return
@@ -215,7 +227,6 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
     }
 
     //运行线程>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 
 
     /**
@@ -237,7 +248,6 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
      */
     protected abstract int getFragmentLayoutID();
 
-
     /**
      * 类似Activity的OnBackgress
      * fragment进行回退
@@ -246,16 +256,14 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
         getFragmentManager().popBackStack();
     }
 
-
-
     @Override
     public void showLoading() {
-        ((BaseActivity)mActivity).showLoading();
+        ((BaseActivity) mActivity).showLoading();
     }
 
     @Override
     public void hideLoading() {
-        ((BaseActivity)mActivity).hideLoading();
+        ((BaseActivity) mActivity).hideLoading();
     }
 
     @Override
@@ -268,15 +276,14 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
         ToastUtils.showShort(message);
     }
 
-
     @Override
     public void showNoNet() {
-        ((BaseActivity)mActivity).showNoNet();
+        ((BaseActivity) mActivity).showNoNet();
     }
 
     @Override
     public void showNoData() {
-        ((BaseActivity)mActivity).showNoData();
+        ((BaseActivity) mActivity).showNoData();
     }
 
     @Override
@@ -288,9 +295,6 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
     public <T> LifecycleTransformer<T> bindToLife() {
         return this.bindToLifecycle();
     }
-
-
-
 
     @Override
     public void checkLastTime() {

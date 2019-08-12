@@ -9,6 +9,7 @@ package cn.tklvyou.mediaconvergence.ui.mine.message
  */
 
 
+import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseHttpRecyclerActivity
@@ -66,7 +67,7 @@ class MyMessageActivity : BaseHttpRecyclerActivity<MessagePresenter, MessageMode
         return R.layout.layout_refresh_recycler
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("我的消息")
         setNavigationImage()
         setNavigationOnClickListener { finish() }

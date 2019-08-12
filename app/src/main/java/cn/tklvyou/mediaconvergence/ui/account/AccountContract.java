@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.account;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
+import cn.tklvyou.mediaconvergence.model.SystemConfigModel;
 import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
 
 /**
@@ -11,6 +12,7 @@ public interface AccountContract {
     interface LoginView extends BaseContract.BaseView{
         void loginSuccess();
         void loginError();
+        void bindMobile(int third_id);
     }
     interface LoginPresenter extends BaseContract.BasePresenter<LoginView>{
         void login(String name, String password);
@@ -35,6 +37,13 @@ public interface AccountContract {
     interface ForgetPresenter extends BaseContract.BasePresenter<ForgetView>{
         void getCaptcha(String mobile,String event);
         void resetpwd(String mobile, String newpassword,String captcha);
+    }
+
+    interface AgreenmentView extends BaseContract.BaseView{
+        void setSystemConfig(SystemConfigModel model);
+    }
+    interface AgreenmentPresenter extends BaseContract.BasePresenter<AgreenmentView>{
+        void getSystemConfig();
     }
 
 }

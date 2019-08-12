@@ -11,7 +11,7 @@ import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.SuixiTVGridRvAdpater
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
-import cn.tklvyou.mediaconvergence.ui.video_player.LiveActivity
+import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -81,7 +81,7 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         super.onItemClick(adapter, view, position)
         val bean = (adapter as SuixiTVGridRvAdpater).data[position]
         val id = bean.id
-        val type = "视讯"
+        val type = "电视"
         NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
     }
 
@@ -91,7 +91,7 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         if (view != null) {
             when (view.id) {
                 R.id.ivSuiXiTVStartPlayer ->{
-                    val intent = Intent(context, LiveActivity::class.java)
+                    val intent = Intent(context, VodActivity::class.java)
                     intent.putExtra("videoPath", (adapter as SuixiTVGridRvAdpater).data[position].video)
                     startActivity(intent)
                 }

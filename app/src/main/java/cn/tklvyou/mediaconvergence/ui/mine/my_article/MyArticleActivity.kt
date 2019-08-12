@@ -2,6 +2,7 @@ package cn.tklvyou.mediaconvergence.ui.mine.my_article
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseTitleActivity
@@ -45,7 +46,7 @@ class MyArticleActivity : BaseTitleActivity<NullPresenter>() {
     }
 
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         mTabNameList.add("拍客")
         mTabNameList.add("V视")
         mFragments.add(MyCameraFragment())

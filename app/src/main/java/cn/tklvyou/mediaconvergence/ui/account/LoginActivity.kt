@@ -1,7 +1,9 @@
 package cn.tklvyou.mediaconvergence.ui.account
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.text.Editable
@@ -9,20 +11,30 @@ import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.View
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.NullContract
+import cn.tklvyou.mediaconvergence.base.MyApplication
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
-import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.common.Contacts
 import cn.tklvyou.mediaconvergence.ui.main.MainActivity
 import cn.tklvyou.mediaconvergence.utils.InterfaceUtils
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.google.gson.Gson
+import com.sina.weibo.sdk.auth.Oauth2AccessToken
+import com.sina.weibo.sdk.auth.WbAuthListener
+import com.sina.weibo.sdk.auth.WbConnectErrorMessage
+import com.sina.weibo.sdk.auth.sso.SsoHandler
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.mm.opensdk.modelmsg.SendAuth
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import com.tencent.tauth.IUiListener
+import com.tencent.tauth.Tencent
+import com.tencent.tauth.UiError
 import kotlinx.android.synthetic.main.activity_login.*
+import org.json.JSONObject
 
-class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.LoginView, View.OnClickListener,InterfaceUtils.OnClickResult {
+class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.LoginView, View.OnClickListener, InterfaceUtils.OnClickResult {
 
     override fun getActivityLayoutID(): Int {
         return R.layout.activity_login
@@ -32,7 +44,7 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
         return AccountLoginPresenter()
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
         //销毁非登录页的所有Activity
         ActivityUtils.finishOtherActivities(this::class.java)
@@ -61,6 +73,19 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
         btnForget.setOnClickListener(this)
         btnRegister.setOnClickListener(this)
         btnWxLogin.setOnClickListener(this)
+        btnWbLogin.setOnClickListener(this)
+        btnQQLogin.setOnClickListener(this)
+
+        RxPermissions(this)
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe { granted ->
+                    if (!granted) { // Always true pre-M
+                        ToastUtils.showShort("权限拒绝，无法使用")
+                        finish()
+
+                    }
+                }
+
     }
 
     override fun onClick(p0: View) {
@@ -89,22 +114,58 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
                 startActivity(Intent(this, RegisterActivity::class.java))
             }
 
-            R.id.btnWxLogin ->{
+            R.id.btnWxLogin -> {
                 InterfaceUtils.getInstance().add(this)
                 startWxLogin()
+            }
+
+            R.id.btnWbLogin -> {
+                startWbLogin()
+            }
+
+            R.id.btnQQLogin -> {
+                startQQLogin()
             }
 
         }
 
     }
 
+    private var mTencent: Tencent? = null
+    private var iUiListener:IUiListener? = null
+    private fun startQQLogin() {
+        mTencent = Tencent.createInstance(Contacts.QQ_APPID, application)
 
-    override fun loginSuccess() {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
-    }
+        if(!mTencent!!.isQQInstalled(this)){
+            ToastUtils.showShort("您未安装QQ客户端")
+            return
+        }
 
-    override fun loginError() {
+        iUiListener = object :IUiListener{
+            override fun onComplete(p0: Any?) {
+                LogUtils.e(p0)
+                val obj = p0 as JSONObject
+                val openId = obj.getString("openid")
+                val assess_token = obj.getString("access_token")
+
+                val map = HashMap<String,String>()
+                map.put("openid",openId)
+                map.put("access_token",assess_token)
+                mPresenter.thirdLogin("qq",Gson().toJson(map))
+            }
+
+            override fun onCancel() {
+                ToastUtils.showShort("用户取消授权登录")
+            }
+
+            override fun onError(p0: UiError?) {
+                ToastUtils.showShort(p0?.errorMessage)
+            }
+
+        }
+
+        //all表示获取所有权限
+        mTencent!!.login(this, "all", iUiListener)
 
     }
 
@@ -123,9 +184,64 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
         }
     }
 
+    private var mSsoHandler: SsoHandler? = null
+    private fun startWbLogin() {
+
+        val pinfo = packageManager.getInstalledPackages(0)
+        if(pinfo != null){
+
+        }
+        mSsoHandler = SsoHandler(this)
+        mSsoHandler!!.authorize(object : WbAuthListener {
+            override fun onSuccess(p0: Oauth2AccessToken?) {
+                val map = HashMap<String,String>()
+                map.put("token",p0!!.token)
+                map.put("uid",p0.uid)
+                mPresenter.thirdLogin("weibo",Gson().toJson(map))
+            }
+
+            override fun onFailure(p0: WbConnectErrorMessage?) {
+                ToastUtils.showShort(p0?.errorMessage)
+            }
+
+            override fun cancel() {
+                ToastUtils.showShort("用户取消授权登录")
+            }
+
+        })
+    }
+
+    override fun bindMobile(third_id: Int) {
+        val intent = Intent(this,BindPhoneActivity::class.java)
+        intent.putExtra("third_id",third_id)
+        startActivity(intent)
+    }
+
+    override fun loginSuccess() {
+        MyApplication.showSplash = false
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    override fun loginError() {
+
+    }
+
     override fun onResult(msg: String) {
         mPresenter.thirdLogin("wechat",msg)
         InterfaceUtils.getInstance().remove(this)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (mSsoHandler != null) {
+            mSsoHandler!!.authorizeCallBack(requestCode, resultCode, data)
+        }
+
+        if(mTencent != null){
+            Tencent.onActivityResultData(requestCode,resultCode,data,null)
+        }
     }
 
 
@@ -133,6 +249,7 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             appExit()
             return true
+
         }
         return super.onKeyDown(keyCode, event)
     }

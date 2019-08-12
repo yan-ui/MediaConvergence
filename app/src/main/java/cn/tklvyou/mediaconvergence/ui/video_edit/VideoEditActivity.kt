@@ -3,6 +3,8 @@ package cn.tklvyou.mediaconvergence.ui.video_edit
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.os.Bundle
 import android.widget.SeekBar
 import java.io.File
 
@@ -39,7 +41,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
     private var hasBack = false
     private var page = ""
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("封面选取")
         setNavigationImage()
         setPositiveText("选取")
@@ -57,7 +59,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
                         ToastUtils.showShort("此处无法截取，请重新选取")
                     }
 
-                }else{
+                } else {
                     runOnUiThread {
                         val path = "$cacheDir/videoImage.png"
                         if (ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG)) {
@@ -144,7 +146,6 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
             b = retriever.getFrameAtTime(time, FFmpegMediaMetadataRetriever.OPTION_CLOSEST)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
-            LogUtils.e(e.message)
         } catch (e: RuntimeException) {
             e.printStackTrace()
         } finally {
@@ -155,7 +156,25 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
             }
 
         }
+        if(b != null){
+            b = rotaingImageView(90f,b)
+        }
         return b
+    }
+
+
+    /**
+     * 旋转图片
+     * @param angle
+     * @param bitmap
+     * @return Bitmap
+     */
+    private fun rotaingImageView(angle: Float, bitmap: Bitmap): Bitmap {
+        //旋转图片 动作
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        // 创建新的图片
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
 

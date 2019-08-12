@@ -3,15 +3,19 @@ package cn.tklvyou.mediaconvergence.ui.home.publish_wenzheng
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.view.View
+import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
-import cn.tklvyou.mediaconvergence.ui.adapter.GridImageAdapter
+import cn.tklvyou.mediaconvergence.helper.AccountHelper
+import cn.tklvyou.mediaconvergence.helper.GlideManager
+import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.WenzhengGridImageAdapter
-import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
+import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager
+import cn.tklvyou.mediaconvergence.widget.dailog.DialogBindViewHolder
+import cn.tklvyou.mediaconvergence.widget.dailog.SelectListDialog
+import cn.tklvyou.mediaconvergence.widget.dailog.TBaseAdapter
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -19,10 +23,35 @@ import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import kotlinx.android.synthetic.main.activity_publish_wenzheng.*
 import java.io.File
-import java.io.Serializable
 import java.lang.StringBuilder
 
 class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), PublishWenzhengContract.View {
+
+    override fun setJuZhengHeader(beans: MutableList<NewsBean>) {
+        this.wenzhengBeans = beans
+
+        tvModuleSecond.setOnClickListener {
+            val dialog = SelectListDialog(this)
+            dialog.setTitle("选择问政对象")
+            dialog.setLayoutManager(GridLayoutManager(this, 4))
+            dialog.setAdapter(object : TBaseAdapter<NewsBean>(R.layout.item_juzheng_header_child_layout, wenzhengBeans) {
+                override fun onBind(holder: DialogBindViewHolder, position: Int, t: NewsBean) {
+                    holder.setText(R.id.tvNickName, t.nickname)
+                    GlideManager.loadRoundImg(t.avatar, holder.getView(R.id.ivAvatar))
+                }
+            })
+            dialog.setItemOnclickListener { holder, position, t, tDialog ->
+                tvModuleSecond.text = (t as NewsBean).nickname
+                dialog.dismiss()
+            }
+            dialog.show()
+        }
+
+    }
+
+    override fun setQiniuToken(token: String) {
+        this.qiniuToken = token
+    }
 
     override fun initPresenter(): PublishWenzhengPresenter {
         return PublishWenzhengPresenter()
@@ -40,11 +69,13 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
     private var moduleSecond = ""
     private var name = ""
     private var content = ""
+    private var wenzhengBeans: MutableList<NewsBean> = ArrayList()
+    private var qiniuToken = ""
 
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("发布问政")
-        setNavigationText("图片",R.mipmap.icon_titlebar_back)
+        setNavigationText("图片", R.mipmap.icon_titlebar_back)
         setNavigationOnClickListener { finish() }
 
         selectList = ArrayList()
@@ -67,28 +98,28 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
         }
 
 
-
         btnSubmit.setOnClickListener {
-            moduleSecond = etModuleSecond.text.toString().trim()
+            moduleSecond = tvModuleSecond.text.toString().trim()
             name = etName.text.toString().trim()
             content = etContent.text.toString().trim()
 
-            if(moduleSecond.isEmpty()){
-                ToastUtils.showShort("请输入问政对象")
+            if (moduleSecond.isEmpty()) {
+                ToastUtils.showShort("请选择问政对象")
                 return@setOnClickListener
             }
 
-            if(name.isEmpty()){
+            if (name.isEmpty()) {
                 ToastUtils.showShort("请输入标题")
                 return@setOnClickListener
             }
 
-            if(content.isEmpty()){
+            if (content.isEmpty()) {
                 ToastUtils.showShort("请输入内容")
                 return@setOnClickListener
             }
 
             showLoading()
+            imagesBuilder = StringBuilder()
 
             selectList!!.forEach {
                 if (it.isCompressed || (it.isCut && it.isCompressed)) {
@@ -97,13 +128,16 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
                     imageFiles.add(File(it.path))
                 }
             }
-            if(imageFiles.size != 0) {
-                mPresenter.uploadMultiImage(imageFiles)
-            }else{
-                mPresenter.publishWenZheng(moduleSecond,name,content, imagesBuilder.toString())
+            if (imageFiles.size != 0) {
+                mPresenter.qiniuUploadMultiImage(imageFiles, qiniuToken, "" + AccountHelper.getInstance().uid, QiniuUploadManager.getInstance(this))
+            } else {
+                mPresenter.publishWenZheng(moduleSecond, name, content, imagesBuilder.toString())
             }
         }
 
+        mPresenter.getQiniuToken()
+
+        mPresenter.getJuZhengHeader("问政")
     }
 
 
@@ -115,7 +149,7 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
                 imagesBuilder.append(item)
             }
         }
-        mPresenter.publishWenZheng(moduleSecond,name,content, imagesBuilder.toString())
+        mPresenter.publishWenZheng(moduleSecond, name, content, imagesBuilder.toString())
     }
 
 

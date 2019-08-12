@@ -35,12 +35,27 @@ public class AccountHelper {
         return userInfo != null;
     }
 
+    public int getUid() {
+        if (userInfo != null) {
+            return userInfo.getId();
+        }
+        return 0;
+    }
+
+    public int getGroupId() {
+        if (userInfo != null) {
+            return userInfo.getGroup_id();
+        }
+        return 0;
+    }
+
     public String getPhone() {
         if (userInfo != null) {
             return CommonUtil.getNotNullValue(userInfo.getMobile());
         }
         return "";
     }
+
     public String getAvatar() {
         if (userInfo != null) {
             return CommonUtil.getNotNullValue(userInfo.getAvatar());

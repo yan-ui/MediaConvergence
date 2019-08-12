@@ -73,13 +73,10 @@ class ServiceFragment : BaseRecyclerFragment<NullPresenter, ServiceModel, BaseVi
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
-        ToastUtils.showShort("-  1 -")
     }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemChildClick(adapter, view, position)
-
-        ToastUtils.showShort("---")
     }
 
 

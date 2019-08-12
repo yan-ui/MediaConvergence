@@ -3,12 +3,15 @@ package cn.tklvyou.mediaconvergence.ui.home.publish_news
 import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
+import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import cn.tklvyou.mediaconvergence.ui.adapter.GridImageAdapter
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
+import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -20,6 +23,9 @@ import java.io.Serializable
 import java.lang.StringBuilder
 
 class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsContract.View {
+    override fun setQiniuToken(token: String) {
+        qiniuToken = token
+    }
 
     override fun initPresenter(): PublishNewsPresenter {
         return PublishNewsPresenter()
@@ -38,9 +44,16 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
     private var imagesBuilder: StringBuilder = StringBuilder()
     private val imageFiles = ArrayList<File>()
     private var videoUrl = ""
-    override fun initView() {
+
+    private var qiniuManager:QiniuUploadManager? = null
+
+    private var qiniuToken = ""
+
+    override fun initView(savedInstanceState: Bundle?) {
         commonTitleBar.toggleStatusBarMode()
         hideTitleBar()
+
+        qiniuManager = QiniuUploadManager.getInstance(this)
 
         selectList = if (intent.getSerializableExtra("data") == null) ArrayList() else intent.getSerializableExtra("data") as MutableList<LocalMedia>
         isVideo = intent.getBooleanExtra("isVideo", true)
@@ -100,6 +113,8 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
         }
 
         btnSubmit.setOnClickListener {
+            hideSoftInput(etContent.windowToken)
+
             if (etContent.text.toString().trim().isEmpty()) {
                 ToastUtils.showShort("请输入内容")
                 return@setOnClickListener
@@ -107,11 +122,10 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
 
             showLoading()
             if (page == "V视") {
-                mPresenter.uploadFile(File(selectList!![0].path), true)
+                mPresenter.qiniuUploadFile(File(selectList!![0].path),true,qiniuToken,"" + AccountHelper.getInstance().uid,qiniuManager)
             } else {
-
                 if (isVideo) {
-                    mPresenter.uploadFile(File(selectList!![0].path), true)
+                    mPresenter.qiniuUploadFile(File(selectList!![0].path),true,qiniuToken,"" + AccountHelper.getInstance().uid,qiniuManager)
                 } else {
                     selectList!!.forEach {
                         if (it.isCompressed || (it.isCut && it.isCompressed)) {
@@ -120,13 +134,12 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                             imageFiles.add(File(it.path))
                         }
                     }
-                    mPresenter.uploadMultiImage(imageFiles)
+                    mPresenter.qiniuUploadMultiImage(imageFiles,qiniuToken, "" + AccountHelper.getInstance().uid,qiniuManager)
                 }
-
-
             }
         }
 
+        mPresenter.getQiniuToken()
     }
 
     override fun uploadImageSuccess(url: String) {
@@ -140,7 +153,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
 
     override fun uploadVideoSuccess(url: String) {
         this.videoUrl = url
-        mPresenter.uploadFile(File(imagePath), false)
+        mPresenter.qiniuUploadFile(File(imagePath),false,qiniuToken,"" + AccountHelper.getInstance().uid, qiniuManager)
     }
 
     override fun uploadImagesSuccess(urls: MutableList<String>) {

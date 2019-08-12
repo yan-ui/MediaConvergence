@@ -6,8 +6,17 @@ public class User {
     /**
      * userinfo : {"id":2,"username":"Mason","nickname":"Mason","mobile":"17730212467","avatar":" ","score":0,"token":"f81b1870-dda7-42d6-82e9-bf9b54aab795","user_id":2,"createtime":1564042098,"expiretime":1566634098,"expires_in":2592000}
      */
+    private int third_id;
 
     private UserinfoBean userinfo;
+
+    public int getThird_id() {
+        return third_id;
+    }
+
+    public void setThird_id(int third_id) {
+        this.third_id = third_id;
+    }
 
     public UserinfoBean getUserinfo() {
         return userinfo;
@@ -20,6 +29,7 @@ public class User {
     public static class UserinfoBean {
         /**
          * id : 2
+         * group_id : 0 ：普通用户  1：普通用户  2： 记者   3：管理员
          * username : Mason
          * nickname : Mason
          * mobile : 17730212467
@@ -33,6 +43,7 @@ public class User {
          */
 
         private int id;
+        private int group_id;
         private String username;
         private String nickname;
         private String mobile;
@@ -50,6 +61,14 @@ public class User {
 
         public void setId(int id) {
             this.id = id;
+        }
+
+        public int getGroup_id() {
+            return group_id;
+        }
+
+        public void setGroup_id(int group_id) {
+            this.group_id = group_id;
         }
 
         public String getUsername() {

@@ -22,6 +22,9 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -57,6 +60,7 @@ public class MyApplication extends MultiDexApplication {
     }
 
     private static Application mContext;
+    public static boolean showSplash = true;
 
     private IWXAPI iwxapi;
 
@@ -68,6 +72,10 @@ public class MyApplication extends MultiDexApplication {
         CrashManager.init(mContext);
         //初始化微信相关配置
         initWx();
+        //初始化微博配置
+        initWb();
+
+
         // android 7.0系统解决拍照的问题
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -80,6 +88,12 @@ public class MyApplication extends MultiDexApplication {
         initPlayerSDK();
 
         GlobalClickCallbacks.init(this);
+
+    }
+
+    private void initWb() {
+        WbSdk.install(this,new AuthInfo(this, Contacts.WB_APP_KEY, Contacts.WB_REDIRECT_URL,
+                Contacts.WB_SCOPE));
     }
 
 

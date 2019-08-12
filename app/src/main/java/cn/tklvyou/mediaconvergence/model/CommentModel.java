@@ -24,6 +24,7 @@ public class CommentModel {
     private String status;
     private String createtime;
     private String updatetime;
+    private int admin_status;
 
     public int getId() {
         return id;
@@ -95,5 +96,13 @@ public class CommentModel {
 
     public void setUpdatetime(String updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public int getAdmin_status() {
+        return admin_status;
+    }
+
+    public void setAdmin_status(int admin_status) {
+        this.admin_status = admin_status;
     }
 }

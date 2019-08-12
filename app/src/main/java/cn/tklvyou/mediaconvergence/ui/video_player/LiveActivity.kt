@@ -9,14 +9,8 @@ import android.os.Handler
 import android.os.Message
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.SeekBar
-import android.widget.TextView
 
 import com.blankj.utilcode.util.ToastUtils
 import com.netease.neliveplayer.playerkit.sdk.LivePlayer
@@ -24,15 +18,11 @@ import com.netease.neliveplayer.playerkit.sdk.LivePlayerObserver
 import com.netease.neliveplayer.playerkit.sdk.PlayerManager
 import com.netease.neliveplayer.playerkit.sdk.constant.CauseCode
 import com.netease.neliveplayer.playerkit.sdk.model.MediaInfo
-import com.netease.neliveplayer.playerkit.sdk.model.SDKInfo
-import com.netease.neliveplayer.playerkit.sdk.model.SDKOptions
 import com.netease.neliveplayer.playerkit.sdk.model.StateInfo
 import com.netease.neliveplayer.playerkit.sdk.model.VideoBufferStrategy
 import com.netease.neliveplayer.playerkit.sdk.model.VideoOptions
 import com.netease.neliveplayer.playerkit.sdk.model.VideoScaleMode
 import com.netease.neliveplayer.playerkit.sdk.view.AdvanceSurfaceView
-import com.netease.neliveplayer.playerkit.sdk.view.AdvanceTextureView
-import com.netease.neliveplayer.proxy.config.NEPlayerConfig
 import com.netease.neliveplayer.sdk.NELivePlayer
 
 import java.io.File
@@ -47,9 +37,6 @@ import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.ui.receiver.Observer
 import cn.tklvyou.mediaconvergence.ui.receiver.PhoneCallStateObserver
 import cn.tklvyou.mediaconvergence.ui.services.PlayerService
-import cn.tklvyou.mediaconvergence.widget.PlayPauseButton
-import com.netease.neliveplayer.playerkit.common.log.LogUtil
-import com.netease.neliveplayer.playerkit.sdk.VodPlayerObserver
 import kotlinx.android.synthetic.main.activity_player.*
 
 
@@ -64,7 +51,7 @@ class LiveActivity : BaseActivity<NullPresenter>() {
     }
 
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
 
         hideTitleBar()
         btnBack.setOnClickListener {

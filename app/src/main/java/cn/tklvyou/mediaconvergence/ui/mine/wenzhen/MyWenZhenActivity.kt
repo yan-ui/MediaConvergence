@@ -1,11 +1,14 @@
 package cn.tklvyou.mediaconvergence.ui.mine.wenzhen
 
+import android.os.Bundle
+import android.view.View
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseHttpRecyclerActivity
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.WenZhenAdapter
+import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.layout_recycler.*
@@ -36,7 +39,6 @@ class MyWenZhenActivity : BaseHttpRecyclerActivity<WenZhenPresenter, NewsBean, B
 
             override fun refreshAdapter() {
                 adapter.setNewData(list)
-                initItemClick()
             }
         })
         if (list != null) {
@@ -60,7 +62,7 @@ class MyWenZhenActivity : BaseHttpRecyclerActivity<WenZhenPresenter, NewsBean, B
         mPresenter.getDataPageList(page)
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("问政")
         setNavigationImage()
         setNavigationOnClickListener { finish() }
@@ -70,9 +72,13 @@ class MyWenZhenActivity : BaseHttpRecyclerActivity<WenZhenPresenter, NewsBean, B
     }
 
 
-    private fun initItemClick() {
-        adapter.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-            //todo 点击事件
-        }
+    override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onItemClick(adapter, view, position)
+        val bean = (adapter as WenZhenAdapter).data[position] as NewsBean
+        val id = bean.id
+        val type = "问政"
+        NewsDetailActivity.startNewsDetailActivity(this, type, id)
     }
+
+
 }

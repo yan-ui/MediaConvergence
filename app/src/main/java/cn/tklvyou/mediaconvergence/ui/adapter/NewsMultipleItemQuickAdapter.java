@@ -17,6 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.SpanUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -25,7 +28,9 @@ import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
+import com.netease.neliveplayer.playerkit.common.log.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.tklvyou.mediaconvergence.R;
@@ -41,6 +46,7 @@ import cn.tklvyou.mediaconvergence.utils.GlideCircleTransform;
 import cn.tklvyou.mediaconvergence.utils.UrlUtils;
 import cn.tklvyou.mediaconvergence.widget.ExpandTextView;
 import cn.tklvyou.mediaconvergence.widget.MultiImageView;
+import cn.tklvyou.mediaconvergence.widget.TagTextView;
 
 
 /**
@@ -56,12 +62,13 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
         addItemType(NewsMultipleItem.NEWS, R.layout.item_news_news_layout);
         addItemType(NewsMultipleItem.SHI_XUN, R.layout.item_news_shi_xun);
         addItemType(NewsMultipleItem.WEN_ZHENG, R.layout.item_news_wen_zheng);
-        addItemType(NewsMultipleItem.JU_ZHENG, R.layout.item_news_ju_zhen);
+        addItemType(NewsMultipleItem.JU_ZHENG, R.layout.item_news_news_layout);
         addItemType(NewsMultipleItem.WECHAT_MOMENTS, R.layout.item_winxin_circle);
         addItemType(NewsMultipleItem.READING, R.layout.item_news_reading);
         addItemType(NewsMultipleItem.LISTEN, R.layout.item_news_listen);
         addItemType(NewsMultipleItem.DANG_JIAN, R.layout.item_news_wen_zheng);
         addItemType(NewsMultipleItem.ZHUAN_LAN, R.layout.item_news_wen_zheng);
+        addItemType(NewsMultipleItem.GONG_GAO, R.layout.item_news_news_layout);
     }
 
     private AudioController mAudioControl;
@@ -254,102 +261,155 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                 }
                 break;
             case NewsMultipleItem.JU_ZHENG:
-                suixiTvModel = (HaveSecondModuleNewsModel) item.getDataBean();
+                bean = (NewsBean) item.getDataBean();
+                helper.setText(R.id.tvTitle, bean.getName());
+                helper.setText(R.id.tvTime, bean.getBegintime());
+                helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
+                helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
 
-                //todo:矩阵头像
-//                GlideManager.loadRoundImg(suixiTvModel.getModule_second(), helper.getView(R.id.ivImageFirst));
-                helper.setText(R.id.tvJuzhengModuleSecond, suixiTvModel.getModule_second());
-                helper.addOnClickListener(R.id.tvJuzhengModuleSecond);
+                tvGoodNum = helper.getView(R.id.tvGoodNum);
 
-                LinearLayout llNewsContainer = helper.getView(R.id.llNewsContainer);
-                llNewsContainer.removeAllViews();
+                drawables = tvGoodNum.getCompoundDrawables();
 
-                for (int i = 0; i < suixiTvModel.getData().size(); i++) {
-                    View view = View.inflate(mContext, R.layout.item_news_news_layout, null);
-
-                    HaveSecondModuleNewsModel.DataBean dataBean = suixiTvModel.getData().get(i);
-
-                    TextView tvTitle = view.findViewById(R.id.tvTitle);
-                    TextView tvTime = view.findViewById(R.id.tvTime);
-                    TextView tvSeeNum = view.findViewById(R.id.tvSeeNum);
-                    tvGoodNum = view.findViewById(R.id.tvGoodNum);
-                    ImageView ivImageOne = view.findViewById(R.id.ivImageOne);
-                    ImageView ivImageFirst = view.findViewById(R.id.ivImageFirst);
-                    ImageView ivImageSecond = view.findViewById(R.id.ivImageSecond);
-                    ImageView ivImageThree = view.findViewById(R.id.ivImageThree);
-                    LinearLayout llMultiImage = view.findViewById(R.id.llMultiImage);
-
-                    tvTitle.setText(dataBean.getName());
-                    tvTime.setText(dataBean.getBegintime());
-                    tvSeeNum.setText(dataBean.getVisit_num());
-                    tvGoodNum.setText(dataBean.getLike_num());
-
-                    drawables = tvGoodNum.getCompoundDrawables();
-
-                    if (dataBean.getLike_status() == 1) {
-                        Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
-                        redGoodDrawable.setBounds(drawables[0].getBounds());
-                        tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
-                    } else {
-                        Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
-                        grayGoodDrawable.setBounds(drawables[0].getBounds());
-                        tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
-                    }
-
-                    if (!StringUtils.isEmpty(dataBean.getImage())) {
-                        //一张图片
-                        llMultiImage.setVisibility(View.GONE);
-                        ivImageOne.setVisibility(View.VISIBLE);
-
-                        GlideManager.loadRoundImg(dataBean.getImage(), ivImageOne);
-
-                    } else {
-                        if (dataBean.getImages() == null || dataBean.getImages().size() == 0) {
-                            //没有图片
-                            llMultiImage.setVisibility(View.GONE);
-                            ivImageOne.setVisibility(View.GONE);
-
-                        } else {
-
-                            if (dataBean.getImages().size() < 3) {
-                                //一张图片
-                                llMultiImage.setVisibility(View.GONE);
-                                ivImageOne.setVisibility(View.VISIBLE);
-
-                                GlideManager.loadRoundImg(dataBean.getImage(), ivImageOne);
-                            } else {
-                                //多张图片
-                                ivImageOne.setVisibility(View.GONE);
-                                llMultiImage.setVisibility(View.VISIBLE);
-
-                                GlideManager.loadRoundImg(dataBean.getImages().get(0), ivImageFirst);
-                                GlideManager.loadRoundImg(dataBean.getImages().get(1), ivImageSecond);
-                                GlideManager.loadRoundImg(dataBean.getImages().get(2), ivImageThree);
-                            }
-                        }
-                    }
-
-                    llNewsContainer.addView(view);
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            int id = dataBean.getId();
-                            String type = "文章";
-                            NewsDetailActivity.Companion.startNewsDetailActivity(mContext, type, id);
-                        }
-                    });
-
-                    View dividerView = new View(mContext);
-                    dividerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,1));
-                    dividerView.setBackgroundColor(mContext.getResources().getColor(R.color.common_bg));
-
-                    llNewsContainer.addView(dividerView);
-
+                if (bean.getLike_status() == 1) {
+                    Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
+                    redGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                } else {
+                    Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
+                    grayGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
                 }
+
+                if (!StringUtils.isEmpty(bean.getImage())) {
+                    //一张图片
+                    helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
+                    helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
+
+                    GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+
+                } else {
+                    if (bean.getImages() == null || bean.getImages().size() == 0) {
+                        //没有图片
+                        helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
+                        helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
+
+                    } else {
+                        if (bean.getImages().size() < 3) {
+                            //一张图片
+                            helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
+                            helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
+
+                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                        } else {
+                            //多张图片
+                            helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
+                            helper.getView(R.id.llMultiImage).setVisibility(View.VISIBLE);
+
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageFirst));
+                            GlideManager.loadRoundImg(bean.getImages().get(1), helper.getView(R.id.ivImageSecond));
+                            GlideManager.loadRoundImg(bean.getImages().get(2), helper.getView(R.id.ivImageThree));
+                        }
+                    }
+                }
+
+//                suixiTvModel = (HaveSecondModuleNewsModel) item.getDataBean();
+//
+//                //todo:矩阵头像
+////                GlideManager.loadRoundImg(suixiTvModel.getModule_second(), helper.getView(R.id.ivImageFirst));
+//                helper.setText(R.id.tvJuzhengModuleSecond, suixiTvModel.getModule_second());
+//                helper.addOnClickListener(R.id.tvJuzhengModuleSecond);
+//
+//                LinearLayout llNewsContainer = helper.getView(R.id.llNewsContainer);
+//                llNewsContainer.removeAllViews();
+//
+//                for (int i = 0; i < suixiTvModel.getData().size(); i++) {
+//                    View view = View.inflate(mContext, R.layout.item_news_news_layout, null);
+//
+//                    HaveSecondModuleNewsModel.DataBean dataBean = suixiTvModel.getData().get(i);
+//
+//                    TextView tvTitle = view.findViewById(R.id.tvTitle);
+//                    TextView tvTime = view.findViewById(R.id.tvTime);
+//                    TextView tvSeeNum = view.findViewById(R.id.tvSeeNum);
+//                    tvGoodNum = view.findViewById(R.id.tvGoodNum);
+//                    ImageView ivImageOne = view.findViewById(R.id.ivImageOne);
+//                    ImageView ivImageFirst = view.findViewById(R.id.ivImageFirst);
+//                    ImageView ivImageSecond = view.findViewById(R.id.ivImageSecond);
+//                    ImageView ivImageThree = view.findViewById(R.id.ivImageThree);
+//                    LinearLayout llMultiImage = view.findViewById(R.id.llMultiImage);
+//
+//                    tvTitle.setText(dataBean.getName());
+//                    tvTime.setText(dataBean.getBegintime());
+//                    tvSeeNum.setText(dataBean.getVisit_num());
+//                    tvGoodNum.setText(dataBean.getLike_num());
+//
+//                    drawables = tvGoodNum.getCompoundDrawables();
+//
+//                    if (dataBean.getLike_status() == 1) {
+//                        Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
+//                        redGoodDrawable.setBounds(drawables[0].getBounds());
+//                        tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
+//                    } else {
+//                        Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
+//                        grayGoodDrawable.setBounds(drawables[0].getBounds());
+//                        tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
+//                    }
+//
+//                    if (!StringUtils.isEmpty(dataBean.getImage())) {
+//                        //一张图片
+//                        llMultiImage.setVisibility(View.GONE);
+//                        ivImageOne.setVisibility(View.VISIBLE);
+//
+//                        GlideManager.loadRoundImg(dataBean.getImage(), ivImageOne);
+//
+//                    } else {
+//                        if (dataBean.getImages() == null || dataBean.getImages().size() == 0) {
+//                            //没有图片
+//                            llMultiImage.setVisibility(View.GONE);
+//                            ivImageOne.setVisibility(View.GONE);
+//
+//                        } else {
+//
+//                            if (dataBean.getImages().size() < 3) {
+//                                //一张图片
+//                                llMultiImage.setVisibility(View.GONE);
+//                                ivImageOne.setVisibility(View.VISIBLE);
+//
+//                                GlideManager.loadRoundImg(dataBean.getImage(), ivImageOne);
+//                            } else {
+//                                //多张图片
+//                                ivImageOne.setVisibility(View.GONE);
+//                                llMultiImage.setVisibility(View.VISIBLE);
+//
+//                                GlideManager.loadRoundImg(dataBean.getImages().get(0), ivImageFirst);
+//                                GlideManager.loadRoundImg(dataBean.getImages().get(1), ivImageSecond);
+//                                GlideManager.loadRoundImg(dataBean.getImages().get(2), ivImageThree);
+//                            }
+//                        }
+//                    }
+//
+//                    llNewsContainer.addView(view);
+//                    view.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            int id = dataBean.getId();
+//                            String type = "文章";
+//                            NewsDetailActivity.Companion.startNewsDetailActivity(mContext, type, id);
+//                        }
+//                    });
+//
+//                    View dividerView = new View(mContext);
+//                    dividerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+//                    dividerView.setBackgroundColor(mContext.getResources().getColor(R.color.common_bg));
+//
+//                    llNewsContainer.addView(dividerView);
+//
+//                }
 
                 break;
             case NewsMultipleItem.WECHAT_MOMENTS:
                 bean = (NewsBean) item.getDataBean();
+                helper.setVisible(R.id.deleteBtn,false);
                 helper.setText(R.id.nameTv, bean.getNickname());
                 helper.setText(R.id.timeTv, bean.getBegintime());
 
@@ -372,7 +432,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
 
                 if (!StringUtils.isEmpty(bean.getAvatar().trim())) {
-                    GlideManager.loadRoundImg(bean.getAvatar(),helper.getView(R.id.headIv),5f);
+                    GlideManager.loadRoundImg(bean.getAvatar(), helper.getView(R.id.headIv), 5f);
                 }
 
                 ExpandTextView expandTextView = helper.getView(R.id.contentTv);
@@ -455,6 +515,8 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
             case NewsMultipleItem.LISTEN:
                 bean = (NewsBean) item.getDataBean();
 
+                mAudioControl.onPause();
+
                 helper.setText(R.id.tvName, bean.getName());
                 helper.setText(R.id.tvBeginTime, bean.getBegintime());
                 helper.setText(R.id.tvTime, bean.getTime());
@@ -506,7 +568,17 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
             case NewsMultipleItem.DANG_JIAN:
                 bean = (NewsBean) item.getDataBean();
-                helper.setText(R.id.tvTitle, bean.getName());
+
+                if(helper.getLayoutPosition() == 0){
+                    TagTextView tagTextView = helper.getView(R.id.tvTitle);
+                    List<String> tags = new ArrayList<>();
+                    tags.add("置顶");
+                    tagTextView.setContentAndTag(bean.getName(),tags);
+                }else {
+                    helper.setText(R.id.tvTitle, bean.getName());
+                }
+
+
                 helper.setText(R.id.tvTime, bean.getBegintime());
                 helper.setText(R.id.tvCommentNum, "" + bean.getComment_num());
 
@@ -564,6 +636,59 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                     } else {
 
+                        if (bean.getImages().size() < 3) {
+                            //一张图片
+                            helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
+                            helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
+
+                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                        } else {
+                            //多张图片
+                            helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
+                            helper.getView(R.id.llMultiImage).setVisibility(View.VISIBLE);
+
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageFirst));
+                            GlideManager.loadRoundImg(bean.getImages().get(1), helper.getView(R.id.ivImageSecond));
+                            GlideManager.loadRoundImg(bean.getImages().get(2), helper.getView(R.id.ivImageThree));
+                        }
+                    }
+                }
+                break;
+            case NewsMultipleItem.GONG_GAO:
+                bean = (NewsBean) item.getDataBean();
+                helper.setText(R.id.tvTitle, bean.getName());
+                helper.setText(R.id.tvTime, bean.getBegintime());
+                helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
+                helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
+
+                tvGoodNum = helper.getView(R.id.tvGoodNum);
+
+                drawables = tvGoodNum.getCompoundDrawables();
+
+                if (bean.getLike_status() == 1) {
+                    Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
+                    redGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                } else {
+                    Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
+                    grayGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                }
+
+                if (!StringUtils.isEmpty(bean.getImage())) {
+                    //一张图片
+                    helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
+                    helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
+
+                    GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+
+                } else {
+                    if (bean.getImages() == null || bean.getImages().size() == 0) {
+                        //没有图片
+                        helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
+                        helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
+
+                    } else {
                         if (bean.getImages().size() < 3) {
                             //一张图片
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);

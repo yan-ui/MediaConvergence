@@ -91,3 +91,20 @@
 
  # for DexGuard only
  -keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+
+ #七牛云 播放器
+ -keep class com.pili.pldroid.player.** { *; }
+ -keep class com.qiniu.qplayer.mediaEngine.MediaPlayer{*;}
+
+ #tencent
+ -keep class com.tencent.open.TDialog$*
+ -keep class com.tencent.open.TDialog$* {*;}
+ -keep class com.tencent.open.PKDialog
+ -keep class com.tencent.open.PKDialog {*;}
+ -keep class com.tencent.open.PKDialog$*
+ -keep class com.tencent.open.PKDialog$* {*;}
+
+ #七牛云
+ -keep class com.qiniu.**{*;}
+ -keep class com.qiniu.**{public <init>();}
+ -ignorewarnings

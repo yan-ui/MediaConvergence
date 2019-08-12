@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.blankj.utilcode.util.LogUtils;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
+import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.utils.CommonUtil;
 import cn.tklvyou.mediaconvergence.utils.StackUtil;
 
@@ -28,7 +29,7 @@ public class TitleDelegate {
         }
         LogUtils.i("class:" + cls.getSimpleName());
         //设置TitleBarView 所有TextView颜色
-        mTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, 0, 0);
+        mTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, R.mipmap.icon_titlebar_back, 0);
         mTitleBar.setNavigationListener(v -> {
             Activity activity = StackUtil.getInstance().getActivity(cls);
             //增加判断避免快速点击返回键造成崩溃

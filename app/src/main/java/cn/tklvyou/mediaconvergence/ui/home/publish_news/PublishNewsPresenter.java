@@ -1,14 +1,24 @@
 package cn.tklvyou.mediaconvergence.ui.home.publish_news;
 
+import android.util.Log;
+
+import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.luck.picture.lib.tools.DateUtils;
+
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
+import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -16,62 +26,59 @@ import okhttp3.RequestBody;
 
 public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View> implements PublishNewsContract.Presenter {
 
-    @Override
-    public void uploadFile(File file, boolean isVideo) {
-
-        final RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-        RetrofitHelper.getInstance().getServer()
-                .upload(body)
-                .compose(RxSchedulers.applySchedulers())
-                .compose(mView.bindToLife())
-                .subscribe(result -> {
-                    if (result.getCode() == 1) {
-                        if (isVideo) {
-                            mView.uploadVideoSuccess(result.getData().getUrl());
-                        } else {
-                            mView.uploadImageSuccess(result.getData().getUrl());
-                        }
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
-                    }
-                }, throwable -> {
-                    mView.hideLoading();
-                    ToastUtils.showShort("上传失败");
-                    throwable.printStackTrace();
-                });
-    }
+    private static final String TAG = "PublishNewsPresenter";
 
     @Override
-    public void uploadMultiImage(List<File> files) {
+    public void qiniuUploadMultiImage(List<File> files, String token, String uid, QiniuUploadManager manager) {
+        List<QiniuUploadManager.QiniuUploadFile> bodys = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
 
-        List<MultipartBody.Part> bodys = new ArrayList();
-        for (File file : files) {
-            final RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("images[]", file.getName(), requestFile);
-            bodys.add(body);
+        for (int i = 0; i < files.size(); i++) {
+
+
+            String currentTim = String.valueOf(System.currentTimeMillis());
+            String key = "upload/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
+            String mimeType = "image/jpeg";
+
+            QiniuUploadManager.QiniuUploadFile param = new QiniuUploadManager.QiniuUploadFile(files.get(i).getAbsolutePath(), key, mimeType, token);
+            bodys.add(param);
+            keys.add(key);
         }
 
-        RetrofitHelper.getInstance().getServer()
-                .uploadFiles(bodys)
-                .compose(RxSchedulers.applySchedulers())
-                .compose(mView.bindToLife())
-                .subscribe(result -> {
-                    if (result.getCode() == 1) {
-                        mView.uploadImagesSuccess(result.getData());
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
-                    }
-                    mView.hideLoading();
-                }, throwable -> {
-                    mView.hideLoading();
-                    ToastUtils.showShort("上传失败");
-                    throwable.printStackTrace();
-                });
+        manager.upload(bodys, new QiniuUploadManager.OnUploadListener() {
+            @Override
+            public void onStartUpload() {
+                Log.e(TAG, "onStartUpload");
+            }
+
+            @Override
+            public void onUploadProgress(String key, double percent) {
+            }
+
+            @Override
+            public void onUploadFailed(String key, String err) {
+                Log.e(TAG, "onUploadFailed:" + err);
+                mView.hideLoading();
+            }
+
+            @Override
+            public void onUploadBlockComplete(String key) {
+                Log.e(TAG, "onUploadBlockComplete");
+            }
+
+            @Override
+            public void onUploadCompleted() {
+                mView.hideLoading();
+                mView.uploadImagesSuccess(keys);
+            }
+
+            @Override
+            public void onUploadCancel() {
+                Log.e(TAG, "onUploadCancel");
+            }
+        });
 
     }
-
 
     @Override
     public void publishVShi(String name, String video, String image, String time) {
@@ -107,6 +114,73 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                     mView.hideLoading();
                     throwable.printStackTrace();
                 });
+    }
+
+    @Override
+    public void getQiniuToken() {
+        RetrofitHelper.getInstance().getServer()
+                .getQiniuToken()
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                    if (result.getCode() == 1) {
+                        mView.setQiniuToken(result.getData().toString());
+                    } else {
+                        ToastUtils.showShort(result.getMsg());
+                    }
+                }, throwable -> {
+                    throwable.printStackTrace();
+                });
+    }
+
+    @Override
+    public void qiniuUploadFile(File file, boolean isVideo, String token, String uid, QiniuUploadManager manager) {
+        String currentTim = String.valueOf(System.currentTimeMillis());
+        String key;
+        String mimeType;
+        if (isVideo) {
+            key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/"  + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) +  ".mp4";
+            mimeType = "video/webm";
+        } else {
+            key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
+            mimeType = "image/jpeg";
+        }
+        QiniuUploadManager.QiniuUploadFile param = new QiniuUploadManager.QiniuUploadFile(file.getAbsolutePath(), key, mimeType, token);
+        manager.upload(param, new QiniuUploadManager.OnUploadListener() {
+            @Override
+            public void onStartUpload() {
+                Log.e(TAG, "onStartUpload");
+            }
+
+            @Override
+            public void onUploadProgress(String key, double percent) {
+            }
+
+            @Override
+            public void onUploadFailed(String key, String err) {
+                Log.e(TAG, "onUploadFailed:" + err);
+                mView.hideLoading();
+            }
+
+            @Override
+            public void onUploadBlockComplete(String key) {
+                Log.e(TAG, "onUploadBlockComplete");
+            }
+
+            @Override
+            public void onUploadCompleted() {
+                if (isVideo) {
+                    mView.uploadVideoSuccess(key);
+                } else {
+                    mView.uploadImageSuccess(key);
+                }
+            }
+
+            @Override
+            public void onUploadCancel() {
+                Log.e(TAG, "onUploadCancel");
+            }
+        });
     }
 
 }

@@ -22,13 +22,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -73,7 +69,7 @@ public class ImagePagerActivity extends BaseActivity<NullPresenter> {
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         setTitle("浏览图片");
         setNavigationImage();
         setNavigationOnClickListener(v -> finish());

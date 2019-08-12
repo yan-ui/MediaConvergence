@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.mine.point;
 
 import android.graphics.Color
+import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.tklvyou.mediaconvergence.R
@@ -57,7 +58,7 @@ class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, Poi
         return R.layout.activity_point_detail
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
         pointTitleBar.setNavigationListener {
             finish()

@@ -6,9 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.model.NewsMultipleItem
 import cn.tklvyou.mediaconvergence.base.fragment.BaseFragment
+import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import kotlinx.android.synthetic.main.fragment_home.*
 import cn.tklvyou.mediaconvergence.model.Channel
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
@@ -40,7 +42,6 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
     }
 
     private var mSelectedChannels = ArrayList<String>()
-    private val mUnSelectedChannels = ArrayList<Channel>()
     private val mChannelFragments = ArrayList<RxFragment>()
     private var mChannelPagerAdapter: ChannelPagerAdapter? = null
 
@@ -48,6 +49,9 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     override fun initView() {
         homeTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
+        if (AccountHelper.getInstance().groupId != 2) {
+            homeTitleBar.rightCustomView.visibility = View.GONE
+        }
         homeTitleBar.rightCustomView.setOnClickListener {
             RxPermissions(this)
                     .request(Manifest.permission.CAMERA)
@@ -55,7 +59,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                         if (granted) { // Always true pre-M
                             PictureSelector.create(this)
                                     .openCamera(PictureMimeType.ofVideo())
-                                    .recordVideoSecond(60)
+                                    .recordVideoSecond(120)
                                     .forResult(PictureConfig.CHOOSE_REQUEST)
                         } else {
                             ToastUtils.showShort("权限拒绝，无法使用")
@@ -68,7 +72,6 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
     }
 
     override fun lazyData() {
-        ToastUtils.showShort("dddd")
 
     }
 
@@ -120,39 +123,42 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         for ((index, item) in mSelectedChannels.withIndex()) {
             val newsFragment = NewsListFragment()
             val bundle = Bundle()
-            when (index) {
-                0 -> {
+            when (item) {
+                "V视频" -> {
                     bundle.putInt("type", NewsMultipleItem.VIDEO)
                 }
-                1 -> {
+                "濉溪TV" -> {
                     bundle.putInt("type", NewsMultipleItem.TV)
                 }
-                2 -> {
+                "新闻" -> {
                     bundle.putInt("type", NewsMultipleItem.NEWS)
                 }
-                3 -> {
+                "视讯" -> {
                     bundle.putInt("type", NewsMultipleItem.SHI_XUN)
                 }
-                4 -> {
+                "问政" -> {
                     bundle.putInt("type", NewsMultipleItem.WEN_ZHENG)
                 }
-                5 -> {
+                "矩阵" -> {
                     bundle.putInt("type", NewsMultipleItem.JU_ZHENG)
                 }
-                6 -> {
+                "原创" -> {
                     bundle.putInt("type", NewsMultipleItem.WECHAT_MOMENTS)
                 }
-                7 -> {
+                "悦读" -> {
                     bundle.putInt("type", NewsMultipleItem.READING)
                 }
-                8 -> {
+                "悦听" -> {
                     bundle.putInt("type", NewsMultipleItem.LISTEN)
                 }
-//                9 -> {
-//                    bundle.putInt("type", NewsMultipleItem.DANG_JIAN)
-//                }
-                9 -> {
+                "党建" -> {
+                    bundle.putInt("type", NewsMultipleItem.DANG_JIAN)
+                }
+                "专栏" -> {
                     bundle.putInt("type", NewsMultipleItem.ZHUAN_LAN)
+                }
+                "公告" -> {
+                    bundle.putInt("type", NewsMultipleItem.GONG_GAO)
                 }
 
             }

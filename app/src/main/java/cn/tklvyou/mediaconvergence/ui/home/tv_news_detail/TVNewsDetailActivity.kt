@@ -3,14 +3,13 @@ package cn.tklvyou.mediaconvergence.ui.home.tv_news_detail
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.text.TextUtils
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -19,18 +18,12 @@ import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
 import cn.tklvyou.mediaconvergence.helper.GlideManager
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.home.AudioController
-import cn.tklvyou.mediaconvergence.ui.home.ImagePagerActivity
-import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailContract
-import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailPresenter
-import cn.tklvyou.mediaconvergence.ui.video_player.LiveActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
-import cn.tklvyou.mediaconvergence.utils.GlideCircleTransform
-import cn.tklvyou.mediaconvergence.utils.UrlUtils
 import com.blankj.utilcode.util.*
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import kotlinx.android.synthetic.main.activity_point_rule.*
 import kotlinx.android.synthetic.main.activity_tv_news_detail.*
+import java.util.*
 
 /**
  * Created by yiw on 2016/1/6.
@@ -67,12 +60,19 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
     private var mAudioControl: AudioController? = null
 
-    override fun initView() {
+
+    private var timer: Timer? = null
+    private var timerTask: TimerTask? = null
+
+    override fun initView(savedInstanceState: Bundle?) {
         getIntentData()
 
         setTitle(type)
         setNavigationImage()
-        setNavigationOnClickListener { v -> finish() }
+        setNavigationOnClickListener { v ->
+            release()
+            finish()
+        }
 
         initWebView(tvWebView)
 
@@ -129,6 +129,14 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         }
 
         mPresenter.getDetailsById(id)
+
+        timer = Timer()
+        timerTask = object : TimerTask() {
+            override fun run() {
+                mPresenter.getScoreByRead(id)
+            }
+        }
+        timer!!.schedule(timerTask,6 * 60 * 1000)
     }
 
     private fun getIntentData() {
@@ -149,13 +157,11 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
             }
         }
 
-        val collectDrawable = resources.getDrawable(R.mipmap.icon_collect_normal)
         if (hasCollect) {
-            collectDrawable.colorFilter = PorterDuffColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP)
+            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect))
         } else {
-            collectDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP)
+            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect_normal))
         }
-        commonTitleBar.rightImageButton.setImageDrawable(collectDrawable)
 
         tvTvName.text = item.name
         tvSeeNum.text = "" + item.visit_num
@@ -180,7 +186,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
             "电视" -> {
                 ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"))
                 ivVideo.setOnClickListener {
-                    val intent = Intent(this, LiveActivity::class.java)
+                    val intent = Intent(this, VodActivity::class.java)
                     intent.putExtra("videoPath", item.video)
                     this.startActivity(intent)
                 }
@@ -221,23 +227,22 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
             "广播" -> {
 
                 val drawables = tvGoodStatus.compoundDrawables
-                val dianzanDrawable = resources.getDrawable(R.mipmap.icon_details_dianzan)
-                dianzanDrawable.bounds = drawables[0].bounds
-                tvGoodStatus.setCompoundDrawables(dianzanDrawable, drawables[1], drawables[2], drawables[3])
-
                 isLike = item.like_status == 1
 
                 if (item.like_status == 1) {
-                    //SDK > 23 可用
-                    //        tvGoodNum.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#ff9708")));
-                    dianzanDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor("#FF4A5C"), PorterDuff.Mode.SRC_ATOP)
                     tvGoodStatus.text = "已赞"
                     tvGoodStatus.setTextColor(resources.getColor(R.color.colorAccent))
+                    val redGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_good_select)
+                    redGoodDrawable.bounds = drawables[0].getBounds()
+                    tvGoodStatus.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3])
                 } else {
-                    dianzanDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor("#AAAAAA"), PorterDuff.Mode.SRC_ATOP)
                     tvGoodStatus.text = "赞"
                     tvGoodStatus.setTextColor(resources.getColor(R.color.default_gray_text_color))
+                    val grayGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_details_dianzan)
+                    grayGoodDrawable.bounds = drawables[0].getBounds()
+                    tvGoodStatus.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3])
                 }
+
 
                 tvCommentNum.text = "评论  ${item.comment_num}"
                 tvGoodNum.text = "赞  ${item.like_num}"
@@ -245,7 +250,6 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
                 this.like_num = item.like_num
 
                 commentContainer.removeAllViews()
-                ToastUtils.showShort(""+item.comment.size)
                 //评论列表
                 item.comment.forEach {
                     val commentView = View.inflate(this, R.layout.item_news_comment_view, null)
@@ -276,25 +280,30 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         this.isLike = isLike
 
         val drawables = tvGoodStatus.compoundDrawables
-        val dianzanDrawable = resources.getDrawable(R.mipmap.icon_details_dianzan)
-        dianzanDrawable.bounds = drawables[0].bounds
-        tvGoodStatus.setCompoundDrawables(dianzanDrawable, drawables[1], drawables[2], drawables[3])
+
         if (isLike) {
-            //SDK > 23 可用
-            //        tvGoodNum.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#ff9708")));
-            dianzanDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor("#FF4A5C"), PorterDuff.Mode.SRC_ATOP)
             tvGoodStatus.text = "已赞"
             tvGoodStatus.setTextColor(resources.getColor(R.color.colorAccent))
+            val redGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_good_select)
+            redGoodDrawable.bounds = drawables[0].getBounds()
+            tvGoodStatus.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3])
+
             like_num++
             tvGoodNum.text = "赞  $like_num"
 
         } else {
-            dianzanDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor("#AAAAAA"), PorterDuff.Mode.SRC_ATOP)
+
             tvGoodStatus.text = "赞"
             tvGoodStatus.setTextColor(resources.getColor(R.color.default_gray_text_color))
+            val grayGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_details_dianzan)
+            grayGoodDrawable.bounds = drawables[0].getBounds()
+            tvGoodStatus.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3])
+
             like_num--
             tvGoodNum.text = "赞  $like_num"
         }
+
+
 
     }
 
@@ -307,13 +316,11 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
     override fun setCollectStatusSuccess(isCollect: Boolean) {
         this.hasCollect = isCollect
 
-        val collectDrawable = resources.getDrawable(R.mipmap.icon_collect_normal)
         if (hasCollect) {
-            collectDrawable.colorFilter = PorterDuffColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP)
+            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect))
         } else {
-            collectDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP)
+            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect_normal))
         }
-        commonTitleBar.rightImageButton.setImageDrawable(collectDrawable)
     }
 
     override fun setTitleContent(title: String) {
@@ -371,6 +378,23 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         } else if (View.GONE == visibility) {
             //隐藏键盘
             hideSoftInput(circleEt.windowToken)
+        }
+    }
+
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            release()
+            finish()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun release() {
+        if (timer != null) {
+            timer!!.cancel()
+            timer = null
         }
     }
 

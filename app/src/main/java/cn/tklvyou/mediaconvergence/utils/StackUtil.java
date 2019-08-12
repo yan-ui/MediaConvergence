@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.utils;
 
 import android.app.Activity;
+import android.util.Log;
 
 
 import com.blankj.utilcode.util.LogUtils;
@@ -127,7 +128,7 @@ public class StackUtil {
             }
             if (mActivityStack != null && mActivityStack.contains(activity)) {
                 mActivityStack.remove(activity);
-                LogUtils.i(TAG, "remove current activity:" + activity.getClass().getSimpleName() + ";size:" + mActivityStack.size());
+                Log.i(TAG, "remove current activity:" + activity.getClass().getSimpleName() + ";size:" + mActivityStack.size());
             }
         }
         return sInstance;

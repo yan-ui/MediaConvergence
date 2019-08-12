@@ -60,12 +60,12 @@
 
             <ImageView
                 android:id="@+id/ivRight"
-                android:visibility="invisible"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerInside"
-                android:src="@mipmap/login_yes" />
+                android:src="@mipmap/login_yes"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -170,7 +170,9 @@
                 android:id="@+id/cbReadMe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="false"
+                android:button="@drawable/selector_checkbox_drawable"
+                android:checked="true"
+                android:paddingLeft="@dimen/dp_5"
                 android:text="注册即同意"
                 android:textColor="#ff999999"
                 android:textSize="@dimen/sp_12" />

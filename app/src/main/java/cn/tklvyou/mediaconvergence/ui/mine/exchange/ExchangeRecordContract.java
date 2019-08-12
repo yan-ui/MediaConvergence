@@ -13,12 +13,13 @@ import cn.tklvyou.mediaconvergence.model.ExchangeModel;
  */
 public interface ExchangeRecordContract {
 
-
     interface View extends BaseContract.BaseView {
         void setExchangeList(int page, BasePageModel<ExchangeModel> pageModel);
+        void receiveGoodsSuccess(int position);
     }
 
     interface Presenter extends BaseContract.BasePresenter<ExchangeRecordContract.View> {
         void getExchangePageList(int page);
+        void receiveGoods(int id,int position);
     }
 }

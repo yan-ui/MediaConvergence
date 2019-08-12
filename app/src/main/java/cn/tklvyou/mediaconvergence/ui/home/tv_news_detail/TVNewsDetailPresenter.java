@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.home.tv_news_detail;
 
 
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
@@ -78,11 +79,9 @@ public class TVNewsDetailPresenter extends BasePresenter<TVNewsDetailContract.Vi
                     .compose(RxSchedulers.applySchedulers())
                     .compose(mView.bindToLife())
                     .subscribe(result -> {
+                        ToastUtils.showShort(result.getMsg());
                         if (result.getCode() == 1) {
-                            ToastUtils.showShort("收藏成功");
                             mView.setCollectStatusSuccess(true);
-                        }else {
-                            ToastUtils.showShort(result.getMsg());
                         }
                     }, throwable -> throwable.printStackTrace());
         }else {
@@ -91,15 +90,26 @@ public class TVNewsDetailPresenter extends BasePresenter<TVNewsDetailContract.Vi
                     .compose(RxSchedulers.applySchedulers())
                     .compose(mView.bindToLife())
                     .subscribe(result -> {
+                        ToastUtils.showShort(result.getMsg());
                         if (result.getCode() == 1) {
-                            ToastUtils.showShort("取消成功");
                             mView.setCollectStatusSuccess(false);
-                        }else {
-                            ToastUtils.showShort(result.getMsg());
                         }
                     }, throwable -> throwable.printStackTrace());
         }
 
+    }
+
+    @Override
+    public void getScoreByRead(int id) {
+        RetrofitHelper.getInstance().getServer()
+                .getScoreByRead(id)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                    if(!StringUtils.isEmpty(result.getMsg())){
+                        ToastUtils.showShort(result.getMsg());
+                    }
+                }, throwable -> throwable.printStackTrace());
     }
 
 }

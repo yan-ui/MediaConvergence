@@ -3,6 +3,7 @@ package cn.tklvyou.mediaconvergence.ui.account.data;
 import java.io.File;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
+import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager;
 
 /**
  * @author :JenkinsZhou
@@ -14,6 +15,7 @@ import cn.tklvyou.mediaconvergence.base.BaseContract;
 public interface IDataContract {
 
     interface DataView extends BaseContract.BaseView {
+        void setQiniuToken(String token);
         void showInputDialog(String content);
         void editSuccess();
         void uploadSuccess(String url);
@@ -21,9 +23,11 @@ public interface IDataContract {
 
 
     interface IDataPresenter extends BaseContract.BasePresenter<DataView> {
+        void getQiniuToken();
+
         void editUserInfo(String avatar,String newNickName,String userName,String bio);
 
-        void doUploadImage(File file);
+        void doUploadImage(File file, String token, String uid, QiniuUploadManager manager);
     }
 
 

@@ -176,12 +176,12 @@ public class MultiImageView extends LinearLayout {
     private ImageView createImageView(int position, final boolean isMultiImage) {
         String photoInfo = imagesList.get(position);
         ImageView imageView = new ColorFilterImageView(getContext());
+        imageView.setScaleType(ScaleType.CENTER_CROP);
         if (isMultiImage) {
-            imageView.setScaleType(ScaleType.CENTER_CROP);
             imageView.setLayoutParams(position % MAX_PER_ROW_COUNT == 0 ? moreParaColumnFirst : morePara);
         } else {
-            imageView.setAdjustViewBounds(true);
-            imageView.setScaleType(ScaleType.CENTER_INSIDE);
+//            imageView.setAdjustViewBounds(true);
+//            imageView.setScaleType(ScaleType.CENTER_INSIDE);
             imageView.setMaxHeight(pxOneMaxWandH);
 
 //            int expectW = photoInfo.w;

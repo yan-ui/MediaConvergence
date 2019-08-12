@@ -1,53 +1,26 @@
 package cn.tklvyou.mediaconvergence.ui.video_player
 
-import android.app.AlertDialog
-import android.graphics.Bitmap
-import android.net.Uri
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.view.Gravity
-import android.view.View
-import android.view.WindowManager
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
+import android.view.*
 import android.widget.SeekBar
-import android.widget.TextView
-
-import com.blankj.utilcode.util.ToastUtils
-import com.netease.neliveplayer.playerkit.common.log.LogUtil
-import com.netease.neliveplayer.playerkit.sdk.PlayerManager
-import com.netease.neliveplayer.playerkit.sdk.VodPlayer
-import com.netease.neliveplayer.playerkit.sdk.VodPlayerObserver
-import com.netease.neliveplayer.playerkit.sdk.constant.CauseCode
-import com.netease.neliveplayer.playerkit.sdk.model.MediaInfo
-import com.netease.neliveplayer.playerkit.sdk.model.StateInfo
-import com.netease.neliveplayer.playerkit.sdk.model.VideoBufferStrategy
-import com.netease.neliveplayer.playerkit.sdk.model.VideoOptions
-import com.netease.neliveplayer.playerkit.sdk.model.VideoScaleMode
-import com.netease.neliveplayer.playerkit.sdk.view.AdvanceSurfaceView
-import com.netease.neliveplayer.playerkit.sdk.view.AdvanceTextureView
-import com.netease.neliveplayer.sdk.NELivePlayer
-
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.util.Locale
-
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.BaseContract
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.ui.receiver.Observer
 import cn.tklvyou.mediaconvergence.ui.receiver.PhoneCallStateObserver
-import cn.tklvyou.mediaconvergence.ui.services.PlayerService
-import com.blankj.utilcode.util.LogUtils
-import kotlinx.android.synthetic.main.activity_player.*
-import java.lang.NullPointerException
+import com.blankj.utilcode.util.ToastUtils
+import com.pili.pldroid.player.PLOnErrorListener
+import kotlinx.android.synthetic.main.activity_vod_player.*
+import kotlinx.android.synthetic.main.activity_vod_player.btnBack
+import java.util.*
 
 /**
  * 播放页面
@@ -60,354 +33,280 @@ class VodActivity : BaseActivity<NullPresenter>() {
     }
 
     override fun getActivityLayoutID(): Int {
-        return R.layout.activity_player
+        return R.layout.activity_vod_player
+    }
+
+    private var mVideoPath: String? = null
+    private lateinit var mAudioManager: AudioManager
+    private val UP_DATE_CODE = 555
+    private val FADE_OUT = 1
+    private var isFull = false
+    private var mShowing = true
+    private var sDefaultTimeout = 3000
+
+    @SuppressLint("HandlerLeak")
+    private var mHandler = object : Handler() {
+
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            when (msg.what) {
+                FADE_OUT -> {
+                    hideMediaController()
+                }
+
+                UP_DATE_CODE -> {
+                    //当前时间
+                    val currentPosition = mVideoView.currentPosition
+
+                    //总时间
+                    val duration = mVideoView.duration
+                    //设置时间
+                    mMediaTime.text = stringForTime(currentPosition)
+                    mMediaTotalTime.text = stringForTime(duration)
+
+                    //设置进度
+                    mMediaProgress.max = duration.toInt()
+                    mMediaProgress.progress = currentPosition.toInt()
+
+                    sendEmptyMessageDelayed(UP_DATE_CODE, 500)
+
+                }
+            }
+
+        }
     }
 
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
         btnBack.setOnClickListener {
-            releasePlayer()
+            mVideoView.stopPlayback()
             finish()
         }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //保持屏幕常亮
         PhoneCallStateObserver.getInstance().observeLocalPhoneObserver(localPhoneObserver, true)
         parseIntent()
-        findViews()
+        initAudioManager()
+        setFullScreen()
+        setPlayer()
+        setScrollSeek()
         initPlayer()
     }
 
 
-    private val surfaceView: AdvanceSurfaceView? = null
+    private fun initAudioManager() {
+        //获取音频管理器
+        mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        val streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
-    protected var player: VodPlayer? = null
+        mMediaSoundsProgress.max = streamMaxVolume
+        mMediaSoundsProgress.progress = streamVolume
 
-    private var mediaInfo: MediaInfo? = null
-
-    private var mDecodeType: String? = null//解码类型，硬解或软解
-
-    private var mVideoPath: String? = null
-
-    private var mMediaType: String? = null //媒体类型
-
-    private var mHardware = true
-
-    private var mUri: Uri? = null
-
-    private var mPaused = false
-
-    private var isMute = false
-
-    private var mIsFullScreen = false
-
-    protected var isPauseInBackgroud: Boolean = false
-
-    private val mHandler = object : Handler() {
-
-        override fun handleMessage(msg: Message) {
-            var msg = msg
-            val position: Long
-            when (msg.what) {
-                SHOW_PROGRESS -> {
-                    position = setProgress()
-                    msg = obtainMessage(SHOW_PROGRESS)
-                    sendMessageDelayed(msg, 1000 - position % 1000)
-                }
-            }
-        }
-    }
-
-
-    private val mProgressSeekListener = object : SeekBar.OnSeekBarChangeListener {
-
-        override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {}
-
-        override fun onStartTrackingTouch(seekBar: SeekBar) {
-            mHandler.removeMessages(SHOW_PROGRESS)
-
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar) {
-            player!!.seekTo(player!!.duration * seekBar.progress / 100)
-        }
-    }
-
-
-    private val mMuteListener = View.OnClickListener {
-        if (!isMute) {
-            mMuteButton!!.setImageResource(R.drawable.nemediacontroller_mute01)
-            player!!.setMute(true)
-            isMute = true
-        } else {
-            mMuteButton!!.setImageResource(R.drawable.nemediacontroller_mute02)
-            player!!.setMute(false)
-            isMute = false
-        }
-    }
-
-    private val playerObserver = object : VodPlayerObserver {
-
-        override fun onCurrentPlayProgress(currentPosition: Long, duration: Long, percent: Float, cachedPosition: Long) {}
-
-        override fun onSeekCompleted() {
-            LogUtil.i(TAG, "onSeekCompleted")
-            mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000)
-
-        }
-
-        override fun onCompletion() {}
-
-        override fun onAudioVideoUnsync() {
-            ToastUtils.showShort("音视频不同步")
-        }
-
-        override fun onNetStateBad() {}
-
-        override fun onDecryption(ret: Int) {}
-
-        override fun onPreparing() {}
-
-        override fun onPrepared(info: MediaInfo) {
-            mediaInfo = info
-        }
-
-        override fun onError(code: Int, extra: Int) {
-            mBuffer!!.visibility = View.INVISIBLE
-            if (code == CauseCode.CODE_VIDEO_PARSER_ERROR) {
-                ToastUtils.showShort("视频解析出错")
-            } else {
-                val build = AlertDialog.Builder(this@VodActivity)
-                build.setTitle("播放错误").setMessage("错误码：$code").setPositiveButton("确定", null).setCancelable(false)
-                        .show()
+        //声音调节进度条
+        mMediaSoundsProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
             }
 
-        }
-
-        override fun onFirstVideoRendered() {
-            //            ToastUtils.showShort("视频第一帧已解析");
-        }
-
-        override fun onFirstAudioRendered() {
-            //            showToast("音频第一帧已解析");
-        }
-
-        override fun onBufferingStart() {
-            mBuffer!!.visibility = View.VISIBLE
-        }
-
-        override fun onBufferingEnd() {
-            mBuffer!!.visibility = View.GONE
-        }
-
-        override fun onBuffering(percent: Int) {
-            LogUtil.d(TAG, "缓冲中...$percent%")
-            mProgressBar!!.secondaryProgress = percent
-        }
-
-        override fun onVideoDecoderOpen(value: Int) {
-//            ToastUtils.showShort("使用解码类型：" + if (value == 1) "硬件解码" else "软解解码")
-        }
-
-        override fun onStateChanged(stateInfo: StateInfo) {}
-
-
-        override fun onHttpResponseInfo(code: Int, header: String) {
-            Log.i(TAG, "onHttpResponseInfo,code:$code header:$header")
-        }
-    }
-
-    private val mSnapShotListener = View.OnClickListener {
-        if (mMediaType == "localaudio" || mHardware) {
-            if (mMediaType == "localaudio") {
-                ToastUtils.showShort("音频播放不支持截图！")
-            } else if (mHardware) {
-                ToastUtils.showShort("硬件解码不支持截图！")
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
-            return@OnClickListener
-        }
-        getSnapshot()
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+
     }
 
-    //todo:放大缩小后存在视频画面卡住不动问题，暂时禁用
-    private val mSetPlayerScaleListener = View.OnClickListener {
-        player!!.setupRenderView(null, VideoScaleMode.NONE)
-        if (mIsFullScreen) {
-            mSetPlayerScaleButton.setImageResource(R.drawable.nemediacontroller_scale01)
-            mIsFullScreen = false
-            player!!.setupRenderView(textureView, VideoScaleMode.FIT)
-        } else {
-            mSetPlayerScaleButton!!.setImageResource(R.drawable.nemediacontroller_scale02)
-            mIsFullScreen = true
-            player!!.setupRenderView(textureView, VideoScaleMode.FULL)
-        }
-    }
-
-
-    /**
-     * 时间戳回调
-     */
-    private val mOnCurrentSyncTimestampListener = NELivePlayer.OnCurrentSyncTimestampListener { timestamp -> Log.v(TAG, "OnCurrentSyncTimestampListener,onCurrentSyncTimestamp:$timestamp") }
-
-    private val mOnCurrentSyncContentListener = NELivePlayer.OnCurrentSyncContentListener { content ->
-        val sb = StringBuffer()
-        for (str in content) {
-            sb.append(str + "\r\n")
-        }
-        ToastUtils.showShort("onCurrentSyncContent,收到同步信息:$sb")
-        Log.v(TAG, "onCurrentSyncContent,收到同步信息:$sb")
-    }
 
     //处理与电话逻辑
     private val localPhoneObserver = Observer<Int> { phoneState ->
         if (phoneState == TelephonyManager.CALL_STATE_IDLE) {
-            player!!.start()
+            mVideoView.start()
         } else if (phoneState == TelephonyManager.CALL_STATE_RINGING) {
-            player!!.stop()
+            mVideoView.pause()
         } else {
-            Log.i(TAG, "localPhoneObserver onEvent " + phoneState!!)
+            Log.i("VodActivity", "localPhoneObserver onEvent " + phoneState!!)
         }
-    }
-
-
-    private fun setProgress(): Long {
-        if (player == null) {
-            return 0
-        }
-        val position = player!!.currentPosition.toInt()
-        val duration = player!!.duration.toInt()
-        if (mProgressBar != null) {
-            if (duration > 0) {
-                LogUtil.i(TAG, "setProgress,position:" + position + "duration:" + duration)
-                val pos = 100L * position / duration
-                mProgressBar.progress = pos.toInt()
-            }
-        }
-        if (mEndTime != null && duration > 0) {
-            mEndTime.text = stringForTime(duration.toLong())
-        } else {
-            mEndTime!!.text = "--:--:--"
-        }
-        if (mCurrentTime != null) {
-            mCurrentTime.text = stringForTime(position.toLong())
-        }
-        return position.toLong()
     }
 
 
     private fun parseIntent() {
         //接收MainActivity传过来的参数
-//        mMediaType = intent.getStringExtra("media_type")
-//        mDecodeType = intent.getStringExtra("decode_type")
-        mMediaType = "videoondemand"
-        mDecodeType = "hardware"
         mVideoPath = intent.getStringExtra("videoPath")
-        mUri = Uri.parse(mVideoPath)
-//        if (mMediaType != null && mMediaType == "localaudio") { //本地音频文件采用软件解码
-//            mDecodeType = "software"
-//        }
-//        if (mDecodeType != null && mDecodeType == "hardware") {
-//            mHardware = true
-//        } else {
-//            mHardware = false
-//        }
-
     }
-
-    protected fun findViews() {
-        if (mMediaType != null && mMediaType == "localaudio") {
-            mAudioRemind!!.visibility = View.VISIBLE
-        } else {
-            mAudioRemind!!.visibility = View.INVISIBLE
-        }
-
-        mPlayPauseButton!!.setOnControlStatusChangeListener { view, state ->
-            if (state) {
-                player!!.start()
-                mPaused = false
-            } else {
-                player!!.pause()
-                mPaused = true
-            }
-        }
-
-        mMuteButton.setOnClickListener(mMuteListener)
-        mProgressBar.setOnSeekBarChangeListener(mProgressSeekListener)
-        mEndTime!!.text = "--:--:--"
-        mCurrentTime!!.text = "--:--:--"
-        mHandler.sendEmptyMessage(SHOW_PROGRESS)
-        mSnapshotButton.setOnClickListener(mSnapShotListener)
-        mSetPlayerScaleButton.setOnClickListener(mSetPlayerScaleListener)
-
-    }
-
 
     private fun initPlayer() {
-        val options = VideoOptions()
-        options.hardwareDecode = mHardware
-        /**
-         * isPlayLongTimeBackground 控制退到后台或者锁屏时是否继续播放，开发者可根据实际情况灵活开发,我们的示例逻辑如下：
-         * 使用软件解码：
-         * isPlayLongTimeBackground 为 false 时，直播进入后台停止播放，进入前台重新拉流播放
-         * isPlayLongTimeBackground 为 true 时，直播进入后台不做处理，继续播放,
-         *
-         * 使用硬件解码：
-         * 直播进入后台停止播放，进入前台重新拉流播放
-         */
-        options.isPlayLongTimeBackground = !isPauseInBackgroud
-        options.bufferStrategy = VideoBufferStrategy.ANTI_JITTER
-        player = PlayerManager.buildVodPlayer(this, mVideoPath, options)
-        intentToStartBackgroundPlay()
-        start()
-        if (surfaceView == null) {
-            player!!.setupRenderView(textureView, VideoScaleMode.FIT)
-        } else {
-            player!!.setupRenderView(surfaceView, VideoScaleMode.FIT)
+        mDYLoading.start()
+        mVideoView.setBufferingIndicator(mDYLoading)
+        mVideoView.setVideoPath(mVideoPath)
+        mVideoView.setOnErrorListener { p0 ->
+            when (p0) {
+                PLOnErrorListener.MEDIA_ERROR_UNKNOWN -> {
+                    ToastUtils.showShort("未知错误")
+                }
+                PLOnErrorListener.ERROR_CODE_OPEN_FAILED -> {
+                    ToastUtils.showShort("播放器打开失败")
+                }
+                PLOnErrorListener.ERROR_CODE_IO_ERROR -> {
+                    ToastUtils.showShort("网络异常")
+                }
+                PLOnErrorListener.ERROR_CODE_SEEK_FAILED -> {
+                    ToastUtils.showShort("拖动失败")
+                }
+                PLOnErrorListener.ERROR_CODE_CACHE_FAILED -> {
+                    ToastUtils.showShort("预加载失败")
+                }
+                PLOnErrorListener.ERROR_CODE_HW_DECODE_FAILURE -> {
+                    ToastUtils.showShort("硬解失败")
+                }
+                PLOnErrorListener.ERROR_CODE_PLAYER_DESTROYED -> {
+                    ToastUtils.showShort("播放器已被销毁")
+                }
+                PLOnErrorListener.ERROR_CODE_PLAYER_VERSION_NOT_MATCH -> {
+                    ToastUtils.showShort("so 库版本不匹配，需要升级")
+                }
+                PLOnErrorListener.ERROR_CODE_PLAYER_CREATE_AUDIO_FAILED -> {
+                    ToastUtils.showShort("AudioTrack 初始化失败，可能无法播放音频")
+                }
+
+                else ->{
+                    ToastUtils.showShort("未知错误！")
+                }
+            }
+            true
         }
+        mVideoView.setOnCompletionListener {
+            mMediaActions.setImageResource(R.drawable.ic_video_play)
+            sDefaultTimeout = 0
+            showMediaController(sDefaultTimeout)
+        }
+    }
 
+    private fun setPlayer() {
+        mMediaActions.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                if (mVideoView.isPlaying) {
+                    mMediaActions.setImageResource(R.drawable.ic_video_play)
+                    mVideoView.pause()
+                    mHandler.removeMessages(UP_DATE_CODE)
+                } else {
+                    sDefaultTimeout = 3000
+                    mMediaActions.setImageResource(R.drawable.exo_icon_pause)
+                    mVideoView.start()
+                    mHandler.sendEmptyMessage(UP_DATE_CODE)
+                }
+            }
+        })
+    }
+
+    private fun setScrollSeek() {
+        //播放器的进度条监听
+        mMediaProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                mMediaTime.text = stringForTime(progress.toLong())
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                mHandler.removeMessages(UP_DATE_CODE)
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                val progress = seekBar.progress
+                mVideoView.seekTo(progress.toLong())
+                mHandler.sendEmptyMessage(UP_DATE_CODE)
+            }
+        })
     }
 
 
-    private fun start() {
-        player!!.registerPlayerObserver(playerObserver, true)
-        player!!.start()
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        //当为横屏时候
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            setConfigWh(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            isFull = true
+
+            //音量键的显示
+            mMediaSounds.visibility = View.VISIBLE
+            mMediaSoundsProgress.visibility = View.VISIBLE
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        } else {
+            //当为竖屏时候
+//            setConfigWh(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.dp2px(this, 240))
+            isFull = false
+
+            mMediaSounds.visibility = View.GONE
+            mMediaSoundsProgress.visibility = View.GONE
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+        }
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.i(TAG, "onStart")
+    private fun setFullScreen() {
+        //设置全屏播放
+        mMediaFullScreen.setOnClickListener {
+            if (isFull) {
+                //此时是全屏
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            } else {
+                //此时是半屏
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 
+            }
+        }
+    }
+
+
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        showMediaController(sDefaultTimeout)
+        return true
+    }
+
+    private fun showMediaController(timeout: Int) {
+        if (!mShowing) {
+            mediaControllerLayout.visibility = View.VISIBLE
+            mShowing = true
+        }
+        if (timeout != 0) {
+            mHandler.removeMessages(FADE_OUT)
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+                    timeout.toLong())
+        }
+    }
+
+
+    private fun hideMediaController() {
+        if (mShowing) {
+            mediaControllerLayout.visibility = View.GONE
+            mShowing = false
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        Log.i(TAG, "onResume")
-        if (player != null && !mPaused) {
-            player!!.onActivityResume(false)
-        }
-
+        mVideoView.start()
+        mHandler.sendEmptyMessage(UP_DATE_CODE)
+        showMediaController(sDefaultTimeout)
     }
 
     override fun onPause() {
         super.onPause()
-        Log.i(TAG, "onPause")
-
+        mVideoView.pause()
     }
 
     override fun onStop() {
         super.onStop()
-        Log.i(TAG, "onStop")
-        enterBackgroundPlay()
-        if (player != null) {
-            player!!.onActivityStop(false)
-        }
-
+        mVideoView.stopPlayback()
     }
 
 
     override fun onBackPressed() {
-        Log.i(TAG, "onBackPressed")
-        releasePlayer()
+        mVideoView.stopPlayback()
         finish()
         super.onBackPressed()
     }
@@ -415,106 +314,17 @@ class VodActivity : BaseActivity<NullPresenter>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i(TAG, "onDestroy")
-        releasePlayer()
-
-    }
-
-
-    private fun releasePlayer() {
-        if (player == null) {
-            return
-        }
-        LogUtil.i(TAG, "releasePlayer")
-        player!!.registerPlayerObserver(playerObserver, false)
+        mHandler.removeMessages(UP_DATE_CODE)
+        mHandler.removeMessages(FADE_OUT)
         PhoneCallStateObserver.getInstance().observeLocalPhoneObserver(localPhoneObserver, false)
-        player!!.setupRenderView(null, VideoScaleMode.NONE)
-        textureView!!.releaseSurface()
-        player!!.stop()
-        player = null
-        intentToStopBackgroundPlay()
-        mHandler.removeCallbacksAndMessages(null)
-
     }
 
-    fun getSnapshot() {
-        if (mediaInfo == null) {
-            Log.d(TAG, "mediaInfo is null,截图不成功")
-            ToastUtils.showShort("截图不成功")
-        } else if (mediaInfo!!.videoDecoderMode == "MediaCodec") {
-            Log.d(TAG, "hardware decoder unsupport snapshot")
-            ToastUtils.showShort("截图不支持硬件解码")
-        } else {
-            val bitmap = player!!.snapshot
-            val picName = "/sdcard/NESnapshot" + System.currentTimeMillis() + ".jpg"
-            val f = File(picName)
-            try {
-                f.createNewFile()
-            } catch (e1: IOException) {
-                e1.printStackTrace()
-            }
-
-            var fOut: FileOutputStream? = null
-            try {
-                fOut = FileOutputStream(f)
-                if (picName.substring(picName.lastIndexOf(".") + 1, picName.length) == "jpg") {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
-                } else if (picName.substring(picName.lastIndexOf(".") + 1, picName.length) == "png") {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut)
-                }
-                fOut.flush()
-                fOut.close()
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-            ToastUtils.showShort("截图成功")
-        }
+    private fun stringForTime(position: Long): String {
+        val totalSeconds = (position / 1000.0 + 0.5).toInt()
+        val seconds = totalSeconds % 60
+        val minutes = totalSeconds / 60 % 60
+        val hours = totalSeconds / 3600
+        return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    /**
-     * 处理service后台播放逻辑
-     */
-    private fun intentToStartBackgroundPlay() {
-        if (!mHardware && !isPauseInBackgroud) {
-            PlayerService.intentToStart(this)
-        }
-    }
-
-    private fun intentToStopBackgroundPlay() {
-        if (!mHardware && !isPauseInBackgroud) {
-            PlayerService.intentToStop(this)
-            player = null
-        }
-    }
-
-
-    private fun enterBackgroundPlay() {
-        if (!mHardware && !isPauseInBackgroud) {
-            PlayerService.setMediaPlayer(player)
-        }
-    }
-
-    private fun stopBackgroundPlay() {
-        if (!mHardware && !isPauseInBackgroud) {
-            PlayerService.setMediaPlayer(null)
-        }
-    }
-
-    companion object {
-
-        val TAG = VodActivity::class.java.simpleName
-
-        private val SHOW_PROGRESS = 0x01
-
-        private fun stringForTime(position: Long): String {
-            val totalSeconds = (position / 1000.0 + 0.5).toInt()
-            val seconds = totalSeconds % 60
-            val minutes = totalSeconds / 60 % 60
-            val hours = totalSeconds / 3600
-            return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
-        }
-    }
 }

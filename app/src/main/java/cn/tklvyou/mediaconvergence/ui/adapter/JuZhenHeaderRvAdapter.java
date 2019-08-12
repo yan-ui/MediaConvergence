@@ -12,20 +12,20 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import cn.tklvyou.mediaconvergence.R;
-import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel;
+import cn.tklvyou.mediaconvergence.model.NewsBean;
 
 /**
  * 首页 矩阵 头部适配器
  * Created by yiwei on 16/5/17.
  */
-public class JuZhenHeaderRvAdapter extends BaseQuickAdapter<HaveSecondModuleNewsModel.DataBean, BaseViewHolder> {
+public class JuZhenHeaderRvAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> {
 
-    public JuZhenHeaderRvAdapter(int layoutResId, @Nullable List<HaveSecondModuleNewsModel.DataBean> data) {
+    public JuZhenHeaderRvAdapter(int layoutResId, @Nullable List<NewsBean> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(@NonNull BaseViewHolder helper, HaveSecondModuleNewsModel.DataBean item) {
+    protected void convert(@NonNull BaseViewHolder helper, NewsBean item) {
 
         helper.setText(R.id.tvSuixiHeaderName,item.getNickname());
         Glide.with(mContext).load(item.getAvatar()).into((ImageView) helper.getView(R.id.ivSuixiHeaderImage));

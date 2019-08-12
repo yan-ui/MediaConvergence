@@ -23,33 +23,14 @@ import cn.tklvyou.mediaconvergence.ui.setting.AboutUsActivity
 import cn.tklvyou.mediaconvergence.ui.setting.SettingActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import cn.tklvyou.mediaconvergence.utils.JSON
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ResourceUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_mine.*
 
 class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHolder, MineRvAdapter>(), MineContract.View, View.OnClickListener {
-    override fun onClick(v: View?) {
-        if (v == null) {
-            return
-        }
-        when (v.id) {
-            R.id.ivAvatar -> {
-                skipPersonalData()
-            }
-            R.id.tvMobile -> {
-                skipPersonalData()
-            }
-            R.id.tvNickName -> {
-                skipPersonalData()
-            }
-            R.id.llMyPointDetail -> {
-                startActivity(Intent(context, MyPointDetailActivity::class.java))
-            }
-            else -> {
-            }
-        }
-    }
 
     override fun initPresenter(): MinePresenter {
         return MinePresenter()
@@ -58,6 +39,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
     override fun getFragmentLayoutID(): Int {
         return R.layout.fragment_mine
     }
+
 
     override fun initView() {
         mineTitleBar.setBackgroundResource(android.R.color.transparent)
@@ -86,15 +68,48 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
 
 
     override fun lazyData() {
+    }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && !isFirstResume) {
+            mPresenter.getUser()
+        }
+    }
+
+    override fun onUserVisible() {
+        super.onUserVisible()
+        mPresenter.getUser()
+    }
+
+
+    override fun onClick(v: View?) {
+        if (v == null) {
+            return
+        }
+        when (v.id) {
+            R.id.ivAvatar -> {
+                skipPersonalData()
+            }
+            R.id.tvMobile -> {
+                skipPersonalData()
+            }
+            R.id.tvNickName -> {
+                skipPersonalData()
+            }
+            R.id.llMyPointDetail -> {
+                startActivity(Intent(context, MyPointDetailActivity::class.java))
+            }
+            else -> {
+            }
+        }
     }
 
     override fun setUser(user: User.UserinfoBean) {
+        LogUtils.e(Gson().toJson(user))
+
         val avatar = user.avatar
         if (!avatar.isNullOrEmpty() && !avatar.contains("base64")) {
-            /*   Glide.with(this).load(avatar)
-                       .diskCacheStrategy(DiskCacheStrategy.ALL)
-                       .into(ivAvatar)*/
             GlideManager.loadCircleImg(avatar, ivAvatar, R.mipmap.default_avatar)
         }
 
@@ -114,7 +129,6 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
 
             override fun refreshAdapter() {
                 adapter.setNewData(list)
-                initItemClick()
             }
         })
     }
@@ -127,41 +141,42 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
     }
 
 
-    private fun initItemClick() {
-        adapter.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-            when (position) {
-                //我的收藏
-                0 -> {
-                    startActivity(Intent(context, MyCollectActivity::class.java))
-                }
-                //最近浏览
-                1 -> {
-                    startActivity(Intent(context, RecentBrowseActivity::class.java))
-                }
-                //我的帖子
-                2 -> {
-                    startActivity(Intent(context, MyArticleActivity::class.java))
-                }
-                //问政记录
-                3 -> {
-                    startActivity(Intent(context, MyWenZhenActivity::class.java))
-                }
-                //我的消息
-                4 -> {
-                    startActivity(Intent(context, MyMessageActivity::class.java))
-                }
-                //兑换记录
-                5 -> {
-                    startActivity(Intent(context, MyExchangeRecordActivity::class.java))
-                }
+    override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onItemClick(adapter, view, position)
+        when (position) {
+            //我的收藏
+            0 -> {
+                startActivity(Intent(context, MyCollectActivity::class.java))
+            }
+            //最近浏览
+            1 -> {
+                startActivity(Intent(context, RecentBrowseActivity::class.java))
+            }
+            //我的帖子
+            2 -> {
+                startActivity(Intent(context, MyArticleActivity::class.java))
+            }
+            //问政记录
+            3 -> {
+                startActivity(Intent(context, MyWenZhenActivity::class.java))
+            }
+            //我的消息
+            4 -> {
+                startActivity(Intent(context, MyMessageActivity::class.java))
+            }
+            //兑换记录
+            5 -> {
+                startActivity(Intent(context, MyExchangeRecordActivity::class.java))
+            }
 
-                //关于我们
-                6 -> {
-                    startActivity(Intent(context, AboutUsActivity::class.java))
-                }
-                else -> {
-                }
+            //关于我们
+            6 -> {
+                startActivity(Intent(context, AboutUsActivity::class.java))
+            }
+            else -> {
             }
         }
+
     }
+
 }

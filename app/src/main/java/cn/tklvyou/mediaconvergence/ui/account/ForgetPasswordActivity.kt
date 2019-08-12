@@ -2,11 +2,14 @@ package cn.tklvyou.mediaconvergence.ui.account
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
+import cn.tklvyou.mediaconvergence.widget.dailog.CommonDialog
 import cn.tklvyou.mediaconvergence.widget.TimeCount
 import com.blankj.utilcode.util.ToastUtils
 import kotlinx.android.synthetic.main.activity_forget_password.*
@@ -22,12 +25,16 @@ class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountCo
         return AccountForgetPresenter()
     }
 
-    override fun initView() {
+    private var dialog: CommonDialog? = null
+
+    override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
+        initExitDialog()
 
         titleBar.setNavigationListener {
-            finish()
+            dialog!!.show()
         }
+
 
         etMobile.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -85,7 +92,7 @@ class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountCo
         }
         when (p0.id) {
             R.id.btnBack -> {
-                finish()
+               dialog!!.show()
             }
 
             R.id.btnGetCaptcha -> {
@@ -140,5 +147,21 @@ class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountCo
 
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if(keyCode ==KeyEvent.KEYCODE_BACK){
+            dialog!!.show()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+    private fun initExitDialog(){
+        dialog = CommonDialog(this)
+        dialog!!.setTitle("温馨提示")
+        dialog!!.setMessage("当前正在修改密码，是否取消？")
+        dialog!!.setYesOnclickListener("确认"){
+            dialog!!.dismiss()
+            finish()
+        }
+    }
 
 }

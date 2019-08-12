@@ -80,7 +80,8 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         mContentView = View.inflate(this, getActivityLayoutID(), (ViewGroup) findViewById(R.id.base_content));
         initBaseView();
         attachView();
-        initView();
+
+        initView(savedInstanceState);
     }
 
 
@@ -164,7 +165,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     }
 
     public void setNavigationImage() {
-        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, 0, 0);
+        baseTitleBar.setLeftContent(CommonTitleBar.TYPE_LEFT_IMAGEBUTTON, "", 0, R.mipmap.icon_titlebar_back, 0);
     }
 
     public void setNavigationImage(int leftImageResource) {
@@ -278,8 +279,9 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
 
     /**
      * 初始化View
+     * @param savedInstanceState
      */
-    protected abstract void initView();
+    protected abstract void initView(@Nullable Bundle savedInstanceState);
 
     /**
      * 在子View中初始化Presenter

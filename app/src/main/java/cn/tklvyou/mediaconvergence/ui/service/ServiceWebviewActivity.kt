@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.service
 
+import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
@@ -15,7 +16,7 @@ class ServiceWebviewActivity : BaseWebViewActivity<NullPresenter>() {
         return R.layout.activity_service_webview
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("服务")
         setNavigationImage()
         setNavigationOnClickListener { finish() }

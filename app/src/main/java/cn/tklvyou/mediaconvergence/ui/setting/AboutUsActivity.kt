@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.setting
 
+import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.MyApplication
 import cn.tklvyou.mediaconvergence.base.NullPresenter
@@ -31,7 +32,7 @@ class AboutUsActivity : BaseTitleActivity<NullPresenter>() {
     }
 
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         tvAppName.text = CommonUtil.getAppName(MyApplication.getAppContext())
         val name = "V " + CommonUtil.getVersionName(MyApplication.getAppContext())
         tvAppVersion.text = name

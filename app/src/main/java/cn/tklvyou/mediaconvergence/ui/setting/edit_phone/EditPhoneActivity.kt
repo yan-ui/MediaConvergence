@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.setting.edit_phone
 
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
@@ -40,7 +41,8 @@ class EditPhoneActivity : BaseTitleActivity<EditPhonePresenter>(), EditPhoneCont
 //        titleBar!!.setMainTitle("更换绑定")
     }
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
+
         tvSendVCode.setOnClickListener(this)
         tvConfirmBind.setOnClickListener(this)
     }

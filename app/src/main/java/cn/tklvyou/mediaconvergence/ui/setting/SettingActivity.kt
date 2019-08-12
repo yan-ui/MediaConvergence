@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.setting
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
@@ -8,7 +9,6 @@ import cn.tklvyou.mediaconvergence.common.SpConstant.PREF_KEY_TOKEN
 import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import cn.tklvyou.mediaconvergence.ui.account.LoginActivity
 import cn.tklvyou.mediaconvergence.ui.setting.edit_pass.EditPasswordActivity
-import cn.tklvyou.mediaconvergence.utils.StackUtil
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ToastUtils
 import kotlinx.android.synthetic.main.activity_setting.*
@@ -31,7 +31,7 @@ class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
     }
 
 
-    override fun initView() {
+    override fun initView(savedInstanceState: Bundle?) {
         setTitle("系统设置")
         setNavigationImage()
         setNavigationOnClickListener { finish() }
@@ -63,7 +63,6 @@ class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
         SPUtils.getInstance().put(PREF_KEY_TOKEN, "")
         SPUtils.getInstance().put("login", false)
         startActivity(Intent(this, LoginActivity::class.java))
-        StackUtil.getInstance().popAll()
         finish()
     }
 

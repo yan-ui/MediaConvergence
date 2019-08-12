@@ -217,9 +217,12 @@ public class GlideManager {
         loadRoundImg(obj, iv, mPlaceholderRoundRadius, isOfficial);
     }
 
-
     public static void loadRoundImg(Object obj, ImageView iv) {
         loadRoundImg(obj, iv, true);
+    }
+
+    public static void loadTopRoundImg(Object obj, ImageView iv) {
+        loadRoundImg(obj, iv, mPlaceholderRoundRadius, true);
     }
 
     private static RequestOptions getRequestOptions() {

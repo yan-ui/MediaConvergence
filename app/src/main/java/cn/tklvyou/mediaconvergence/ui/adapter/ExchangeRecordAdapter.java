@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.adapter;
 
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -30,13 +31,35 @@ public class ExchangeRecordAdapter extends BaseQuickAdapter<ExchangeModel, BaseV
         if (item == null) {
             return;
         }
-        ImageView roundedImageView = helper.getView(R.id.rvGoodsImage);
-        GlideManager.loadRoundImg(item.getImage(), roundedImageView, 4);
-        helper.setText(R.id.tvGoodsDesc, item.getName());
-        helper.setText(R.id.tvDeduction, "消耗：" + item.getScore() + "分");
-        boolean buttonEnable = STATUS_HIDDEN.equalsIgnoreCase(item.getStatus());
-        helper.setGone(R.id.tvWaitReceive, buttonEnable);
-        helper.addOnClickListener(R.id.tvWaitReceive);
+
+        if(item.getRegister_status() == 1){
+            helper.getView(R.id.registerLayout).setVisibility(View.VISIBLE);
+            helper.getView(R.id.normalLayout).setVisibility(View.GONE);
+
+            boolean ishidden = STATUS_HIDDEN.equalsIgnoreCase(item.getStatus());
+            if(!ishidden){
+                helper.setText(R.id.tvTip,"我已现场领取");
+                helper.getView(R.id.registerLayout).setOnClickListener(null);
+            }else {
+                helper.setText(R.id.tvTip,"请在现场领取礼包");
+                helper.addOnClickListener(R.id.registerLayout);
+            }
+
+        }else {
+            helper.getView(R.id.registerLayout).setVisibility(View.GONE);
+            helper.getView(R.id.normalLayout).setVisibility(View.VISIBLE);
+
+            ImageView roundedImageView = helper.getView(R.id.rvGoodsImage);
+            GlideManager.loadRoundImg(item.getImage(), roundedImageView, 4);
+            helper.setText(R.id.tvGoodsDesc, item.getName());
+            helper.setText(R.id.tvDeduction, "消耗：" + item.getScore() + "分");
+            boolean buttonEnable = STATUS_HIDDEN.equalsIgnoreCase(item.getStatus());
+            helper.setGone(R.id.tvWaitReceive, buttonEnable);
+            helper.addOnClickListener(R.id.tvWaitReceive);
+
+        }
+
+
     }
 
 }

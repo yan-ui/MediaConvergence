@@ -46,6 +46,7 @@ public class NewsBean implements Serializable {
     private String content;
     private String nickname;
     private String avatar;
+    private String type;
     private String status;
     private int visit_num;
     private int comment_num;
@@ -53,6 +54,9 @@ public class NewsBean implements Serializable {
     private String createtime;
     private String updatetime;
     private int vote_id;
+    private int vote_status;
+    private VoteModel vote;
+    private List<VoteOptionModel> vote_option;
     private int weigh;
     private String time;
     private List<CommentModel> comment;
@@ -152,6 +156,14 @@ public class NewsBean implements Serializable {
         this.nickname = nickname;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getAvatar() {
         return avatar;
     }
@@ -214,6 +226,30 @@ public class NewsBean implements Serializable {
 
     public void setVote_id(int vote_id) {
         this.vote_id = vote_id;
+    }
+
+    public int getVote_status() {
+        return vote_status;
+    }
+
+    public void setVote_status(int vote_status) {
+        this.vote_status = vote_status;
+    }
+
+    public VoteModel getVote() {
+        return vote;
+    }
+
+    public void setVote(VoteModel vote) {
+        this.vote = vote;
+    }
+
+    public List<VoteOptionModel> getVote_option() {
+        return vote_option;
+    }
+
+    public void setVote_option(List<VoteOptionModel> vote_option) {
+        this.vote_option = vote_option;
     }
 
     public int getWeigh() {

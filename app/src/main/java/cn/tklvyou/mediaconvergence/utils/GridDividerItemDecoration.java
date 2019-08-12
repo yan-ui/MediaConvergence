@@ -84,7 +84,7 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
 
 
         bottom = mDividerWidth;
-        LogUtils.e("zzz", "itemPosition:" + itemPosition + " |left:" + left + " right:" + right + " bottom:" + bottom + " eachWidth:" + eachWidth + " d1:" + dl);
+        Log.d("zzz", "itemPosition:" + itemPosition + " |left:" + left + " right:" + right + " bottom:" + bottom + " eachWidth:" + eachWidth + " d1:" + dl);
         if (isLastRow) {
             bottom = 0;
         }
