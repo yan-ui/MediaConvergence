@@ -57,38 +57,39 @@ class MainActivity : BaseBottomTabActivity<NullPresenter>() {
         isLogin = SPUtils.getInstance().getBoolean("login")
         if (!isLogin) {
             startActivity(Intent(this, LoginActivity::class.java))
+            return
         } else {
             if (MyApplication.showSplash) {
                 startActivity(Intent(this, SplashActivity::class.java))
             }
-        }
 
-        homeFragment = HomeFragment()
-        cameraFragment = CameraFragment()
-        serviceFragment = ServiceFragment()
-        mineFragment = MineFragment()
+            homeFragment = HomeFragment()
+            cameraFragment = CameraFragment()
+            serviceFragment = ServiceFragment()
+            mineFragment = MineFragment()
 
-        mFragments.add(homeFragment!!)
-        mFragments.add(cameraFragment!!)
-        mFragments.add(serviceFragment!!)
-        mFragments.add(mineFragment!!)
+            mFragments.add(homeFragment!!)
+            mFragments.add(cameraFragment!!)
+            mFragments.add(serviceFragment!!)
+            mFragments.add(mineFragment!!)
 
 
-        bottomNavigationView.enableAnimation(false)
-        bottomNavigationView.enableShiftingMode(false)
-        bottomNavigationView.enableItemShiftingMode(false)
+            bottomNavigationView.enableAnimation(false)
+            bottomNavigationView.enableShiftingMode(false)
+            bottomNavigationView.enableItemShiftingMode(false)
 
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.navigation_home -> selectFragment(0)
-                R.id.navigation_camera -> selectFragment(1)
-                R.id.navigation_service -> selectFragment(2)
-                R.id.navigation_mine -> selectFragment(3)
+            bottomNavigationView.setOnNavigationItemSelectedListener {
+                when (it.itemId) {
+                    R.id.navigation_home -> selectFragment(0)
+                    R.id.navigation_camera -> selectFragment(1)
+                    R.id.navigation_service -> selectFragment(2)
+                    R.id.navigation_mine -> selectFragment(3)
+                }
+                return@setOnNavigationItemSelectedListener true
             }
-            return@setOnNavigationItemSelectedListener true
-        }
 
-        selectFragment(0)
+            selectFragment(0)
+        }
     }
 
 

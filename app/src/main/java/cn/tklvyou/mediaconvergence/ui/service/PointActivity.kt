@@ -52,8 +52,16 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
             startActivity(Intent(this, PointRuleActivity::class.java))
         }
 
-        mPresenter.getUser()
+        tvPointScore.setOnClickListener {
+            startActivity(Intent(this,MyPointDetailActivity::class.java))
+        }
+
         mPresenter.getGoodsPageList(1)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mPresenter.getUser()
     }
 
     override fun setUser(bean: User.UserinfoBean) {
@@ -63,9 +71,6 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
 
         tvNickName.text = bean.nickname
         tvPointScore.text = "积分：${bean.score}"
-        tvPointScore.setOnClickListener {
-            startActivity(Intent(this,MyPointDetailActivity::class.java))
-        }
     }
 
     override fun setGoods(page: Int, pageModel: BasePageModel<PointModel>?) {

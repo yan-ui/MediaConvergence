@@ -14,7 +14,7 @@ public interface EditPhoneContract {
     interface EditView extends BaseContract.BaseView {
         void getCaptchaSuccess();
 
-        void editSuccess();
+        void editSuccess(String mobile);
 
         void editFailed();
     }

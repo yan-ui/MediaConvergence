@@ -38,6 +38,7 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
                         AccountHelper.getInstance().setUserInfo(result.getData().getUserinfo());
                         SPUtils.getInstance().put("token", result.getData().getUserinfo().getToken());
                         SPUtils.getInstance().put("login", true);
+                        SPUtils.getInstance().put("groupId", result.getData().getUserinfo().getGroup_id());
                     } else {
                         mView.loginError();
                     }
@@ -50,7 +51,6 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
         RetrofitHelper.getInstance().getServer()
                 .thirdLogin(platform, code)
                 .compose(RxSchedulers.applySchedulers())
-                .compose(mView.bindToLife())
                 .subscribe(result -> {
                     LogUtils.e(new Gson().toJson(result));
                             mView.hideLoading();
@@ -60,6 +60,7 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
                                 AccountHelper.getInstance().setUserInfo(result.getData().getUserinfo());
                                 SPUtils.getInstance().put("token", result.getData().getUserinfo().getToken());
                                 SPUtils.getInstance().put("login", true);
+                                SPUtils.getInstance().put("groupId", result.getData().getUserinfo().getGroup_id());
                             } else if (result.getCode() == 5) {
                                 mView.bindMobile(result.getData().getThird_id());
                             } else {

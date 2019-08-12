@@ -50,7 +50,6 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
                     val code = sendResp.code
                     InterfaceUtils.getInstance().onClick(code)
                 } else if (resp is SendMessageToWX.Resp) {
-                    ToastUtils.showShort("分享成功")
                     InterfaceUtils.getInstance().onClick("")
                 }
                 finish()
@@ -65,7 +64,11 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
                 finish()
             }
 
-            BaseResp.ErrCode.ERR_AUTH_DENIED -> LogUtils.e("ERR_AUTH_DENIED")
+            BaseResp.ErrCode.ERR_AUTH_DENIED ->{
+                LogUtils.e("ERR_AUTH_DENIED")
+                finish()
+            }
+
             else -> {
                 ToastUtils.showShort("微信登录错误")
                 LogUtils.d("微信登录错误" + " " + resp.errCode + resp.errStr)

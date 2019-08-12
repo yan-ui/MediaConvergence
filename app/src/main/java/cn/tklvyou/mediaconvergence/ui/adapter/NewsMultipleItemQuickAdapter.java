@@ -409,7 +409,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                 break;
             case NewsMultipleItem.WECHAT_MOMENTS:
                 bean = (NewsBean) item.getDataBean();
-                helper.setVisible(R.id.deleteBtn,false);
+                helper.setVisible(R.id.deleteBtn, false);
                 helper.setText(R.id.nameTv, bean.getNickname());
                 helper.setText(R.id.timeTv, bean.getBegintime());
 
@@ -569,12 +569,12 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
             case NewsMultipleItem.DANG_JIAN:
                 bean = (NewsBean) item.getDataBean();
 
-                if(helper.getLayoutPosition() == 0){
+                if (helper.getLayoutPosition() == 0) {
                     TagTextView tagTextView = helper.getView(R.id.tvTitle);
                     List<String> tags = new ArrayList<>();
                     tags.add("置顶");
-                    tagTextView.setContentAndTag(bean.getName(),tags);
-                }else {
+                    tagTextView.setContentAndTag(bean.getName(), tags);
+                } else {
                     helper.setText(R.id.tvTitle, bean.getName());
                 }
 
@@ -807,8 +807,11 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                     R.id.tvTime);
             startTime.setText(curTimeString);
         }
-        NewsBean mediaEntity = (NewsBean) mData.get(position).getDataBean();
-        mediaEntity.setTime(curTimeString);
+
+        if (mData != null && mData.get(position) != null) {
+            NewsBean mediaEntity = (NewsBean) mData.get(position).getDataBean();
+            mediaEntity.setTime(curTimeString);
+        }
     }
 
     @Override

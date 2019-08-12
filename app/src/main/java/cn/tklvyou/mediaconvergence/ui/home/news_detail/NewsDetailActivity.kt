@@ -11,6 +11,7 @@ import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -113,7 +114,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
             }
 
-            "电视" ->{
+            "电视" -> {
                 setPositiveImage(R.mipmap.icon_collect_normal)
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
@@ -123,12 +124,12 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             }
 
 
-            "视讯"  -> {
+            "视讯" -> {
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
 
-                (ivVideo.layoutParams as LinearLayout.LayoutParams).setMargins(0, 0, 0, 0)
+                (ivVideo.layoutParams as FrameLayout.LayoutParams).setMargins(0, 0, 0, 0)
             }
 
 
@@ -287,7 +288,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
                 if (item.images != null && item.images.size > 0) {
                     //上传的是图片
-                    ivVideo.visibility = View.GONE
+                    llVideo.visibility = View.GONE
 
                     multiImagView.visibility = View.VISIBLE
                     multiImagView.setList(item.images)
@@ -302,7 +303,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
                     multiImagView.visibility = View.GONE
 
-                    ivVideo.visibility = View.VISIBLE
+                    llVideo.visibility = View.VISIBLE
                     ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"))
                     ivVideo.setOnClickListener {
                         val intent = Intent(this, VodActivity::class.java)
@@ -314,17 +315,13 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                     Glide.with(this).load(item.image)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .placeholder(R.color.bg_no_photo)
-                            .into(object : SimpleTarget<Drawable>() {
-                                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                                    ivVideo.background = resource
-                                }
-                            })
+                            .into(ivVideo)
 
                 }
 
             }
 
-            "电视" ->{
+            "电视" -> {
                 setPositiveOnClickListener {
                     if (hasCollect) {
                         mPresenter.setCollectStatus(id, false)
@@ -773,7 +770,13 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     }
 
     private fun shareToQQ() {
-        val mTencent = Tencent.createInstance(Contacts.QQ_APPID, this)
+        val mTencent = Tencent.createInstance(Contacts.QQ_APPID, application)
+
+        if (!mTencent!!.isQQInstalled(this)) {
+            ToastUtils.showShort("您未安装QQ客户端")
+            return
+        }
+
         val params = Bundle()
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT)
         params.putString(QQShare.SHARE_TO_QQ_TITLE, shareTitle)
@@ -800,6 +803,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
     private fun shareToWX() {
         if (!isWeiXinAppInstall()) {
+            ToastUtils.showShort("您未安装微信")
             return
         }
         if (!isWXAppSupportAPI()) {
@@ -823,6 +827,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         wxapi!!.sendReq(req)
 
         InterfaceUtils.getInstance().add {
+            ToastUtils.showShort("分享成功")
             mPresenter.getScoreByShare(id)
             InterfaceUtils.getInstance().remove(this)
         }
@@ -831,6 +836,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
     private fun shareToWXFriend() {
         if (!isWeiXinAppInstall()) {
+            ToastUtils.showShort("您未安装微信")
             return
         }
         if (!isWXAppSupportAPI()) {
@@ -854,6 +860,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         wxapi!!.sendReq(req)
 
         InterfaceUtils.getInstance().add {
+            ToastUtils.showShort("分享成功")
             mPresenter.getScoreByShare(id)
             InterfaceUtils.getInstance().remove(this)
         }
@@ -861,22 +868,37 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
     private var shareHandler: WbShareHandler? = null
     private fun shareToWB() {
-        shareHandler = WbShareHandler(this)
-        shareHandler!!.registerApp()
+        val pinfo = packageManager.getInstalledPackages(0)// 获取所有已安装程序的包信息
+        var isInstall = false
+        if (pinfo != null) {
+            pinfo.forEach {
 
-        val weiboMessage = WeiboMultiMessage()
+                val pn = it.packageName
+                if (pn == "com.sina.weibo") {
+                    isInstall = true
+                }
+            }
+        }
+        if (!isInstall) {
+            ToastUtils.showShort("您未安装微博")
+        } else {
+            shareHandler = WbShareHandler(this)
+            shareHandler!!.registerApp()
 
-        val mediaObject = WebpageObject()
-        mediaObject.identify = Utility.generateGUID()
-        mediaObject.title = shareTitle
-        mediaObject.description = "濉溪发布"
-        val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.default_avatar)
-        mediaObject.setThumbImage(bitmap)
-        mediaObject.actionUrl = Contacts.SHARE_BASE_URL + id
-        mediaObject.defaultText = "Webpage"
-        weiboMessage.mediaObject = mediaObject
+            val weiboMessage = WeiboMultiMessage()
 
-        shareHandler!!.shareMessage(weiboMessage, false)
+            val mediaObject = WebpageObject()
+            mediaObject.identify = Utility.generateGUID()
+            mediaObject.title = shareTitle
+            mediaObject.description = "濉溪发布"
+            val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.default_avatar)
+            mediaObject.setThumbImage(bitmap)
+            mediaObject.actionUrl = Contacts.SHARE_BASE_URL + id
+            mediaObject.defaultText = "Webpage"
+            weiboMessage.mediaObject = mediaObject
+
+            shareHandler!!.shareMessage(weiboMessage, false)
+        }
     }
 
 
@@ -894,7 +916,6 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             return false
         }
     }
-
 
     /**
      * 是否支持分享到朋友圈

@@ -91,17 +91,17 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 
         cameraRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.VERTICAL, 1, resources.getColor(R.color.common_bg)))
 
-        cameraRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Glide.with(context!!).resumeRequests()
-                } else {
-                    Glide.with(context!!).pauseRequests()
-                }
-            }
-        })
+//        cameraRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                super.onScrollStateChanged(recyclerView, newState)
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    Glide.with(context!!).resumeRequests()
+//                } else {
+//                    Glide.with(context!!).pauseRequests()
+//                }
+//            }
+//        })
 
         mPresenter.getNewList("随手拍", null,1)
     }
@@ -114,12 +114,18 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         super.onHiddenChanged(hidden)
         if(!hidden && !isFirstResume){
             mPresenter.getNewList("随手拍", null,1)
+            if(adapter != null){
+                adapter.loadMoreComplete()
+            }
         }
     }
 
     override fun onUserVisible() {
         super.onUserVisible()
         mPresenter.getNewList("随手拍", null,1)
+        if(adapter != null){
+            adapter.loadMoreComplete()
+        }
     }
 
 

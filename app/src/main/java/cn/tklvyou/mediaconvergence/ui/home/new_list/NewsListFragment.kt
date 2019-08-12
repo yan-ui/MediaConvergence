@@ -209,10 +209,12 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         banner.setIndicatorGravity(BannerConfig.RIGHT)
         banner.setOnBannerListener(object : OnBannerListener {
             override fun OnBannerClick(position: Int) {
-                val intent = Intent(context, BannerDetailsActivity::class.java)
-                intent.putExtra("title", bannerModelList[position].name)
-                intent.putExtra("content", bannerModelList[position].content)
-                startActivity(intent)
+                if (bannerModelList[position].content.trim().isNotEmpty()) {
+                    val intent = Intent(context, BannerDetailsActivity::class.java)
+                    intent.putExtra("title", bannerModelList[position].name)
+                    intent.putExtra("content", bannerModelList[position].content)
+                    startActivity(intent)
+                }
             }
 
         })
@@ -356,14 +358,14 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
 
         btnClear.setOnClickListener {
             etSearch.setText("")
-            mPresenter.getNewList("新闻",null,1)
+            mPresenter.getNewList("新闻", null, 1)
         }
 
-        etSearch.addTextChangedListener(object:TextWatcher{
+        etSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
-                if(s != null && s.length > 1){
-                    mPresenter.searchNewList("新闻",s.toString(),1)
+                if (s != null && s.length > 1) {
+                    mPresenter.searchNewList("新闻", s.toString(), 1)
                 }
 
             }
@@ -653,6 +655,7 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
                 val id = bean.id
                 val type = "悦听"
                 NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+                audioController?.onPause()
             }
 
             NewsMultipleItem.DANG_JIAN -> {

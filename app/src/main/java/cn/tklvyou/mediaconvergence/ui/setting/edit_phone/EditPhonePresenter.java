@@ -44,7 +44,7 @@ public class EditPhonePresenter extends BasePresenter<EditPhoneContract.EditView
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if (result.getCode() == CODE_REQUEST_SUCCESS) {
-                        mView.editSuccess();
+                        mView.editSuccess(mobile);
                     } else {
                         ToastUtils.showShort(result.getMsg());
                         mView.editFailed();

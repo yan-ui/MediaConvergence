@@ -130,7 +130,6 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
         RetrofitHelper.getInstance().getServer()
                 .getScoreByShare(id)
                 .compose(RxSchedulers.applySchedulers())
-                .compose(mView.bindToLife())
                 .subscribe(result -> {
                     if(!StringUtils.isEmpty(result.getMsg())){
                         ToastUtils.showShort(result.getMsg());

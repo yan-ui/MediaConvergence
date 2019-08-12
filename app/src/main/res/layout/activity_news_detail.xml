@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:singleLine="true"
-                    android:text="微信用户"
+                    android:text="-"
                     android:textColor="@color/default_black_text_color"
                     android:textSize="@dimen/sp_16" />
 
@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="8小时前"
+                    android:text="-"
                     android:textColor="@color/default_gray_text_color"
                     android:textSize="@dimen/sp_13" />
 
@@ -195,17 +195,30 @@
                 </cn.tklvyou.mediaconvergence.widget.MultiImageView>
 
                 <!-- 视频-->
-                <ImageView
-                    android:id="@+id/ivVideo"
+                <FrameLayout
+                    android:id="@+id/llVideo"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_150"
-                    android:layout_marginLeft="@dimen/dp_13"
-                    android:layout_marginTop="@dimen/dp_10"
-                    android:layout_marginRight="@dimen/dp_13"
-                    android:background="@color/default_gray_text_color"
-                    android:scaleType="centerInside"
-                    android:src="@mipmap/ic_start_play"
-                    android:visibility="visible" />
+                    android:layout_height="@dimen/dp_150">
+
+                    <ImageView
+                        android:id="@+id/ivVideo"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/dp_13"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:layout_marginRight="@dimen/dp_13"
+                        android:background="@color/default_gray_text_color"
+                        android:scaleType="centerCrop"
+                        android:visibility="visible" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/ic_start_play" />
+
+                </FrameLayout>
+
 
 
                 <!--投票-->

@@ -104,7 +104,7 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
                 doEdit()
             }
             R.id.llChangePhone -> {
-                startActivity(Intent(mContext, EditPhoneActivity::class.java))
+                startActivityForResult(Intent(mContext, EditPhoneActivity::class.java),0)
             }
 
             else -> {
@@ -167,6 +167,11 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
                     selectList = PictureSelector.obtainMultipleResult(data)
                     handlePictureSelectCallback()
                 }
+
+                0 ->{
+                    tvPhoneNumber.text = data!!.getStringExtra("mobile")
+                }
+
                 else -> {
                 }
             }

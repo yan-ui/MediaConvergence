@@ -53,6 +53,7 @@ public class BindPhonePresenter extends BasePresenter<BindPhoneContract.View> im
                         AccountHelper.getInstance().setUserInfo(result.getData().getUserinfo());
                         SPUtils.getInstance().put("token", result.getData().getUserinfo().getToken());
                         SPUtils.getInstance().put("login", true);
+                        SPUtils.getInstance().put("groupId", result.getData().getUserinfo().getGroup_id());
                     }
                 }, throwable -> {
 

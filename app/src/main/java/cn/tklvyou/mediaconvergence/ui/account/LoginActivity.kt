@@ -3,6 +3,7 @@ package cn.tklvyou.mediaconvergence.ui.account
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -10,6 +11,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.MyApplication
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
@@ -86,24 +88,19 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
                     }
                 }
 
+        etPassword.setOnEditorActionListener { v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_DONE){
+                login()
+            }
+            return@setOnEditorActionListener true
+        }
+
     }
 
     override fun onClick(p0: View) {
         when (p0.id) {
             R.id.btnLogin -> {
-                val account = etAccount.text.toString().trim()
-                val password = etPassword.text.toString().trim()
-                if (ivRight.visibility != View.VISIBLE) {
-                    ToastUtils.showShort("请输入正确的手机号")
-                    return
-                }
-
-                if (password.isEmpty()) {
-                    ToastUtils.showShort("请输入密码")
-                    return
-                }
-
-                mPresenter.login(account, password)
+                login()
             }
 
             R.id.btnForget -> {
@@ -131,27 +128,45 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
 
     }
 
+    private fun login() {
+        hideSoftInput(etPassword.windowToken)
+
+        val account = etAccount.text.toString().trim()
+        val password = etPassword.text.toString().trim()
+        if (ivRight.visibility != View.VISIBLE) {
+            ToastUtils.showShort("请输入正确的手机号")
+            return
+        }
+
+        if (password.isEmpty()) {
+            ToastUtils.showShort("请输入密码")
+            return
+        }
+
+        mPresenter.login(account, password)
+    }
+
     private var mTencent: Tencent? = null
-    private var iUiListener:IUiListener? = null
+    private var iUiListener: IUiListener? = null
     private fun startQQLogin() {
         mTencent = Tencent.createInstance(Contacts.QQ_APPID, application)
 
-        if(!mTencent!!.isQQInstalled(this)){
+        if (!mTencent!!.isQQInstalled(this)) {
             ToastUtils.showShort("您未安装QQ客户端")
             return
         }
 
-        iUiListener = object :IUiListener{
+        iUiListener = object : IUiListener {
             override fun onComplete(p0: Any?) {
                 LogUtils.e(p0)
                 val obj = p0 as JSONObject
                 val openId = obj.getString("openid")
                 val assess_token = obj.getString("access_token")
 
-                val map = HashMap<String,String>()
-                map.put("openid",openId)
-                map.put("access_token",assess_token)
-                mPresenter.thirdLogin("qq",Gson().toJson(map))
+                val map = HashMap<String, String>()
+                map.put("openid", openId)
+                map.put("access_token", assess_token)
+                mPresenter.thirdLogin("qq", Gson().toJson(map))
             }
 
             override fun onCancel() {
@@ -186,34 +201,44 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
 
     private var mSsoHandler: SsoHandler? = null
     private fun startWbLogin() {
-
-        val pinfo = packageManager.getInstalledPackages(0)
-        if(pinfo != null){
-
+        val pinfo = packageManager.getInstalledPackages(0)// 获取所有已安装程序的包信息
+        var isInstall = false
+        if (pinfo != null) {
+            pinfo.forEach {
+                val pn = it.packageName
+                if (pn == "com.sina.weibo") {
+                    isInstall = true
+                }
+            }
         }
-        mSsoHandler = SsoHandler(this)
-        mSsoHandler!!.authorize(object : WbAuthListener {
-            override fun onSuccess(p0: Oauth2AccessToken?) {
-                val map = HashMap<String,String>()
-                map.put("token",p0!!.token)
-                map.put("uid",p0.uid)
-                mPresenter.thirdLogin("weibo",Gson().toJson(map))
-            }
 
-            override fun onFailure(p0: WbConnectErrorMessage?) {
-                ToastUtils.showShort(p0?.errorMessage)
-            }
+        if (!isInstall) {
+            ToastUtils.showShort("您未安装微博")
+        } else {
+            mSsoHandler = SsoHandler(this)
+            mSsoHandler!!.authorize(object : WbAuthListener {
+                override fun onSuccess(p0: Oauth2AccessToken?) {
+                    val map = HashMap<String, String>()
+                    map.put("token", p0!!.token)
+                    map.put("uid", p0.uid)
+                    mPresenter.thirdLogin("weibo", Gson().toJson(map))
+                }
 
-            override fun cancel() {
-                ToastUtils.showShort("用户取消授权登录")
-            }
+                override fun onFailure(p0: WbConnectErrorMessage?) {
+                    ToastUtils.showShort(p0?.errorMessage)
+                }
 
-        })
+                override fun cancel() {
+                    ToastUtils.showShort("用户取消授权登录")
+                }
+
+            })
+        }
     }
 
     override fun bindMobile(third_id: Int) {
-        val intent = Intent(this,BindPhoneActivity::class.java)
-        intent.putExtra("third_id",third_id)
+        val intent = Intent(this, BindPhoneActivity::class.java)
+        intent.putExtra("third_id", third_id)
         startActivity(intent)
     }
 
@@ -228,7 +253,7 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
     }
 
     override fun onResult(msg: String) {
-        mPresenter.thirdLogin("wechat",msg)
+        mPresenter.thirdLogin("wechat", msg)
         InterfaceUtils.getInstance().remove(this)
     }
 
@@ -239,8 +264,8 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
             mSsoHandler!!.authorizeCallBack(requestCode, resultCode, data)
         }
 
-        if(mTencent != null){
-            Tencent.onActivityResultData(requestCode,resultCode,data,null)
+        if (mTencent != null) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, null)
         }
     }
 

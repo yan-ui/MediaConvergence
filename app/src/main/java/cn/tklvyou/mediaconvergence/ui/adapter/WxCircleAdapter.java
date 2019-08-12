@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -53,18 +54,18 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, NewsBean item) {
-        if(AccountHelper.getInstance().getGroupId() == 3){
-            helper.setVisible(R.id.deleteBtn,true);
-        }else {
-            helper.setVisible(R.id.deleteBtn,false);
+        if (SPUtils.getInstance().getInt("groupId") == 3) {
+            helper.setVisible(R.id.deleteBtn, true);
+        } else {
+            helper.setVisible(R.id.deleteBtn, false);
         }
         helper.addOnClickListener(R.id.deleteBtn);
 
         helper.setText(R.id.nameTv, item.getNickname());
         helper.setText(R.id.timeTv, item.getBegintime());
 
-        helper.setText(R.id.tvCommentNum,""+item.getComment_num());
-        helper.setText(R.id.tvGoodNum,""+item.getLike_num());
+        helper.setText(R.id.tvCommentNum, "" + item.getComment_num());
+        helper.setText(R.id.tvGoodNum, "" + item.getLike_num());
 
         TextView tvGoodNum = helper.getView(R.id.tvGoodNum);
 
@@ -74,7 +75,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
             Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
             redGoodDrawable.setBounds(drawables[0].getBounds());
             tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
-        }else {
+        } else {
             Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
             grayGoodDrawable.setBounds(drawables[0].getBounds());
             tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
@@ -82,7 +83,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
 
 
         if (!StringUtils.isEmpty(item.getAvatar().trim())) {
-            GlideManager.loadRoundImg(item.getAvatar(),helper.getView(R.id.headIv),5f);
+            GlideManager.loadRoundImg(item.getAvatar(), helper.getView(R.id.headIv), 5f);
         }
 
         ExpandTextView expandTextView = helper.getView(R.id.contentTv);
@@ -99,7 +100,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
         }
         expandTextView.setVisibility(TextUtils.isEmpty(item.getName()) ? View.GONE : View.VISIBLE);
 
-        if(item.getImages() != null && item.getImages().size() > 0){
+        if (item.getImages() != null && item.getImages().size() > 0) {
             //上传的是图片
             ImageView ivVideo = helper.getView(R.id.ivVideo);
             ivVideo.setVisibility(View.GONE);
@@ -117,7 +118,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
                 }
             });
 
-        }else {
+        } else {
             //上传的是视频
 
             MultiImageView multiImageView = helper.getView(R.id.multiImagView);
@@ -131,7 +132,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, VodActivity.class);
 //                    intent.putExtra("media_type", "livestream")
-                    intent.putExtra("videoPath",item.getVideo());
+                    intent.putExtra("videoPath", item.getVideo());
                     mContext.startActivity(intent);
                 }
             });

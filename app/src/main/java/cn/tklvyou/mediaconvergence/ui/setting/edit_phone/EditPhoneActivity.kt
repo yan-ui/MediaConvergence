@@ -1,5 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.setting.edit_phone
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -51,13 +53,16 @@ class EditPhoneActivity : BaseTitleActivity<EditPhonePresenter>(), EditPhoneCont
         handleVCodeSendSuccess()
     }
 
-    override fun editSuccess() {
+    override fun editSuccess(mobile: String) {
         ToastUtils.showShort("更换成功")
+        val data = Intent()
+        data.putExtra("mobile",mobile)
+        setResult(Activity.RESULT_OK,data)
         finish()
     }
 
     override fun editFailed() {
-        ToastUtils.showShort("更换失败")
+
     }
 
     private fun handleVCodeSendSuccess() {

@@ -62,6 +62,7 @@ class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
     private fun handleLogout() {
         SPUtils.getInstance().put(PREF_KEY_TOKEN, "")
         SPUtils.getInstance().put("login", false)
+        SPUtils.getInstance().put("groupId", 0)
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }

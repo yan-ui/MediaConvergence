@@ -16,6 +16,7 @@ import cn.tklvyou.mediaconvergence.model.Channel
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
 import cn.tklvyou.mediaconvergence.ui.home.new_list.NewsListFragment
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
+import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -49,7 +50,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     override fun initView() {
         homeTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
-        if (AccountHelper.getInstance().groupId != 2) {
+        if (SPUtils.getInstance().getInt("groupId") != 2) {
             homeTitleBar.rightCustomView.visibility = View.GONE
         }
         homeTitleBar.rightCustomView.setOnClickListener {

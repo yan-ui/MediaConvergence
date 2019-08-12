@@ -53,19 +53,21 @@
                 android:drawableLeft="@mipmap/login_phone"
                 android:drawablePadding="@dimen/dp_11"
                 android:hint="请输入手机号"
+                android:imeOptions="actionNext"
                 android:inputType="number"
                 android:maxLength="11"
+                android:nextFocusForward="@id/etPassword"
                 android:textSize="@dimen/sp_14" />
 
 
             <ImageView
                 android:id="@+id/ivRight"
-                android:visibility="invisible"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerInside"
-                android:src="@mipmap/login_yes" />
+                android:src="@mipmap/login_yes"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -87,6 +89,7 @@
                 android:drawableLeft="@mipmap/login_password"
                 android:drawablePadding="@dimen/dp_11"
                 android:hint="请输入密码"
+                android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:textSize="@dimen/sp_14" />
@@ -138,45 +141,45 @@
         </LinearLayout>
 
         <TextView
-            android:layout_marginTop="@dimen/dp_50"
-            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_50"
             android:text="第三方登录"
             android:textColor="#ff999999"
             android:textSize="@dimen/sp_12" />
 
         <LinearLayout
-            android:layout_marginTop="@dimen/dp_15"
             android:layout_width="match_parent"
-            android:orientation="horizontal"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginTop="@dimen/dp_15"
             android:gravity="center_vertical"
-            android:layout_height="@dimen/dp_50">
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/btnQQLogin"
-                android:scaleType="centerInside"
-                android:src="@mipmap/login_qq"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_height="match_parent" />
+                android:scaleType="centerInside"
+                android:src="@mipmap/login_qq" />
 
 
             <ImageView
                 android:id="@+id/btnWxLogin"
-                android:scaleType="centerInside"
-                android:src="@mipmap/login_wx"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_height="match_parent" />
+                android:scaleType="centerInside"
+                android:src="@mipmap/login_wx" />
 
             <ImageView
                 android:id="@+id/btnWbLogin"
-                android:scaleType="centerInside"
-                android:src="@mipmap/login_wb"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_height="match_parent" />
+                android:scaleType="centerInside"
+                android:src="@mipmap/login_wb" />
 
         </LinearLayout>
 
