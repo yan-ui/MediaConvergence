@@ -29,10 +29,10 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if(result.getCode() ==1){
+                    if (result.getCode() == 1) {
                         ToastUtils.showShort("删除成功");
                         mView.deleteSuccess(position);
-                    }else {
+                    } else {
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> throwable.printStackTrace());
@@ -45,9 +45,9 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if(result.getCode() ==1){
+                    if (result.getCode() == 1) {
                         mView.setJuZhengHeader(result.getData());
-                    }else {
+                    } else {
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> throwable.printStackTrace());
@@ -56,39 +56,26 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
     @Override
     public void getNewList(String module, String module_second, int p) {
         RetrofitHelper.getInstance().getServer()
-                .getNewList(module,module_second, p)
+                .getNewList(module, module_second, p)
                 .compose(RxSchedulers.applySchedulers())
 //                .compose(mView.bindToLife())
                 .subscribe(result -> {
                             if (result.getCode() == 1) {
-                                mView.setNewList(p, result.getData());
+                                if (mView != null) {
+                                    mView.setNewList(p, result.getData());
+                                }
                             } else {
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
                             throwable.printStackTrace();
-                            mView.setNewList(p, null);
+                            if (mView != null) {
+                                mView.setNewList(p, null);
+                            }
                         }
                 );
     }
 
-    @Override
-    public void searchNewList(String module, String name, int p) {
-        RetrofitHelper.getInstance().getServer()
-                .searchNewList(module,name, p)
-                .compose(RxSchedulers.applySchedulers())
-                .subscribe(result -> {
-                            if (result.getCode() == 1) {
-                                mView.setNewList(p, result.getData());
-                            } else {
-                                ToastUtils.showShort(result.getMsg());
-                            }
-                        }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setNewList(p, null);
-                        }
-                );
-    }
 
     @Override
     public void getHaveSecondModuleNews(int p, String module) {

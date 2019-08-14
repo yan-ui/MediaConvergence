@@ -18,10 +18,12 @@ import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
 import cn.tklvyou.mediaconvergence.helper.GlideManager
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.home.AudioController
+import cn.tklvyou.mediaconvergence.ui.home.comment.CommentListActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import com.blankj.utilcode.util.*
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.pili.pldroid.player.PLOnErrorListener
 import kotlinx.android.synthetic.main.activity_tv_news_detail.*
 import java.util.*
 
@@ -76,7 +78,8 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
         initWebView(tvWebView)
 
-        setPositiveImage(R.mipmap.icon_collect_normal)
+//        setPositiveImage(R.mipmap.icon_collect_normal)
+
         val drawables = tvSeeNum.compoundDrawables
 
 
@@ -147,21 +150,21 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
     override fun setDetails(item: NewsBean) {
         //收藏状态
-        hasCollect = item.collect_status == 1
-
-        setPositiveOnClickListener {
-            if (hasCollect) {
-                mPresenter.setCollectStatus(id, false)
-            } else {
-                mPresenter.setCollectStatus(id, true)
-            }
-        }
-
-        if (hasCollect) {
-            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect))
-        } else {
-            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect_normal))
-        }
+//        hasCollect = item.collect_status == 1
+//
+//        setPositiveOnClickListener {
+//            if (hasCollect) {
+//                mPresenter.setCollectStatus(id, false)
+//            } else {
+//                mPresenter.setCollectStatus(id, true)
+//            }
+//        }
+//
+//        if (hasCollect) {
+//            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect))
+//        } else {
+//            commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect_normal))
+//        }
 
         tvTvName.text = item.name
         tvSeeNum.text = "" + item.visit_num
@@ -176,11 +179,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         Glide.with(this).load(imageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.color.bg_no_photo)
-                .into(object : SimpleTarget<Drawable>() {
-                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                        ivVideo.background = resource
-                    }
-                })
+                .into(ivVideo)
 
         when (type) {
             "电视" -> {
@@ -226,6 +225,61 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
             "广播" -> {
 
+                mMediaActions.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        if (mVideoView.isPlaying) {
+                            mMediaActions.setImageResource(R.drawable.ic_video_play)
+                            mVideoView.pause()
+                        } else {
+                            mMediaActions.setImageResource(R.drawable.exo_icon_pause)
+                            mVideoView.start()
+
+                        }
+                    }
+                })
+
+                mVideoView.setVideoPath(item.video)
+                mVideoView.setOnErrorListener { p0 ->
+//                    when (p0) {
+//                        PLOnErrorListener.MEDIA_ERROR_UNKNOWN -> {
+//                            ToastUtils.showShort("未知错误")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_OPEN_FAILED -> {
+//                            ToastUtils.showShort("播放器打开失败")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_IO_ERROR -> {
+//                            ToastUtils.showShort("网络异常")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_SEEK_FAILED -> {
+//                            ToastUtils.showShort("拖动失败")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_CACHE_FAILED -> {
+//                            ToastUtils.showShort("预加载失败")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_HW_DECODE_FAILURE -> {
+//                            ToastUtils.showShort("硬解失败")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_PLAYER_DESTROYED -> {
+//                            ToastUtils.showShort("播放器已被销毁")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_PLAYER_VERSION_NOT_MATCH -> {
+//                            ToastUtils.showShort("so 库版本不匹配，需要升级")
+//                        }
+//                        PLOnErrorListener.ERROR_CODE_PLAYER_CREATE_AUDIO_FAILED -> {
+//                            ToastUtils.showShort("AudioTrack 初始化失败，可能无法播放音频")
+//                        }
+//
+//                        else ->{
+//                            ToastUtils.showShort("未知错误！")
+//                        }
+//                    }
+                    true
+                }
+                mVideoView.setOnCompletionListener {
+                    mMediaActions.setImageResource(R.drawable.ic_video_play)
+                }
+
+
                 val drawables = tvGoodStatus.compoundDrawables
                 isLike = item.like_status == 1
 
@@ -245,6 +299,12 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
 
                 tvCommentNum.text = "评论  ${item.comment_num}"
+                tvCommentNum.setOnClickListener {
+                    val intent = Intent(this, CommentListActivity::class.java)
+                    intent.putExtra("id",id)
+                    startActivity(intent)
+                }
+
                 tvGoodNum.text = "赞  ${item.like_num}"
 
                 this.like_num = item.like_num
@@ -396,6 +456,11 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
             timer!!.cancel()
             timer = null
         }
+
+        if(mVideoView.isPlaying){
+            mVideoView.stopPlayback()
+        }
+
     }
 
 

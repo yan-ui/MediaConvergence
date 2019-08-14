@@ -108,3 +108,7 @@
  -keep class com.qiniu.**{*;}
  -keep class com.qiniu.**{public <init>();}
  -ignorewarnings
+
+ -keep class com.tencent.mm.opensdk.** { *;}
+ -keep class com.tencent.wxop.** { *;}
+ -keep class com.tencent.mm.sdk.** { *;}

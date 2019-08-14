@@ -3,15 +3,19 @@ package cn.tklvyou.mediaconvergence.ui.home.publish_news
 import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import cn.tklvyou.mediaconvergence.ui.adapter.GridImageAdapter
+import cn.tklvyou.mediaconvergence.ui.camera.TakePhotoActivity
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -45,7 +49,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
     private val imageFiles = ArrayList<File>()
     private var videoUrl = ""
 
-    private var qiniuManager:QiniuUploadManager? = null
+    private var qiniuManager: QiniuUploadManager? = null
 
     private var qiniuToken = ""
 
@@ -55,9 +59,17 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
 
         qiniuManager = QiniuUploadManager.getInstance(this)
 
-        selectList = if (intent.getSerializableExtra("data") == null) ArrayList() else intent.getSerializableExtra("data") as MutableList<LocalMedia>
+        selectList = intent.getSerializableExtra("data") as MutableList<LocalMedia>
         isVideo = intent.getBooleanExtra("isVideo", true)
         page = intent.getStringExtra("page")
+        var maxLength = 0
+        if (page == "V视") {
+            maxLength = 60
+        } else {
+            maxLength = 70
+        }
+
+        etContent.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxLength))
 
         if (!isVideo) {
             picRecyclerView.visibility = View.VISIBLE
@@ -91,7 +103,14 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
             videoLayout.visibility = View.VISIBLE
 
             imagePath = intent.getStringExtra("videoImage")
-            ivVideo.background = BitmapDrawable(imagePath)
+            ivVideo.setImageDrawable(BitmapDrawable(imagePath))
+
+            ivVideo.setOnClickListener {
+                if (selectList != null && selectList!!.size > 0) {
+                    // 预览视频
+                    PictureSelector.create(this).externalPictureVideo(selectList!![0].path)
+                }
+            }
 
             ivDelete.setOnClickListener {
                 videoLayout.visibility = View.GONE
@@ -99,14 +118,14 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
             }
 
             ivAddVideo.setOnClickListener {
-                PictureSelector.create(this)
-                        .openCamera(PictureMimeType.ofVideo())
-                        .recordVideoSecond(60)
-                        .forResult(10)
+                val intent = Intent(this, TakePhotoActivity::class.java)
+                intent.putExtra("page", page)
+                intent.putExtra("is_video", true)
+                startActivity(intent)
+                finish()
             }
 
         }
-
 
         btnCancel.setOnClickListener {
             finish()
@@ -120,12 +139,18 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                 return@setOnClickListener
             }
 
+            if (qiniuToken.isEmpty()) {
+                mPresenter.getQiniuToken()
+                ToastUtils.showShort("初始化上传配置中，请重新尝试")
+                return@setOnClickListener
+            }
+
             showLoading()
             if (page == "V视") {
-                mPresenter.qiniuUploadFile(File(selectList!![0].path),true,qiniuToken,"" + AccountHelper.getInstance().uid,qiniuManager)
+                mPresenter.qiniuUploadFile(File(selectList!![0].path), true, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
             } else {
                 if (isVideo) {
-                    mPresenter.qiniuUploadFile(File(selectList!![0].path),true,qiniuToken,"" + AccountHelper.getInstance().uid,qiniuManager)
+                    mPresenter.qiniuUploadFile(File(selectList!![0].path), true, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
                 } else {
                     selectList!!.forEach {
                         if (it.isCompressed || (it.isCut && it.isCompressed)) {
@@ -134,7 +159,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                             imageFiles.add(File(it.path))
                         }
                     }
-                    mPresenter.qiniuUploadMultiImage(imageFiles,qiniuToken, "" + AccountHelper.getInstance().uid,qiniuManager)
+                    mPresenter.qiniuUploadMultiImage(imageFiles, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
                 }
             }
         }
@@ -143,17 +168,22 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
     }
 
     override fun uploadImageSuccess(url: String) {
+        val mmr = MediaMetadataRetriever()
+        mmr.setDataSource(selectList!![0].path)
+        val durationTime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toInt()
+
         if (page == "V视") {
-            mPresenter.publishVShi(etContent.text.toString().trim(), videoUrl, url, "" + selectList!![0].duration / 1000)
+            mPresenter.publishVShi(etContent.text.toString().trim(), videoUrl, url, "" + durationTime / 1000)
         } else {
-            mPresenter.publishSuiShouPai(etContent.text.toString().trim(), "", videoUrl, url, "" + selectList!![0].duration / 1000)
+            mPresenter.publishSuiShouPai(etContent.text.toString().trim(), "", videoUrl, url, "" + durationTime / 1000)
         }
+
     }
 
 
     override fun uploadVideoSuccess(url: String) {
         this.videoUrl = url
-        mPresenter.qiniuUploadFile(File(imagePath),false,qiniuToken,"" + AccountHelper.getInstance().uid, qiniuManager)
+        mPresenter.qiniuUploadFile(File(imagePath), false, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
     }
 
     override fun uploadImagesSuccess(urls: MutableList<String>) {
@@ -207,10 +237,11 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                     adapter!!.notifyDataSetChanged()
                 }
 
+
                 10 -> {
                     selectList = PictureSelector.obtainMultipleResult(data)
                     val intent = Intent(this, VideoEditActivity::class.java)
-                    intent.putExtra("page",page)
+                    intent.putExtra("page", page)
                     intent.putExtra("data", selectList as Serializable)
                     intent.putExtra("hasBack", true)
                     startActivityForResult(intent, 12)

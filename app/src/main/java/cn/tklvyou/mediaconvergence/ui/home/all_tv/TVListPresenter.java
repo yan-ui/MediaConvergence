@@ -15,7 +15,6 @@ public class TVListPresenter extends BasePresenter<TVListContract.View> implemen
         RetrofitHelper.getInstance().getServer()
                 .getNewList(module, module_second,p)
                 .compose(RxSchedulers.applySchedulers())
-                .compose(mView.bindToLife())
                 .subscribe(result -> {
                             if (result.getCode() == 1) {
                                 mView.setNewList(p, result.getData());

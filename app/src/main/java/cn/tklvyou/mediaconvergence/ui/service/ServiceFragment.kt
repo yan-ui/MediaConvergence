@@ -35,6 +35,13 @@ class ServiceFragment : BaseRecyclerFragment<NullPresenter, ServiceModel, BaseVi
         initRecyclerView(serviceRecyclerView)
         serviceRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.VERTICAL, 30, Color.WHITE))
 
+//        {
+//            "imagename": "big_shout_loud",
+//            "title": "我要爆料",
+//            "subTitle": "将身边事爆给我们",
+//            "url": "http://m.api.cms.anhuinews.com/v2/report?app_version=1.0.1&clientid=1&device_id=F7E8907D-8187-4091-8B26-4E71BF19CA67&ip=192.168.0.102&modules=brand%3A2&sign=4c877149e9a524c16f7e994973582078&siteid=10015&system_name=1.0.1&time=1564402012000&type=ios"
+//        },
+
         val json = ResourceUtils.readAssets2String("servicelist.json")
         val data = JSON.parseArray(json, ServiceModel::class.java)
 

@@ -142,39 +142,39 @@ class VodActivity : BaseActivity<NullPresenter>() {
         mVideoView.setBufferingIndicator(mDYLoading)
         mVideoView.setVideoPath(mVideoPath)
         mVideoView.setOnErrorListener { p0 ->
-            when (p0) {
-                PLOnErrorListener.MEDIA_ERROR_UNKNOWN -> {
-                    ToastUtils.showShort("未知错误")
-                }
-                PLOnErrorListener.ERROR_CODE_OPEN_FAILED -> {
-                    ToastUtils.showShort("播放器打开失败")
-                }
-                PLOnErrorListener.ERROR_CODE_IO_ERROR -> {
-                    ToastUtils.showShort("网络异常")
-                }
-                PLOnErrorListener.ERROR_CODE_SEEK_FAILED -> {
-                    ToastUtils.showShort("拖动失败")
-                }
-                PLOnErrorListener.ERROR_CODE_CACHE_FAILED -> {
-                    ToastUtils.showShort("预加载失败")
-                }
-                PLOnErrorListener.ERROR_CODE_HW_DECODE_FAILURE -> {
-                    ToastUtils.showShort("硬解失败")
-                }
-                PLOnErrorListener.ERROR_CODE_PLAYER_DESTROYED -> {
-                    ToastUtils.showShort("播放器已被销毁")
-                }
-                PLOnErrorListener.ERROR_CODE_PLAYER_VERSION_NOT_MATCH -> {
-                    ToastUtils.showShort("so 库版本不匹配，需要升级")
-                }
-                PLOnErrorListener.ERROR_CODE_PLAYER_CREATE_AUDIO_FAILED -> {
-                    ToastUtils.showShort("AudioTrack 初始化失败，可能无法播放音频")
-                }
-
-                else ->{
-                    ToastUtils.showShort("未知错误！")
-                }
-            }
+//            when (p0) {
+//                PLOnErrorListener.MEDIA_ERROR_UNKNOWN -> {
+//                    ToastUtils.showShort("未知错误")
+//                }
+//                PLOnErrorListener.ERROR_CODE_OPEN_FAILED -> {
+//                    ToastUtils.showShort("播放器打开失败")
+//                }
+//                PLOnErrorListener.ERROR_CODE_IO_ERROR -> {
+//                    ToastUtils.showShort("网络异常")
+//                }
+//                PLOnErrorListener.ERROR_CODE_SEEK_FAILED -> {
+//                    ToastUtils.showShort("拖动失败")
+//                }
+//                PLOnErrorListener.ERROR_CODE_CACHE_FAILED -> {
+//                    ToastUtils.showShort("预加载失败")
+//                }
+//                PLOnErrorListener.ERROR_CODE_HW_DECODE_FAILURE -> {
+//                    ToastUtils.showShort("硬解失败")
+//                }
+//                PLOnErrorListener.ERROR_CODE_PLAYER_DESTROYED -> {
+//                    ToastUtils.showShort("播放器已被销毁")
+//                }
+//                PLOnErrorListener.ERROR_CODE_PLAYER_VERSION_NOT_MATCH -> {
+//                    ToastUtils.showShort("so 库版本不匹配，需要升级")
+//                }
+//                PLOnErrorListener.ERROR_CODE_PLAYER_CREATE_AUDIO_FAILED -> {
+//                    ToastUtils.showShort("AudioTrack 初始化失败，可能无法播放音频")
+//                }
+//
+//                else ->{
+//                    ToastUtils.showShort("未知错误！")
+//                }
+//            }
             true
         }
         mVideoView.setOnCompletionListener {

@@ -82,7 +82,7 @@ class JuzhengFragment : BaseHttpRecyclerFragment<JuzhengListPresenter, NewsBean,
         val bean = (adapter as JuzhengRvAdapter).data[position]
         val id = bean.id
         val type = "文章"
-        NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
     }
 
 

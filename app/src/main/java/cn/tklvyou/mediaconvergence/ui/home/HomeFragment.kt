@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.model.NewsMultipleItem
 import cn.tklvyou.mediaconvergence.base.fragment.BaseFragment
@@ -14,8 +15,10 @@ import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import kotlinx.android.synthetic.main.fragment_home.*
 import cn.tklvyou.mediaconvergence.model.Channel
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
+import cn.tklvyou.mediaconvergence.ui.camera.TakePhotoActivity
 import cn.tklvyou.mediaconvergence.ui.home.new_list.NewsListFragment
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
@@ -46,8 +49,9 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
     private val mChannelFragments = ArrayList<RxFragment>()
     private var mChannelPagerAdapter: ChannelPagerAdapter? = null
 
-    private lateinit var commonNavigator: CommonNavigator
+    private var commonNavigator: CommonNavigator? = null
 
+    private var isRefresh = false
     override fun initView() {
         homeTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
         if (SPUtils.getInstance().getInt("groupId") != 2) {
@@ -55,13 +59,14 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         }
         homeTitleBar.rightCustomView.setOnClickListener {
             RxPermissions(this)
-                    .request(Manifest.permission.CAMERA)
+                    .request(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO)
                     .subscribe { granted ->
                         if (granted) { // Always true pre-M
-                            PictureSelector.create(this)
-                                    .openCamera(PictureMimeType.ofVideo())
-                                    .recordVideoSecond(120)
-                                    .forResult(PictureConfig.CHOOSE_REQUEST)
+                            val intent = Intent(context, TakePhotoActivity::class.java)
+                            intent.putExtra("is_video",true)
+                            intent.putExtra("page","V视")
+                            startActivity(intent)
+                            isRefresh = true
                         } else {
                             ToastUtils.showShort("权限拒绝，无法使用")
                         }
@@ -76,10 +81,18 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(isRefresh){
+            isRefresh = false
+            (mChannelFragments[0] as NewsListFragment).refreshData()
+        }
+    }
+
     private fun initMagicIndicator() {
         commonNavigator = CommonNavigator(context)
-        commonNavigator.isSkimOver = true
-        commonNavigator.adapter = object : CommonNavigatorAdapter() {
+        commonNavigator!!.isSkimOver = true
+        commonNavigator!!.adapter = object : CommonNavigatorAdapter() {
 
             override fun getCount(): Int {
                 return mSelectedChannels.size
@@ -106,13 +119,35 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     override fun setHomeChannel(channelList: MutableList<String>?) {
         mSelectedChannels = channelList as ArrayList<String>
-        commonNavigator.notifyDataSetChanged()
+        commonNavigator!!.notifyDataSetChanged()
 
         initChannelFragments()
 
         mChannelPagerAdapter = ChannelPagerAdapter(mChannelFragments, childFragmentManager)
         mViewPager.adapter = mChannelPagerAdapter
         mViewPager.offscreenPageLimit = mSelectedChannels.size
+
+        mViewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(p0: Int) {
+            }
+
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+            }
+
+            override fun onPageSelected(p0: Int) {
+                if(p0 == 0){
+                    if (SPUtils.getInstance().getInt("groupId") == 2) {
+                        homeTitleBar.rightCustomView.visibility = View.VISIBLE
+                    }else{
+                        homeTitleBar.rightCustomView.visibility = View.GONE
+                    }
+                }else{
+                    homeTitleBar.rightCustomView.visibility = View.GONE
+                }
+            }
+
+        })
+
 
     }
 
@@ -191,5 +226,12 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        commonNavigator = null
+        mChannelFragments.clear()
+        mChannelPagerAdapter = null
+    }
 
 }

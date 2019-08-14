@@ -41,11 +41,6 @@ class MyWenZhenActivity : BaseHttpRecyclerActivity<WenZhenPresenter, NewsBean, B
                 adapter.setNewData(list)
             }
         })
-        if (list != null) {
-            if (list.isEmpty()) {
-                showNoData()
-            }
-        }
     }
 
 

@@ -49,7 +49,7 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
     override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
         //销毁非登录页的所有Activity
-        ActivityUtils.finishOtherActivities(this::class.java)
+        ActivityUtils.finishOtherActivities(LoginActivity::class.java)
 
         etAccount.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {

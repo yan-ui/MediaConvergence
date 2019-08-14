@@ -9,6 +9,7 @@
 
     <ImageView
         android:id="@+id/ivAvatar"
+        android:scaleType="centerCrop"
         android:layout_width="@dimen/dp_42"
         android:layout_height="@dimen/dp_42"
         android:src="@mipmap/default_avatar" />

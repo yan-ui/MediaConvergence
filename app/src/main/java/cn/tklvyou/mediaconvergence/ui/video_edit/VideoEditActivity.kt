@@ -92,14 +92,12 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
         selectList = if (intent.getSerializableExtra("data") == null) ArrayList() else intent.getSerializableExtra("data") as MutableList<LocalMedia>
         file_path = selectList[0].path
 
-        LogUtils.e(file_path)
 
         player = MPlayer()
         player!!.setDisplay(MinimalDisplay(mSurfaceView))
 
         try {
             player!!.setSource(file_path)
-            //            player.play();
         } catch (e: MPlayerException) {
             e.printStackTrace()
             ToastUtils.showShort("视频地址有误")

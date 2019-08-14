@@ -12,6 +12,7 @@ import android.media.Image;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,13 +49,18 @@ import cn.tklvyou.mediaconvergence.widget.MultiImageView;
  */
 public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> {
 
+    private boolean enableDelete = false;
     public WxCircleAdapter(int layoutResId, @Nullable List<NewsBean> data) {
         super(layoutResId, data);
     }
 
+    public void setEnableDelete(){
+        this.enableDelete = true;
+    }
+
     @Override
     protected void convert(@NonNull BaseViewHolder helper, NewsBean item) {
-        if (SPUtils.getInstance().getInt("groupId") == 3) {
+        if (SPUtils.getInstance().getInt("groupId") == 3 || enableDelete) {
             helper.setVisible(R.id.deleteBtn, true);
         } else {
             helper.setVisible(R.id.deleteBtn, false);
@@ -83,7 +89,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
 
 
         if (!StringUtils.isEmpty(item.getAvatar().trim())) {
-            GlideManager.loadRoundImg(item.getAvatar(), helper.getView(R.id.headIv), 5f);
+            GlideManager.loadRoundImg(item.getAvatar(),helper.getView(R.id.headIv), 5f);
         }
 
         ExpandTextView expandTextView = helper.getView(R.id.contentTv);
@@ -103,7 +109,9 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
         if (item.getImages() != null && item.getImages().size() > 0) {
             //上传的是图片
             ImageView ivVideo = helper.getView(R.id.ivVideo);
-            ivVideo.setVisibility(View.GONE);
+            FrameLayout llVideo = helper.getView(R.id.llVideo);
+            llVideo.setVisibility(View.GONE);
+
 
             MultiImageView multiImageView = helper.getView(R.id.multiImagView);
             multiImageView.setVisibility(View.VISIBLE);
@@ -124,29 +132,24 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
             MultiImageView multiImageView = helper.getView(R.id.multiImagView);
             multiImageView.setVisibility(View.GONE);
 
+            FrameLayout llVideo = helper.getView(R.id.llVideo);
+            llVideo.setVisibility(View.VISIBLE);
+
             ImageView ivVideo = helper.getView(R.id.ivVideo);
-            ivVideo.setVisibility(View.VISIBLE);
             ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"));
             ivVideo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, VodActivity.class);
-//                    intent.putExtra("media_type", "livestream")
                     intent.putExtra("videoPath", item.getVideo());
                     mContext.startActivity(intent);
                 }
             });
 
-
             Glide.with(mContext).load(item.getImage())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.color.bg_no_photo)
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                            ivVideo.setBackground(resource);
-                        }
-                    });
+                    .into(ivVideo);
 
         }
 

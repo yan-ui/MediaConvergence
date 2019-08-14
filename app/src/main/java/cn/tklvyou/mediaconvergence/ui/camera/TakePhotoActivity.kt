@@ -12,6 +12,8 @@ import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import com.blankj.utilcode.util.ImageUtils
+import com.cjt2325.cameralibrary.CaptureButton
+import com.cjt2325.cameralibrary.JCameraView
 import com.luck.picture.lib.entity.LocalMedia
 import kotlinx.android.synthetic.main.activity_take_photo.*
 import java.io.Serializable
@@ -29,6 +31,18 @@ class TakePhotoActivity : BaseActivity<NullPresenter>() {
     override fun initView(savedInstanceState: Bundle?) {
         hideTitleBar()
 
+        val onlyVideo = intent.getBooleanExtra("is_video", false)
+        val page = intent.getStringExtra("page")
+
+        if(page == "V视"){
+            jCameraView.setDurationTime(120000) //120s
+        }
+
+        if (onlyVideo) {
+            jCameraView.setTip("长按启动摄像")
+            jCameraView.setFeatures(JCameraView.BUTTON_STATE_ONLY_RECORDER)
+        }
+
         //设置视频保存路径
         jCameraView.setSaveVideoPath(Environment.getExternalStorageDirectory().path + File.separator + "JCamera")
 
@@ -36,7 +50,7 @@ class TakePhotoActivity : BaseActivity<NullPresenter>() {
         jCameraView.setJCameraLisenter(object : JCameraListener {
             override fun captureSuccess(bitmap: Bitmap) {
                 val intent = Intent(this@TakePhotoActivity, PublishNewsActivity::class.java)
-                intent.putExtra("page", "随手拍")
+                intent.putExtra("page", page)
                 intent.putExtra("isVideo", false)
 
                 val selectList = ArrayList<LocalMedia>()
@@ -57,7 +71,7 @@ class TakePhotoActivity : BaseActivity<NullPresenter>() {
             override fun recordSuccess(videoUrlPath: String, firstFrame: Bitmap) {
                 //获取视频首帧图片以及视频地址
                 val intent = Intent(this@TakePhotoActivity, VideoEditActivity::class.java)
-                intent.putExtra("page", "随手拍")
+                intent.putExtra("page", page)
                 intent.putExtra("isVideo", true)
 
                 val selectList = ArrayList<LocalMedia>()
@@ -72,7 +86,9 @@ class TakePhotoActivity : BaseActivity<NullPresenter>() {
 
         })
 
-        jCameraView.setLeftClickListener { finish() }
+        jCameraView.setLeftClickListener {
+            finish()
+        }
     }
 
     override fun onResume() {

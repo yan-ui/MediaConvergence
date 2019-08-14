@@ -24,6 +24,7 @@ public class SystemConfigModel {
     private String android_update;
     private String android_download;
     private String register;
+    private String default_search;
 
     public String getIos_version() {
         return ios_version;
@@ -95,5 +96,13 @@ public class SystemConfigModel {
 
     public void setRegister(String register) {
         this.register = register;
+    }
+
+    public String getDefault_search() {
+        return default_search;
+    }
+
+    public void setDefault_search(String default_search) {
+        this.default_search = default_search;
     }
 }

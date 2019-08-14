@@ -1,5 +1,13 @@
 package cn.tklvyou.mediaconvergence.ui.setting;
 
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
+import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
 
 /**
@@ -11,9 +19,22 @@ import cn.tklvyou.mediaconvergence.base.BasePresenter;
  */
 public class SettingPresenter extends BasePresenter<SettingContract.LogoutView>implements SettingContract.LogoutPresenter  {
 
-
     @Override
-    public void logout(String name, String password) {
+    public void logout() {
+        RetrofitHelper.getInstance().getServer()
+                .logout()
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                         if(result.getCode() == 1){
+                             mView.logoutSuccess();
+                         }else {
+                             ToastUtils.showShort(result.getMsg());
+                         }
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                        }
 
+                );
     }
 }

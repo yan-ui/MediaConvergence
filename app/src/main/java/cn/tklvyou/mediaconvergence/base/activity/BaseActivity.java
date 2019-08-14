@@ -93,7 +93,6 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         fragmentManager = null;
         threadNameList = null;
         detachView();
-
     }
 
     private void initBaseView() {

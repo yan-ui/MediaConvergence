@@ -5,6 +5,7 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.model.BannerModel;
 import cn.tklvyou.mediaconvergence.model.BasePageModel;
+import cn.tklvyou.mediaconvergence.model.CommentModel;
 import cn.tklvyou.mediaconvergence.model.ExchangeModel;
 import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel;
 import cn.tklvyou.mediaconvergence.model.LotteryModel;
@@ -169,6 +170,12 @@ public interface ApiService {
     @POST("api/article/index")
     Observable<BaseResult<BasePageModel<NewsBean>>> searchNewList(@Query("module") String module, @Query("name") String name, @Query("p") int p);
 
+    /**
+     * 获取评论列表
+     */
+    @POST("api/comment/index")
+    Observable<BaseResult<BasePageModel<CommentModel>>> getCommentList(@Query("article_id") int article_id, @Query("p") int p);
+
 
     /**
      * 消息列表
@@ -219,6 +226,12 @@ public interface ApiService {
      */
     @POST("api/article/dels")
     Observable<BaseResult<Object>> deleteArticle(@Query("id") int id);
+
+    /**
+     * 删除V视
+     */
+    @POST("api/article/del")
+    Observable<BaseResult<Object>> deleteArticles(@Query("id") int id);
 
     /**
      * 点赞

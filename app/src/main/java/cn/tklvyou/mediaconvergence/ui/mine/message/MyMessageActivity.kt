@@ -42,11 +42,6 @@ class MyMessageActivity : BaseHttpRecyclerActivity<MessagePresenter, MessageMode
                 adapter.setNewData(list)
             }
         })
-        if (list != null) {
-            if (list.isEmpty()) {
-                showNoData()
-            }
-        }
 
     }
 

@@ -32,6 +32,37 @@ public class MyArticleListPresenter extends BasePresenter<MyArticleContract.View
                 );
     }
 
+    @Override
+    public void deleteArticle(int id, int position) {
+        RetrofitHelper.getInstance().getServer()
+                .deleteArticle(id)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                    if (result.getCode() == 1) {
+                        ToastUtils.showShort("删除成功");
+                        mView.deleteSuccess(position);
+                    } else {
+                        ToastUtils.showShort(result.getMsg());
+                    }
+                }, throwable -> throwable.printStackTrace());
+    }
+
+    @Override
+    public void deleteArticles(int id, int position) {
+        RetrofitHelper.getInstance().getServer()
+                .deleteArticles(id)
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                    if (result.getCode() == 1) {
+                        ToastUtils.showShort("删除成功");
+                        mView.deleteSuccess(position);
+                    } else {
+                        ToastUtils.showShort(result.getMsg());
+                    }
+                }, throwable -> throwable.printStackTrace());
+    }
 
 
 }

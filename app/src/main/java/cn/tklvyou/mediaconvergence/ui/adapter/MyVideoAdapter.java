@@ -11,6 +11,8 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.Locale;
+
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
 
@@ -28,8 +30,11 @@ public class MyVideoAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> {
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, NewsBean bean) {
+        helper.setVisible(R.id.deleteBtn, true);
+        helper.addOnClickListener(R.id.deleteBtn);
+
         helper.setText(R.id.tvNewsTitle, bean.getName());
-        helper.setText(R.id.tvVideoTime, bean.getTime());
+        helper.setText(R.id.tvVideoTime, formatTime(Double.valueOf(bean.getTime()).longValue()));
         helper.setText(R.id.tvCommentNum, "" + bean.getComment_num());
         helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
         helper.setText(R.id.tvName, bean.getNickname());
@@ -56,5 +61,12 @@ public class MyVideoAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> {
         Glide.with(mContext).load(bean.getImage()).into((ImageView) helper.getView(R.id.ivVideoBg));
 
         helper.addOnClickListener(R.id.ivStartPlayer);
+    }
+
+    private String formatTime(Long position) {
+        int totalSeconds = (int) (position + 0.5);
+        int seconds = totalSeconds % 60;
+        int minutes = totalSeconds / 60 % 60;
+        return String.format(Locale.US, "%02d:%02d", minutes, seconds);
     }
 }

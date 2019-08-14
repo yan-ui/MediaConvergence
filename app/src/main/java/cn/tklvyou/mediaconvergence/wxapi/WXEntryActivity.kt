@@ -3,6 +3,7 @@ package cn.tklvyou.mediaconvergence.wxapi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import cn.tklvyou.mediaconvergence.common.Contacts
 import cn.tklvyou.mediaconvergence.utils.InterfaceUtils
 import com.blankj.utilcode.util.LogUtils
@@ -21,6 +22,7 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
     private val RETURN_MSG_TYPE_LOGIN = 1
     private val RETURN_MSG_TYPE_SHARE = 2
 
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mWeixinAPI = WXAPIFactory.createWXAPI(this, Contacts.WX_APPID, true)
@@ -36,6 +38,7 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
     //微信发送的请求将回调到onReq方法
     override fun onReq(req: BaseReq) {
         LogUtils.d("onReq")
+        finish()
     }
 
     //发送到微信请求的响应结果

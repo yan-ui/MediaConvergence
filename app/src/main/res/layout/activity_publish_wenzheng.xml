@@ -102,8 +102,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/shape_gray_radius_8_bg"
                     android:gravity="top"
-                    android:maxLength="20"
-                    android:hint="输入问政内容（限20字以内）"
+                    android:maxLength="50"
+                    android:hint="输入问政内容（限50字以内）"
                     android:padding="@dimen/dp_10"
                     android:textSize="@dimen/sp_14" />
 

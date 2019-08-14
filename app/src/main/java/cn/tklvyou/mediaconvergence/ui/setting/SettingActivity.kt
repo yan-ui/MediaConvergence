@@ -21,7 +21,8 @@ import kotlinx.android.synthetic.main.activity_setting.*
  * @date 2019年07月30日17:07
  * @Email: 971613168@qq.com
  */
-class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
+class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener ,SettingContract.LogoutView{
+
     override fun initPresenter(): SettingPresenter {
         return SettingPresenter()
     }
@@ -53,11 +54,17 @@ class SettingActivity : BaseActivity<SettingPresenter>(), View.OnClickListener {
                 startActivity(Intent(this, EditPasswordActivity::class.java))
             }
             R.id.tvLogOut -> {
-                handleLogout()
+                mPresenter.logout()
+
             }
         }
 
     }
+
+    override fun logoutSuccess() {
+        handleLogout()
+    }
+
 
     private fun handleLogout() {
         SPUtils.getInstance().put(PREF_KEY_TOKEN, "")

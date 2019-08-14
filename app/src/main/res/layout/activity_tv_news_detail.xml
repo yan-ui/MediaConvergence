@@ -18,15 +18,36 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.pili.pldroid.player.widget.PLVideoView
+                android:id="@+id/mVideoView"
+                android:layout_width="0.1dp"
+                android:layout_height="0.1dp"
+                android:layout_gravity="center" />
+
             <!-- 视频-->
-            <ImageView
-                android:id="@+id/ivVideo"
+            <FrameLayout
+                android:id="@+id/llVideo"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_150"
-                android:background="@color/default_gray_text_color"
-                android:scaleType="centerInside"
-                android:src="@mipmap/ic_start_play"
-                android:visibility="visible" />
+                android:layout_height="@dimen/dp_188">
+
+                <!-- 视频-->
+                <ImageView
+                    android:id="@+id/ivVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/default_gray_text_color"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/mMediaActions"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:src="@mipmap/ic_start_play" />
+
+            </FrameLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -72,32 +93,36 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_44"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/dp_13"
-                    android:paddingRight="@dimen/dp_13">
+                    android:paddingRight="@dimen/dp_13"
+                    android:weightSum="2">
 
+
+                    <TextView
+                        android:id="@+id/tvGoodNum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="赞 0"
+                        android:textColor="#ff999999"
+                        android:textSize="@dimen/sp_13" />
 
                     <TextView
                         android:id="@+id/tvCommentNum"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
+                        android:drawableRight="@mipmap/icon_mini_right"
+                        android:drawablePadding="@dimen/dp_10"
+                        android:gravity="center_vertical|right"
                         android:text="评论 0"
-                        android:textColor="#ff999999"
-                        android:textSize="@dimen/sp_13" />
-
-                    <TextView
-                        android:id="@+id/tvGoodNum"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/dp_25"
-                        android:gravity="center"
-                        android:text="赞 0"
                         android:textColor="#ff999999"
                         android:textSize="@dimen/sp_13" />
                 </LinearLayout>

@@ -14,9 +14,11 @@ import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import cn.tklvyou.mediaconvergence.widget.dailog.CommonDialog
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
 import kotlinx.android.synthetic.main.fragment_camera.*
 
 /**
@@ -27,6 +29,7 @@ import kotlinx.android.synthetic.main.fragment_camera.*
  * @Email: 971613168@qq.com
  */
 class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBean, BaseViewHolder, MyVideoAdapter>(), MyArticleContract.View {
+
 
     private val moduleName = "V视频"
     override fun initPresenter(): MyArticleListPresenter {
@@ -42,19 +45,7 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
         initSmartRefreshLayout(cameraSmartRefreshLayout)
         initRecyclerView(cameraRecyclerView)
 
-        cameraRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.VERTICAL, 1, resources.getColor(R.color.common_bg)))
-
-        cameraRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Glide.with(context!!).resumeRequests()
-                } else {
-                    Glide.with(context!!).pauseRequests()
-                }
-            }
-        })
+        cameraRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.VERTICAL, 20, resources.getColor(R.color.common_bg)))
 
         mPresenter.getNewList(moduleName, 1)
     }
@@ -95,7 +86,7 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
         val bean = (adapter as MyVideoAdapter).data[position]
         val id = bean.id
         val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-        NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
 
     }
 
@@ -113,8 +104,24 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
                     startActivity(intent)
                 }
 
+                R.id.deleteBtn ->{
+                    val dialog = CommonDialog(context)
+                    dialog.setTitle("温馨提示")
+                    dialog.setMessage("是否删除？")
+                    dialog.setYesOnclickListener("确认") {
+                        val bean = (adapter as MyVideoAdapter).data[position]
+                        mPresenter.deleteArticles(bean.id, position)
+                        dialog.dismiss()
+                    }
+                    dialog.show()
+                }
 
             }
         }
     }
+
+    override fun deleteSuccess(position: Int) {
+        adapter.remove(position)
+    }
+
 }

@@ -11,6 +11,7 @@ import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.WxCircleAdapter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import cn.tklvyou.mediaconvergence.widget.dailog.CommonDialog
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_camera.*
  * @Email: 971613168@qq.com
  */
 class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBean, BaseViewHolder, WxCircleAdapter>(), MyArticleContract.View {
+
     private val moduleName = "随手拍"
     override fun initPresenter(): MyArticleListPresenter {
         return MyArticleListPresenter()
@@ -74,7 +76,9 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
         setList(object : AdapterCallBack<WxCircleAdapter> {
 
             override fun createAdapter(): WxCircleAdapter {
-                return WxCircleAdapter(R.layout.item_winxin_circle, list)
+                val adapter = WxCircleAdapter(R.layout.item_winxin_circle, list)
+                adapter.setEnableDelete()
+                return adapter
             }
 
             override fun refreshAdapter() {
@@ -92,10 +96,29 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
         val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-        NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
 
     }
 
+
+    override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onItemChildClick(adapter, view, position)
+        if (view!!.id == R.id.deleteBtn) {
+            val dialog = CommonDialog(context)
+            dialog.setTitle("温馨提示")
+            dialog.setMessage("是否删除？")
+            dialog.setYesOnclickListener("确认") {
+                val bean = (adapter as WxCircleAdapter).data[position]
+                mPresenter.deleteArticle(bean.id, position)
+                dialog.dismiss()
+            }
+            dialog.show()
+        }
+    }
+
+    override fun deleteSuccess(position: Int) {
+        adapter.remove(position)
+    }
 
 
 

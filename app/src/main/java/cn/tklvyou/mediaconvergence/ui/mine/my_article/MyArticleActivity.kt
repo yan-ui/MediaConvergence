@@ -68,12 +68,13 @@ class MyArticleActivity : BaseTitleActivity<NullPresenter>() {
                 return mTabNameList.size
             }
 
+
             override fun getTitleView(context: Context, index: Int): IPagerTitleView {
                 val clipPagerTitleView = ClipPagerTitleView(context)
                 clipPagerTitleView.background = CommonUtil.getDrawable(R.color.redFF4A5C)
                 clipPagerTitleView.text = mTabNameList[index]
                 clipPagerTitleView.textSize = SizeUtil.sp2px(13f)
-                clipPagerTitleView.textColor = Color.parseColor("#888888")
+                clipPagerTitleView.textColor = Color.parseColor("#55FFFFFF")
                 clipPagerTitleView.clipColor = CommonUtil.getColor(R.color.white)
                 clipPagerTitleView.setOnClickListener { articleViewPager.setCurrentItem(index, false) }
                 return clipPagerTitleView

@@ -198,14 +198,14 @@
                 <FrameLayout
                     android:id="@+id/llVideo"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_150">
+                    android:layout_height="@dimen/dp_180"
+                    android:layout_marginTop="@dimen/dp_10">
 
                     <ImageView
                         android:id="@+id/ivVideo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/dp_13"
-                        android:layout_marginTop="@dimen/dp_10"
                         android:layout_marginRight="@dimen/dp_13"
                         android:background="@color/default_gray_text_color"
                         android:scaleType="centerCrop"
@@ -218,7 +218,6 @@
                         android:src="@mipmap/ic_start_play" />
 
                 </FrameLayout>
-
 
 
                 <!--投票-->
@@ -324,26 +323,29 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/dp_13"
-                android:paddingRight="@dimen/dp_13">
+                android:paddingRight="@dimen/dp_13"
+                android:weightSum="2">
 
+
+                <TextView
+                    android:id="@+id/tvGoodNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="赞 0"
+                    android:textColor="#ff999999"
+                    android:textSize="@dimen/sp_13" />
 
                 <TextView
                     android:id="@+id/tvCommentNum"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
+                    android:drawableRight="@mipmap/icon_mini_right"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:gravity="center_vertical|right"
                     android:text="评论 0"
-                    android:textColor="#ff999999"
-                    android:textSize="@dimen/sp_13" />
-
-                <TextView
-                    android:id="@+id/tvGoodNum"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/dp_25"
-                    android:gravity="center"
-                    android:text="赞 0"
                     android:textColor="#ff999999"
                     android:textSize="@dimen/sp_13" />
             </LinearLayout>

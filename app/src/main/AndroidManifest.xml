@@ -25,24 +25,16 @@
         android:name=".base.MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:largeHeap="true"
         android:icon="@mipmap/default_avatar"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/default_avatar"
         android:supportsRtl="true"
         android:theme="@style/CustomAppTheme"
         tools:replace="android:theme">
-        <activity android:name=".ui.account.AgreementActivity"></activity>
-        <activity android:name=".ui.home.etstset.TestActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <action android:name="android.intent.action.VIEW" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+        <activity android:name=".ui.home.comment.CommentListActivity"></activity>
+        <activity android:name=".ui.home.search_list.SearchListActivity" />
+        <activity android:name=".ui.account.AgreementActivity" />
         <activity android:name=".ui.main.SplashActivity" />
         <activity android:name=".ui.home.all_tv.AllTvActivity" />
         <activity android:name=".ui.home.all_juzheng.AllJuZhengActivity" />
@@ -55,11 +47,12 @@
         <activity android:name=".ui.home.publish_wenzheng.PublishWenzhengActivity" />
         <activity android:name=".ui.home.BannerDetailsActivity" />
         <activity android:name=".ui.video_edit.VideoEditActivity" />
-        <activity android:name=".ui.camera.TakePhotoActivity" />
+        <activity
+            android:name=".ui.camera.TakePhotoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="screenLayout"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -96,7 +89,9 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask"
+            android:taskAffinity="net.sourceforge.simcpux"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".ui.home.tv_news_detail.TVNewsDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

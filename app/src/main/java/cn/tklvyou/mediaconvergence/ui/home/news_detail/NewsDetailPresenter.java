@@ -13,17 +13,23 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
 
     @Override
     public void getDetailsById(int id) {
+        mView.showLoading();
         RetrofitHelper.getInstance().getServer()
                 .getArticleDetail(id)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
+                    mView.hideLoading();
                     if (result.getCode() == 1) {
                         mView.setDetails(result.getData());
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    mView.hideLoading();
+                    mView.showNoNet();
+                });
     }
 
     @Override
@@ -59,7 +65,7 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
     @Override
     public void addComment(int id, String detail) {
         RetrofitHelper.getInstance().getServer()
-                .addComment(id,detail)
+                .addComment(id, detail)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
@@ -71,8 +77,8 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
     }
 
     @Override
-    public void setCollectStatus(int id,boolean isCollect) {
-        if(isCollect){
+    public void setCollectStatus(int id, boolean isCollect) {
+        if (isCollect) {
             RetrofitHelper.getInstance().getServer()
                     .addCollect(id)
                     .compose(RxSchedulers.applySchedulers())
@@ -83,7 +89,7 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
                             mView.setCollectStatusSuccess(true);
                         }
                     }, throwable -> throwable.printStackTrace());
-        }else {
+        } else {
             RetrofitHelper.getInstance().getServer()
                     .cancelCollect(id)
                     .compose(RxSchedulers.applySchedulers())
@@ -117,9 +123,8 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
         RetrofitHelper.getInstance().getServer()
                 .getScoreByRead(id)
                 .compose(RxSchedulers.applySchedulers())
-                .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if(!StringUtils.isEmpty(result.getMsg())){
+                    if (!StringUtils.isEmpty(result.getMsg())) {
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> throwable.printStackTrace());
@@ -131,7 +136,7 @@ public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> 
                 .getScoreByShare(id)
                 .compose(RxSchedulers.applySchedulers())
                 .subscribe(result -> {
-                    if(!StringUtils.isEmpty(result.getMsg())){
+                    if (!StringUtils.isEmpty(result.getMsg())) {
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> throwable.printStackTrace());

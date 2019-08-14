@@ -82,7 +82,7 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         val bean = (adapter as SuixiTVGridRvAdpater).data[position]
         val id = bean.id
         val type = "电视"
-        NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
     }
 
 

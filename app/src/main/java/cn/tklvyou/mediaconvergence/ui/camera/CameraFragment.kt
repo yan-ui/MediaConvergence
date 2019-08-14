@@ -2,6 +2,7 @@ package cn.tklvyou.mediaconvergence.ui.camera
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
@@ -46,13 +47,16 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         return R.layout.fragment_camera
     }
 
+    private var isRefresh = false
+    private var isChoose = false
     override fun initView() {
         cameraTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
         cameraTitleBar.rightCustomView.setOnClickListener {
             RxPermissions(this)
                     .request(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA)
                     .subscribe { granted ->
-                        if (granted) { // Always true pre-M
+                        if (granted) {
+                            // Always true pre-M
                             BottomSheetDialog(context)
                                     .init()
                                     .setCancelable(true)    //设置手机返回按钮是否有效
@@ -61,9 +65,13 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
                                     .setDefaultItemStyle(BottomSheetDialog.SheetItemTextStyle("#000000", 16))
                                     .setBottomBtnStyle(BottomSheetDialog.SheetItemTextStyle("#ff0000", 18))
                                     .addSheetItem("拍摄") { which ->
-                                        startActivity(Intent(context, TakePhotoActivity::class.java))
+                                        val intent = Intent(context, TakePhotoActivity::class.java)
+                                        intent.putExtra("page", "随手拍")
+                                        startActivity(intent)
+                                        isRefresh = true
                                     }
                                     .addSheetItem("从手机相册选择") { which ->
+                                        isChoose = true
                                         // 进入相册 以下是例子：不需要的api可以不写
                                         PictureSelector.create(this@CameraFragment)
                                                 .openGallery(PictureMimeType.ofImage())
@@ -103,34 +111,36 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 //            }
 //        })
 
-        mPresenter.getNewList("随手拍", null,1)
+        mPresenter.getNewList("随手拍", null, 1)
     }
 
     override fun lazyData() {
 
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if(!hidden && !isFirstResume){
-            mPresenter.getNewList("随手拍", null,1)
-            if(adapter != null){
-                adapter.loadMoreComplete()
+    override fun onUserVisible() {
+        super.onUserVisible()
+        if (isChoose) {
+            isChoose = false
+            isRefresh = true
+        } else {
+            if (isRefresh) {
+                isRefresh = false
+                cameraSmartRefreshLayout.autoRefresh()
             }
         }
     }
 
-    override fun onUserVisible() {
-        super.onUserVisible()
-        mPresenter.getNewList("随手拍", null,1)
-        if(adapter != null){
-            adapter.loadMoreComplete()
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && !isFirstResume) {
+            mPresenter.getNewList("随手拍", null, 1)
         }
     }
 
 
     override fun getListAsync(page: Int) {
-        mPresenter.getNewList("随手拍", null,page)
+        mPresenter.getNewList("随手拍", null, page)
     }
 
     override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {
@@ -174,43 +184,72 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
         val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-        NewsDetailActivity.startNewsDetailActivity(context!!, type, id)
+        startNewsDetailActivity(mActivity!!, type, id, position)
 
+    }
+
+
+    private fun startNewsDetailActivity(context: Context, type: String, id: Int, position: Int) {
+        val intent = Intent(context, NewsDetailActivity::class.java)
+        intent.putExtra(NewsDetailActivity.INTENT_ID, id)
+        intent.putExtra(NewsDetailActivity.INTENT_TYPE, type)
+        intent.putExtra(NewsDetailActivity.POSITION, position)
+        startActivityForResult(intent, 0)
     }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemChildClick(adapter, view, position)
-        if(view!!.id == R.id.deleteBtn){
+        if (view!!.id == R.id.deleteBtn) {
             val dialog = CommonDialog(context)
             dialog.setTitle("温馨提示")
             dialog.setMessage("是否删除？")
-            dialog.setYesOnclickListener("确认"){
+            dialog.setYesOnclickListener("确认") {
                 val bean = (adapter as WxCircleAdapter).data[position]
-                mPresenter.deleteArticle(bean.id,position)
+                mPresenter.deleteArticle(bean.id, position)
                 dialog.dismiss()
             }
+            dialog.show()
         }
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == PictureConfig.CHOOSE_REQUEST && data != null) {
-                // 图片、视频、音频选择结果回调
-                val selectList = PictureSelector.obtainMultipleResult(data)
-                // 例如 LocalMedia 里面返回三种path
-                // 1.media.getPath(); 为原图path
-                // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
-                // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
-                // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
-                val intent = Intent(context, PublishNewsActivity::class.java)
-                intent.putExtra("page","随手拍")
-                intent.putExtra("isVideo",false)
-                intent.putExtra("data", selectList as Serializable)
-                startActivity(intent)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+
+            when (requestCode) {
+                PictureConfig.CHOOSE_REQUEST -> {
+                    // 图片、视频、音频选择结果回调
+                    val selectList = PictureSelector.obtainMultipleResult(data)
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                    val intent = Intent(context, PublishNewsActivity::class.java)
+                    intent.putExtra("page", "随手拍")
+                    intent.putExtra("isVideo", false)
+                    intent.putExtra("data", selectList as Serializable)
+                    startActivity(intent)
+                }
+
+                0 -> {
+                    val position = data.getIntExtra("position", 0)
+                    val seeNum = data.getIntExtra("seeNum", 0)
+                    val zanNum = data.getIntExtra("zanNum", 0)
+                    val commenNum = data.getIntExtra("commentNum", 0)
+                    val like_status = data.getIntExtra("like_status", 0)
+
+                    val bean = (adapter as WxCircleAdapter).data[position] as NewsBean
+                    bean.comment_num = commenNum
+                    bean.like_num = zanNum
+                    bean.visit_num = seeNum
+                    bean.like_status = like_status
+                    adapter.notifyItemChanged(position)
+                }
 
             }
+
         }
 
     }

@@ -331,7 +331,6 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
         Log.e(TAG, "onLoadFailed page = " + page + "; e = " + (e == null ? null : e.getMessage()));
         stopLoadData(page);
         ToastUtils.showShort("加载失败");
-        setList(new ArrayList<>());
     }
 
 

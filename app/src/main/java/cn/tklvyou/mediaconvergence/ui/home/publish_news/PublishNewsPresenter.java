@@ -58,6 +58,10 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
             @Override
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
+                if(err.contains("no token")){
+                    getQiniuToken();
+                }
+                ToastUtils.showShort("上传失败,请重新上传");
                 mView.hideLoading();
             }
 
@@ -159,6 +163,10 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
             @Override
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
+                if(err.contains("no token")){
+                    getQiniuToken();
+                }
+                ToastUtils.showShort("上传失败,请重新上传");
                 mView.hideLoading();
             }
 

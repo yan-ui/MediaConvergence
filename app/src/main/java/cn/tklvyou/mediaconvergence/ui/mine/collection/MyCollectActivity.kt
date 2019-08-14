@@ -34,11 +34,6 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
                 adapter.setNewData(list)
             }
         })
-        if (list != null) {
-            if (list.isEmpty()) {
-                showNoData()
-            }
-        }
     }
 
     override fun setCollectList(page: Int, pageModel: BasePageModel<NewsBean>?) {

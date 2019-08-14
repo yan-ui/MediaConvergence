@@ -133,7 +133,7 @@ public class ExpandTextView extends LinearLayout {
         this.expandStatusListener = listener;
     }
 
-    public static interface ExpandStatusListener{
+    public interface ExpandStatusListener{
 
         void statusChange(boolean isExpand);
     }

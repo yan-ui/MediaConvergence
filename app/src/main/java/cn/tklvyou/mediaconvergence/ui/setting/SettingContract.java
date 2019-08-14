@@ -12,12 +12,10 @@ import cn.tklvyou.mediaconvergence.base.BaseContract;
 public interface SettingContract {
     interface LogoutView extends BaseContract.BaseView {
         void logoutSuccess();
-
-        void logoutError();
     }
 
     interface LogoutPresenter extends BaseContract.BasePresenter<SettingContract.LogoutView> {
-        void logout(String name, String password);
+        void logout();
     }
 
 

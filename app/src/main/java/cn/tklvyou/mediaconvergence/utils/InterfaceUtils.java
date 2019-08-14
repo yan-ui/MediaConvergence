@@ -17,6 +17,7 @@ public class InterfaceUtils {
     private InterfaceUtils() {
         mResults = new ArrayList<>();
     }
+
     public static InterfaceUtils getInstance() {
         if (sInterfaceUtils == null) {
             sInterfaceUtils = new InterfaceUtils();
@@ -34,7 +35,7 @@ public class InterfaceUtils {
         mResults.add(activity);
     }
 
-    public void remove(Activity activity) {
+    public void remove(OnClickResult activity) {
         mResults.remove(activity);
     }
 

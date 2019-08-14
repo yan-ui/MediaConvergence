@@ -41,11 +41,6 @@ class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean,
                 adapter.setNewData(list)
             }
         })
-        if (list != null) {
-            if (list.isEmpty()) {
-                showNoData()
-            }
-        }
     }
 
 

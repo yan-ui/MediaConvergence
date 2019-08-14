@@ -15,9 +15,12 @@ public interface MyArticleContract {
 
     interface View extends BaseContract.BaseView {
         void setNewList(int p, BasePageModel<NewsBean> model);
+        void deleteSuccess(int position);
     }
 
     interface Presenter extends BaseContract.BasePresenter<MyArticleContract.View> {
         void getNewList(String module,  int p);
+        void deleteArticle(int id,int position);
+        void deleteArticles(int id,int position);
     }
 }

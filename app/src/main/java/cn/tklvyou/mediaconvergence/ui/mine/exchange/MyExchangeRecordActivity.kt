@@ -35,11 +35,6 @@ class MyExchangeRecordActivity : BaseHttpRecyclerActivity<ExchangePresenter, Exc
                 adapter.setNewData(list)
             }
         })
-        if (list != null) {
-            if (list.isEmpty()) {
-                showNoData()
-            }
-        }
     }
 
 

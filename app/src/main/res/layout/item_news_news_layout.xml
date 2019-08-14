@@ -12,7 +12,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
+        <cn.tklvyou.mediaconvergence.widget.TagTextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

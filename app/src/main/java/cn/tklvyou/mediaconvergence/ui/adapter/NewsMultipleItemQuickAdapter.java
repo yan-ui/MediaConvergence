@@ -32,6 +32,7 @@ import com.netease.neliveplayer.playerkit.common.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.helper.GlideManager;
@@ -66,8 +67,8 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
         addItemType(NewsMultipleItem.WECHAT_MOMENTS, R.layout.item_winxin_circle);
         addItemType(NewsMultipleItem.READING, R.layout.item_news_reading);
         addItemType(NewsMultipleItem.LISTEN, R.layout.item_news_listen);
-        addItemType(NewsMultipleItem.DANG_JIAN, R.layout.item_news_wen_zheng);
-        addItemType(NewsMultipleItem.ZHUAN_LAN, R.layout.item_news_wen_zheng);
+        addItemType(NewsMultipleItem.DANG_JIAN, R.layout.item_news_news_layout);
+        addItemType(NewsMultipleItem.ZHUAN_LAN, R.layout.item_news_news_layout);
         addItemType(NewsMultipleItem.GONG_GAO, R.layout.item_news_news_layout);
     }
 
@@ -85,7 +86,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
             case NewsMultipleItem.VIDEO:
                 NewsBean bean = (NewsBean) item.getDataBean();
                 helper.setText(R.id.tvNewsTitle, bean.getName());
-                helper.setText(R.id.tvVideoTime, bean.getTime());
+                helper.setText(R.id.tvVideoTime, formatTime(Double.valueOf(bean.getTime()).longValue()));
                 helper.setText(R.id.tvCommentNum, "" + bean.getComment_num());
                 helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
                 helper.setText(R.id.tvName, bean.getNickname());
@@ -106,13 +107,12 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                 // 加载网络图片
                 if (!StringUtils.isEmpty(bean.getAvatar().trim())) {
-                    Glide.with(mContext).load(bean.getAvatar()).into((ImageView) helper.getView(R.id.ivAvatar));
+                    GlideManager.loadCircleImg(bean.getAvatar(), helper.getView(R.id.ivAvatar), R.mipmap.default_avatar);
                 }
 
                 Glide.with(mContext).load(bean.getImage()).into((ImageView) helper.getView(R.id.ivVideoBg));
 
                 helper.addOnClickListener(R.id.ivStartPlayer);
-
                 break;
             case NewsMultipleItem.TV:
                 HaveSecondModuleNewsModel suixiTvModel = (HaveSecondModuleNewsModel) item.getDataBean();
@@ -183,7 +183,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                             helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                         } else {
                             //多张图片
                             helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
@@ -202,7 +202,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                 helper.setText(R.id.tvTime, bean.getBegintime());
                 helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
                 helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
-                helper.setText(R.id.tvVideoTime, "" + bean.getTime());
+                helper.setText(R.id.tvVideoTime, formatTime(Double.valueOf(bean.getTime()).longValue()));
 
                 tvGoodNum = helper.getView(R.id.tvGoodNum);
 
@@ -247,7 +247,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                             helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                         } else {
                             //多张图片
                             helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
@@ -300,7 +300,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                             helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                         } else {
                             //多张图片
                             helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
@@ -519,7 +519,13 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                 helper.setText(R.id.tvName, bean.getName());
                 helper.setText(R.id.tvBeginTime, bean.getBegintime());
-                helper.setText(R.id.tvTime, bean.getTime());
+
+                if(bean.getTime().contains(":") || bean.getTime().contains("：")){
+                    helper.setText(R.id.tvTime, bean.getTime());
+                }else {
+                    helper.setText(R.id.tvTime, formatTime(Double.valueOf(bean.getTime()).longValue()));
+                }
+
                 helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
                 helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
 
@@ -536,6 +542,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                     grayGoodDrawable.setBounds(drawables[0].getBounds());
                     tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
                 }
+
 
 
                 if (bean.getPlayStatus()) {
@@ -580,7 +587,22 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
 
                 helper.setText(R.id.tvTime, bean.getBegintime());
-                helper.setText(R.id.tvCommentNum, "" + bean.getComment_num());
+                helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
+                helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
+
+                tvGoodNum = helper.getView(R.id.tvGoodNum);
+
+                drawables = tvGoodNum.getCompoundDrawables();
+
+                if (bean.getLike_status() == 1) {
+                    Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
+                    redGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                } else {
+                    Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
+                    grayGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                }
 
                 if (!StringUtils.isEmpty(bean.getImage())) {
                     //一张图片
@@ -596,13 +618,12 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                         helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
 
                     } else {
-
                         if (bean.getImages().size() < 3) {
                             //一张图片
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                             helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                         } else {
                             //多张图片
                             helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
@@ -614,12 +635,28 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                         }
                     }
                 }
+
                 break;
             case NewsMultipleItem.ZHUAN_LAN:
                 bean = (NewsBean) item.getDataBean();
                 helper.setText(R.id.tvTitle, bean.getName());
                 helper.setText(R.id.tvTime, bean.getBegintime());
-                helper.setText(R.id.tvCommentNum, "" + bean.getComment_num());
+                helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
+                helper.setText(R.id.tvGoodNum, "" + bean.getLike_num());
+
+                tvGoodNum = helper.getView(R.id.tvGoodNum);
+
+                drawables = tvGoodNum.getCompoundDrawables();
+
+                if (bean.getLike_status() == 1) {
+                    Drawable redGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_red_good);
+                    redGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                } else {
+                    Drawable grayGoodDrawable = mContext.getResources().getDrawable(R.mipmap.icon_good);
+                    grayGoodDrawable.setBounds(drawables[0].getBounds());
+                    tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
+                }
 
                 if (!StringUtils.isEmpty(bean.getImage())) {
                     //一张图片
@@ -635,13 +672,12 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                         helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
 
                     } else {
-
                         if (bean.getImages().size() < 3) {
                             //一张图片
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                             helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                         } else {
                             //多张图片
                             helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
@@ -694,7 +730,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                             helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                             helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                            GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                            GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                         } else {
                             //多张图片
                             helper.getView(R.id.ivImageOne).setVisibility(View.GONE);
@@ -853,7 +889,6 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 //        }
 //        MediaEntity mediaEntity = mData.get(position);
 //        mediaEntity.setEndTime(durationTimeString);
-
     }
 
     /*
@@ -863,4 +898,10 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
      */
 
 
+    private String formatTime(Long position) {
+        int totalSeconds = (int) (position + 0.5);
+        int seconds = totalSeconds % 60;
+        int minutes = totalSeconds / 60 % 60;
+        return String.format(Locale.US, "%02d:%02d", minutes, seconds);
+    }
 }

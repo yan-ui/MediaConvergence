@@ -68,7 +68,7 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <FrameLayout
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/videoLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_208"
@@ -76,14 +76,27 @@
         android:layout_marginRight="@dimen/dp_30"
         android:background="@color/black">
 
-        <ImageView
-            android:id="@+id/ivVideo"
+        <!-- 视频-->
+        <FrameLayout
+            android:id="@+id/llVideo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/default_gray_text_color"
-            android:scaleType="centerInside"
-            android:src="@mipmap/ic_start_play"
-            android:visibility="visible" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivVideo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/default_gray_text_color"
+                android:scaleType="centerCrop"
+                android:visibility="visible" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_start_play" />
+
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/ivDelete"

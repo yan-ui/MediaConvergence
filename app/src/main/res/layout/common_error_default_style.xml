@@ -44,13 +44,15 @@
 
         <Button
             android:id="@+id/loading_refreash_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/dp_120"
             android:layout_height="@dimen/dp_40"
             android:layout_marginTop="@dimen/dp_20"
             android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/default_color_radius_22_bg"
             android:paddingLeft="@dimen/dp_10"
             android:paddingRight="@dimen/dp_10"
-            android:text="重新加载"
+            android:text="设置网络"
             android:textSize="@dimen/sp_15" />
     </LinearLayout>
 

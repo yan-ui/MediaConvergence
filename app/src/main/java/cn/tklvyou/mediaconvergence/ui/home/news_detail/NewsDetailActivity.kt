@@ -1,10 +1,9 @@
 package cn.tklvyou.mediaconvergence.ui.home.news_detail
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
@@ -15,6 +14,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import cn.tklvyou.mediaconvergence.R
@@ -25,10 +26,12 @@ import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.model.VoteOptionModel
 import cn.tklvyou.mediaconvergence.ui.home.AudioController
 import cn.tklvyou.mediaconvergence.ui.home.ImagePagerActivity
+import cn.tklvyou.mediaconvergence.ui.home.comment.CommentListActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.GlideCircleTransform
 import cn.tklvyou.mediaconvergence.utils.InterfaceUtils
 import cn.tklvyou.mediaconvergence.utils.UrlUtils
+import cn.tklvyou.mediaconvergence.utils.YBitmapUtils
 import cn.tklvyou.mediaconvergence.widget.SharePopupWindow
 import cn.tklvyou.mediaconvergence.widget.VoteLoadButton
 import com.blankj.utilcode.util.*
@@ -48,6 +51,8 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
+import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
+import com.trello.rxlifecycle3.components.support.RxFragment
 import kotlinx.android.synthetic.main.activity_news_detail.*
 import java.util.*
 
@@ -57,8 +62,9 @@ import java.util.*
 class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetailContract.View {
 
     companion object {
-        private val INTENT_TYPE = "type"
-        private val INTENT_ID = "id"
+        public val INTENT_TYPE = "type"
+        public val INTENT_ID = "id"
+        public val POSITION = "position"
 
         fun startNewsDetailActivity(context: Context, type: String, id: Int) {
             val intent = Intent(context, NewsDetailActivity::class.java)
@@ -66,11 +72,18 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             intent.putExtra(INTENT_TYPE, type)
             context.startActivity(intent)
         }
+
     }
 
     private var id: Int = 0
     private var type: String = ""
     private var shareTitle = ""
+
+    private var seeNum = 0
+    private var zanNum = 0
+    private var commenNum = 0
+    private var item_position = 0
+    private var like_status = 0
 
     override fun initPresenter(): NewsDetailPresenter {
         return NewsDetailPresenter()
@@ -92,6 +105,8 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     override fun initView(savedInstanceState: Bundle?) {
         id = intent.getIntExtra(INTENT_ID, 0)
         type = intent.getStringExtra(INTENT_TYPE)
+        item_position = intent.getIntExtra(POSITION, 0)
+
 
         if (type == "电视") {
             setTitle("视讯")
@@ -102,6 +117,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         setNavigationImage()
         setNavigationOnClickListener { v ->
             release()
+            initResultData()
             finish()
         }
 
@@ -115,12 +131,11 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             }
 
             "电视" -> {
-                setPositiveImage(R.mipmap.icon_collect_normal)
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
 
-                (ivVideo.layoutParams as LinearLayout.LayoutParams).setMargins(0, 0, 0, 0)
+                (ivVideo.layoutParams as FrameLayout.LayoutParams).setMargins(0, 0, 0, 0)
             }
 
 
@@ -136,7 +151,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             "公告" -> {
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
-                ivVideo.visibility = View.GONE
+                llVideo.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
             }
 
@@ -145,14 +160,14 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 setPositiveImage(R.mipmap.icon_collect_normal)
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
-                ivVideo.visibility = View.GONE
+                llVideo.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
             }
 
             "问政" -> {
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
-                ivVideo.visibility = View.GONE
+                llVideo.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
             }
 
@@ -160,7 +175,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 setPositiveImage(R.mipmap.icon_collect_normal)
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
-                ivVideo.visibility = View.GONE
+                llVideo.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
                 llYueTing.visibility = View.VISIBLE
                 mAudioControl = AudioController(this)
@@ -263,6 +278,9 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     }
 
     override fun setDetails(item: NewsBean) {
+        commenNum = item.comment_num
+        seeNum = item.visit_num
+
         shareTitle = item.name
         //收藏状态
         hasCollect = item.collect_status == 1
@@ -322,21 +340,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             }
 
             "电视" -> {
-                setPositiveOnClickListener {
-                    if (hasCollect) {
-                        mPresenter.setCollectStatus(id, false)
-                    } else {
-                        mPresenter.setCollectStatus(id, true)
-                    }
-                }
-
-                if (hasCollect) {
-                    commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect))
-                } else {
-                    commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect_normal))
-                }
-
-                ivVideo.visibility = View.VISIBLE
+                llVideo.visibility = View.VISIBLE
                 ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"))
                 ivVideo.setOnClickListener {
                     val intent = Intent(this, VodActivity::class.java)
@@ -347,11 +351,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 Glide.with(this).load(item.image)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.color.bg_no_photo)
-                        .into(object : SimpleTarget<Drawable>() {
-                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                                ivVideo.background = resource
-                            }
-                        })
+                        .into(ivVideo)
 
                 tvTitle.text = item.name
                 tvNickName.text = item.nickname
@@ -363,7 +363,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             }
 
             "视讯" -> {
-                ivVideo.visibility = View.VISIBLE
+                llVideo.visibility = View.VISIBLE
                 ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"))
                 ivVideo.setOnClickListener {
                     val intent = Intent(this, VodActivity::class.java)
@@ -374,11 +374,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 Glide.with(this).load(item.image)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.color.bg_no_photo)
-                        .into(object : SimpleTarget<Drawable>() {
-                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                                ivVideo.background = resource
-                            }
-                        })
+                        .into(ivVideo)
 
                 tvTitle.text = item.name
                 tvNickName.text = item.nickname
@@ -424,7 +420,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             "问政" -> {
 
                 tvTitle.text = item.name
-                tvNickName.text = item.nickname
+                tvNickName.text = "问政对象：${item.module_second}"
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
 
@@ -461,7 +457,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 tvNickName.text = item.nickname
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
-                tvYueTingTime.text = item.time
+                tvYueTingTime.text = formatTime(item.time.toDouble().toLong())
 
                 mAudioControl!!.setOnAudioControlListener(object : AudioController.AudioControlListener {
                     override fun setCurPositionTime(position: Int, curPositionTime: Long) {
@@ -520,6 +516,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             llTouPiao.visibility = View.VISIBLE
             tvVoteName.text = item.vote.name
 
+            voteOptionContainer.removeAllViews()
 
             if (item.vote_status == 0) {
                 //未投票
@@ -582,7 +579,16 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
 
         tvCommentNum.text = "评论  ${item.comment_num}"
+        tvCommentNum.setOnClickListener {
+            val intent = Intent(this, CommentListActivity::class.java)
+            intent.putExtra("id", id)
+            startActivity(intent)
+        }
+
+
         tvGoodNum.text = "赞  ${item.like_num}"
+        zanNum = item.like_num
+        like_status = item.like_status
 
         this.like_num = item.like_num
 
@@ -603,7 +609,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             }
 
             if (it.avatar.trim().isNotEmpty()) {
-                GlideManager.loadRoundImg(it.avatar, ivAvatar, 5f)
+                GlideManager.loadRoundImg(it.avatar, ivAvatar, 5f, R.mipmap.default_avatar, true)
             }
 
             tvNickname.text = it.nickname
@@ -653,6 +659,8 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
             like_num++
             tvGoodNum.text = "赞  $like_num"
+            zanNum = like_num
+            like_status = 1
 
         } else {
 
@@ -664,6 +672,8 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
             like_num--
             tvGoodNum.text = "赞  $like_num"
+            zanNum = like_num
+            like_status = 0
         }
 
     }
@@ -744,8 +754,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
     override fun onDestroy() {
         super.onDestroy()
-        mAudioControl?.release()
-        mAudioControl = null
+        release()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -816,17 +825,22 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         val msg = WXMediaMessage(webpage)
         msg.title = shareTitle
         msg.description = "濉溪发布"
-        val bmp = BitmapFactory.decodeResource(resources, R.mipmap.default_avatar)
+        val bmp = BitmapFactory.decodeResource(resources, R.drawable.share_icon)
         val thumbBmp = Bitmap.createScaledBitmap(bmp, 100, 100, true)
         bmp.recycle()
-        msg.thumbData = ImageUtils.bitmap2Bytes(thumbBmp, Bitmap.CompressFormat.PNG)
+        msg.thumbData = ImageUtils.bitmap2Bytes(YBitmapUtils.changeColor(thumbBmp), Bitmap.CompressFormat.JPEG)
         val req = SendMessageToWX.Req()
         req.transaction = "webpage" + System.currentTimeMillis()
         req.message = msg
         req.scene = SendMessageToWX.Req.WXSceneSession
         wxapi!!.sendReq(req)
 
-        InterfaceUtils.getInstance().add {
+        InterfaceUtils.getInstance().add(onClickResult)
+
+    }
+
+    private var onClickResult = object : InterfaceUtils.OnClickResult {
+        override fun onResult(msg: String?) {
             ToastUtils.showShort("分享成功")
             mPresenter.getScoreByShare(id)
             InterfaceUtils.getInstance().remove(this)
@@ -849,21 +863,17 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         val msg = WXMediaMessage(webpage)
         msg.title = shareTitle
         msg.description = "濉溪发布"
-        val bmp = BitmapFactory.decodeResource(resources, R.mipmap.default_avatar)
+        val bmp = BitmapFactory.decodeResource(resources, R.drawable.share_icon)
         val thumbBmp = Bitmap.createScaledBitmap(bmp, 100, 100, true)
         bmp.recycle()
-        msg.thumbData = ImageUtils.bitmap2Bytes(thumbBmp, Bitmap.CompressFormat.PNG)
+        msg.thumbData = ImageUtils.bitmap2Bytes(YBitmapUtils.changeColor(thumbBmp), Bitmap.CompressFormat.JPEG)
         val req = SendMessageToWX.Req()
         req.transaction = "webpage" + System.currentTimeMillis()
         req.message = msg
         req.scene = SendMessageToWX.Req.WXSceneTimeline
         wxapi!!.sendReq(req)
 
-        InterfaceUtils.getInstance().add {
-            ToastUtils.showShort("分享成功")
-            mPresenter.getScoreByShare(id)
-            InterfaceUtils.getInstance().remove(this)
-        }
+        InterfaceUtils.getInstance().add(onClickResult)
     }
 
     private var shareHandler: WbShareHandler? = null
@@ -892,7 +902,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             mediaObject.title = shareTitle
             mediaObject.description = "濉溪发布"
             val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.default_avatar)
-            mediaObject.setThumbImage(bitmap)
+            mediaObject.setThumbImage(YBitmapUtils.changeColor(bitmap))
             mediaObject.actionUrl = Contacts.SHARE_BASE_URL + id
             mediaObject.defaultText = "Webpage"
             weiboMessage.mediaObject = mediaObject
@@ -932,6 +942,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             release()
+            initResultData()
             finish()
             return true
         }
@@ -943,6 +954,35 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             timer!!.cancel()
             timer = null
         }
+
+
+        if (mAudioControl != null) {
+            mAudioControl!!.release()
+            mAudioControl = null
+        }
+    }
+
+
+    private fun initResultData() {
+        if (commenNum == 0 && zanNum == 0 && seeNum == 0) {
+
+        } else {
+            val intent = Intent()
+            intent.putExtra("commentNum", commenNum)
+            intent.putExtra("zanNum", zanNum)
+            intent.putExtra("seeNum", seeNum)
+            intent.putExtra("position", item_position)
+            intent.putExtra("like_status", like_status)
+            setResult(Activity.RESULT_OK, intent)
+        }
+    }
+
+
+    private fun formatTime(position: Long): String {
+        val totalSeconds = (position!! + 0.5).toInt()
+        val seconds = totalSeconds % 60
+        val minutes = totalSeconds / 60 % 60
+        return String.format(Locale.US, "%02d:%02d", minutes, seconds)
     }
 
 }

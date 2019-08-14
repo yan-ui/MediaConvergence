@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.common.Contacts;
 import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack;
@@ -104,8 +105,10 @@ public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter,
         adapter.setOnItemChildClickListener(this);
         adapter.setOnItemLongClickListener(this);
         this.adapter = adapter;
-        rvBaseRecycler.setAdapter(adapter);
-        this.adapter.disableLoadMoreIfNotFullPage();
+        rvBaseRecycler.setAdapter(this.adapter);
+        this.adapter.setEmptyView(R.layout.common_empty_view,rvBaseRecycler);
+        this.adapter.setHeaderAndEmpty(true);
+
     }
 
     /**

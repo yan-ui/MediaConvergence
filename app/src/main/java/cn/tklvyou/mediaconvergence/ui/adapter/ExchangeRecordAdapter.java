@@ -1,7 +1,9 @@
 package cn.tklvyou.mediaconvergence.ui.adapter;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -54,7 +56,15 @@ public class ExchangeRecordAdapter extends BaseQuickAdapter<ExchangeModel, BaseV
             helper.setText(R.id.tvGoodsDesc, item.getName());
             helper.setText(R.id.tvDeduction, "消耗：" + item.getScore() + "分");
             boolean buttonEnable = STATUS_HIDDEN.equalsIgnoreCase(item.getStatus());
-            helper.setGone(R.id.tvWaitReceive, buttonEnable);
+            if(!buttonEnable){
+                ((TextView)helper.getView(R.id.tvWaitReceive)).setTextColor(Color.BLACK);
+                helper.setBackgroundRes(R.id.tvWaitReceive,R.drawable.bg_radius_15_top_bottom_gray);
+                ((TextView)helper.getView(R.id.tvWaitReceive)).setText("已领取");
+            }else {
+                helper.setBackgroundRes(R.id.tvWaitReceive,R.drawable.bg_radius_15_top_bottom_red);
+                ((TextView)helper.getView(R.id.tvWaitReceive)).setTextColor(Color.WHITE);
+                ((TextView)helper.getView(R.id.tvWaitReceive)).setText("待领取");
+            }
             helper.addOnClickListener(R.id.tvWaitReceive);
 
         }

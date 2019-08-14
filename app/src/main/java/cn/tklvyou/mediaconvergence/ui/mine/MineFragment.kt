@@ -52,7 +52,7 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
         llMyPointDetail.setOnClickListener(this)
         initRecyclerView(mineRecyclerView)
         mineRecyclerView.layoutManager = GridLayoutManager(context, 4)
-        mineRecyclerView.addItemDecoration(GridDividerItemDecoration(60, Color.WHITE))
+        mineRecyclerView.addItemDecoration(GridDividerItemDecoration(40, Color.WHITE))
         //todo:待添加
         //{
         //  "name": "关注板块",
