@@ -42,7 +42,7 @@
                     android:textColor="@color/black333333"
                     android:textSize="@dimen/sp_14" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageView
                     android:id="@+id/civAvatar"
                     android:layout_width="@dimen/dp_38"
                     android:layout_height="@dimen/dp_38"

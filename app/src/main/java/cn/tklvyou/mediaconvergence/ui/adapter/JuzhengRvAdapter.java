@@ -10,6 +10,8 @@ import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.List;
+
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.helper.GlideManager;
 import cn.tklvyou.mediaconvergence.model.NewsBean;
@@ -17,8 +19,8 @@ import cn.tklvyou.mediaconvergence.model.NewsBean;
 
 public class JuzhengRvAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> {
 
-    public JuzhengRvAdapter() {
-        super(R.layout.item_news_news_layout);
+    public JuzhengRvAdapter(List<NewsBean> beans) {
+        super(R.layout.item_news_news_layout,beans);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class JuzhengRvAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder>
                     helper.getView(R.id.llMultiImage).setVisibility(View.GONE);
                     helper.getView(R.id.ivImageOne).setVisibility(View.VISIBLE);
 
-                    GlideManager.loadRoundImg(bean.getImage(), helper.getView(R.id.ivImageOne));
+                    GlideManager.loadRoundImg(bean.getImages().get(0), helper.getView(R.id.ivImageOne));
                 } else {
                     //多张图片
                     helper.getView(R.id.ivImageOne).setVisibility(View.GONE);

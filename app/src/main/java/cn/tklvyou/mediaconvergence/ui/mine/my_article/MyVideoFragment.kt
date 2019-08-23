@@ -1,5 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.mine.my_article
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
@@ -40,6 +42,10 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
         return R.layout.fragment_camera
     }
 
+    override fun getLoadingView(): View {
+        return cameraRecyclerView
+    }
+
     override fun initView() {
         cameraTitleBar.visibility = View.GONE
         initSmartRefreshLayout(cameraSmartRefreshLayout)
@@ -47,6 +53,11 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
 
         cameraRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.VERTICAL, 20, resources.getColor(R.color.common_bg)))
 
+        mPresenter.getNewList(moduleName, 1)
+    }
+
+    override fun onRetry() {
+        super.onRetry()
         mPresenter.getNewList(moduleName, 1)
     }
 
@@ -69,7 +80,7 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
         setList(object : AdapterCallBack<MyVideoAdapter> {
 
             override fun createAdapter(): MyVideoAdapter {
-                return MyVideoAdapter()
+                return MyVideoAdapter(list)
             }
 
             override fun refreshAdapter() {
@@ -86,7 +97,7 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
         val bean = (adapter as MyVideoAdapter).data[position]
         val id = bean.id
         val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
+        startNewsDetailActivity(context!!, type, id, position)
 
     }
 
@@ -123,5 +134,34 @@ class MyVideoFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBea
     override fun deleteSuccess(position: Int) {
         adapter.remove(position)
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val position = data.getIntExtra("position", 0)
+            val seeNum = data.getIntExtra("seeNum", 0)
+            val zanNum = data.getIntExtra("zanNum", 0)
+            val commenNum = data.getIntExtra("commentNum", 0)
+            val like_status = data.getIntExtra("like_status", 0)
+
+            val bean = (adapter as MyVideoAdapter).data[position]
+            bean.comment_num = commenNum
+            bean.like_num = zanNum
+            bean.visit_num = seeNum
+            bean.like_status = like_status
+            adapter.notifyItemChanged(position)
+
+        }
+    }
+
+    private fun startNewsDetailActivity(context: Context, type: String, id: Int, position: Int) {
+        val intent = Intent(context, NewsDetailActivity::class.java)
+        intent.putExtra(NewsDetailActivity.INTENT_ID, id)
+        intent.putExtra(NewsDetailActivity.INTENT_TYPE, type)
+        intent.putExtra(NewsDetailActivity.POSITION, position)
+        startActivityForResult(intent, 0)
+    }
+
 
 }

@@ -6,8 +6,11 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.model.MessageModel;
+import cn.tklvyou.mediaconvergence.model.NewsBean;
 
 
 /**
@@ -18,8 +21,8 @@ import cn.tklvyou.mediaconvergence.model.MessageModel;
  * @Email: 971613168@qq.com
  */
 public class SystemMsgAdapter extends BaseQuickAdapter<MessageModel, BaseViewHolder> {
-    public SystemMsgAdapter() {
-        super(R.layout.item_system_msg);
+    public SystemMsgAdapter(List<MessageModel> data) {
+        super(R.layout.item_system_msg,data);
     }
 
     @Override

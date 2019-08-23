@@ -1,5 +1,8 @@
 package cn.tklvyou.mediaconvergence.ui.mine.my_article
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +38,10 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
         return R.layout.fragment_camera
     }
 
+    override fun getLoadingView(): View {
+        return cameraRecyclerView
+    }
+
     override fun initView() {
         cameraTitleBar.visibility = View.GONE
         initSmartRefreshLayout(cameraSmartRefreshLayout)
@@ -42,27 +49,20 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
 
         cameraRecyclerView.addItemDecoration(RecycleViewDivider(context, LinearLayout.VERTICAL, 1, resources.getColor(R.color.common_bg)))
 
-        cameraRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Glide.with(context!!).resumeRequests()
-                } else {
-                    Glide.with(context!!).pauseRequests()
-                }
-            }
-        })
-
         mPresenter.getNewList(moduleName, 1)
     }
 
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getNewList(moduleName, 1)
+    }
     override fun lazyData() {
     }
 
     override fun getListAsync(page: Int) {
         mPresenter.getNewList(moduleName, page)
     }
+
 
     override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {
         if (model != null) {
@@ -89,14 +89,13 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
     }
 
 
-
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
 
         val bean = (adapter as WxCircleAdapter).data[position]
         val id = bean.id
         val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
+        startNewsDetailActivity(context!!, type, id, position)
 
     }
 
@@ -118,6 +117,35 @@ class MyCameraFragment : BaseHttpRecyclerFragment<MyArticleListPresenter, NewsBe
 
     override fun deleteSuccess(position: Int) {
         adapter.remove(position)
+    }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val position = data.getIntExtra("position", 0)
+            val seeNum = data.getIntExtra("seeNum", 0)
+            val zanNum = data.getIntExtra("zanNum", 0)
+            val commenNum = data.getIntExtra("commentNum", 0)
+            val like_status = data.getIntExtra("like_status", 0)
+
+            val bean = (adapter as WxCircleAdapter).data[position]
+            bean.comment_num = commenNum
+            bean.like_num = zanNum
+            bean.visit_num = seeNum
+            bean.like_status = like_status
+            adapter.notifyItemChanged(position)
+
+        }
+    }
+
+    private fun startNewsDetailActivity(context: Context, type: String, id: Int, position: Int) {
+        val intent = Intent(context, NewsDetailActivity::class.java)
+        intent.putExtra(NewsDetailActivity.INTENT_ID, id)
+        intent.putExtra(NewsDetailActivity.INTENT_TYPE, type)
+        intent.putExtra(NewsDetailActivity.POSITION, position)
+        startActivityForResult(intent, 0)
     }
 
 

@@ -26,8 +26,7 @@ public class MyArticleListPresenter extends BasePresenter<MyArticleContract.View
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setNewList(p, null);
+                             mView.showFailed("");
                         }
                 );
     }

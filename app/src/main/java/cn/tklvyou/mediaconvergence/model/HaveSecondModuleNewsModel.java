@@ -53,6 +53,7 @@ public class HaveSecondModuleNewsModel {
         private String time;
         private int createtime;
         private String type;
+        private String url;
         private String begintime;
         private String visit_num;
         private String like_num;
@@ -105,6 +106,14 @@ public class HaveSecondModuleNewsModel {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
         }
 
         public String getImage() {

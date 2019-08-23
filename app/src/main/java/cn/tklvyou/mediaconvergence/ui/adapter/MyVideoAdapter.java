@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.List;
 import java.util.Locale;
 
 import cn.tklvyou.mediaconvergence.R;
@@ -24,8 +25,8 @@ import cn.tklvyou.mediaconvergence.model.NewsBean;
  * @Email: 971613168@qq.com
  */
 public class MyVideoAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> {
-    public MyVideoAdapter() {
-        super(R.layout.item_news_video);
+    public MyVideoAdapter(List<NewsBean> data) {
+        super(R.layout.item_news_video,data);
     }
 
     @Override

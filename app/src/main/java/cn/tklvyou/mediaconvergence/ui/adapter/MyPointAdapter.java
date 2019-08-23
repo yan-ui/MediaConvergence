@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.List;
+
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.model.PointDetailModel;
 
@@ -17,8 +19,8 @@ import cn.tklvyou.mediaconvergence.model.PointDetailModel;
  */
 public class MyPointAdapter extends BaseQuickAdapter<PointDetailModel, BaseViewHolder> {
 
-    public MyPointAdapter() {
-        super(R.layout.item_my_integral_detail);
+    public MyPointAdapter(List<PointDetailModel> data) {
+        super(R.layout.item_my_integral_detail,data);
     }
 
     @Override

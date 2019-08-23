@@ -84,6 +84,8 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     private var commenNum = 0
     private var item_position = 0
     private var like_status = 0
+    private var enableHideComment = true
+
 
     override fun initPresenter(): NewsDetailPresenter {
         return NewsDetailPresenter()
@@ -138,7 +140,6 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 (ivVideo.layoutParams as FrameLayout.LayoutParams).setMargins(0, 0, 0, 0)
             }
 
-
             "视讯" -> {
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
@@ -147,14 +148,12 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 (ivVideo.layoutParams as FrameLayout.LayoutParams).setMargins(0, 0, 0, 0)
             }
 
-
             "公告" -> {
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
                 llVideo.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
             }
-
 
             "文章", "悦读" -> {
                 setPositiveImage(R.mipmap.icon_collect_normal)
@@ -181,7 +180,28 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 mAudioControl = AudioController(this)
             }
 
+            "直播" -> {
+                enableHideComment = false
+
+                llWXHeader.visibility = View.GONE
+                contentTv.visibility = View.GONE
+                llArticle.visibility = View.VISIBLE
+                shareItem.visibility = View.GONE
+                tvTitle.visibility = View.GONE
+                tvGoodNum.visibility = View.INVISIBLE
+                tvBeginTime.visibility = View.GONE
+                tvNickName.textSize = 16f
+                tvNickName.setTextColor(resources.getColor(R.color.default_black_text_color))
+
+                editTextBodyLl.visibility = View.VISIBLE
+                optionLayout.visibility = View.GONE
+
+                (ivVideo.layoutParams as FrameLayout.LayoutParams).setMargins(0, 0, 0, 0)
+            }
+
         }
+
+
 
         commentLayout.setOnClickListener {
             updateEditTextBodyVisible(View.VISIBLE)
@@ -200,6 +220,14 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         })
 
         dianzanLayout.setOnClickListener {
+            if (isLike) {
+                mPresenter.cancelLikeNews(id)
+            } else {
+                mPresenter.addLikeNews(id)
+            }
+        }
+
+        sparkButton.setOnClickListener {
             if (isLike) {
                 mPresenter.cancelLikeNews(id)
             } else {
@@ -251,7 +279,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             shareToWXFriend()
         }
 
-        mPresenter.getDetailsById(id)
+        mPresenter.getDetailsById(id,true)
 
         timer = Timer()
         timerTask = object : TimerTask() {
@@ -277,6 +305,13 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
     }
 
+
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getDetailsById(id,false)
+    }
+
+
     override fun setDetails(item: NewsBean) {
         commenNum = item.comment_num
         seeNum = item.visit_num
@@ -284,6 +319,8 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         shareTitle = item.name
         //收藏状态
         hasCollect = item.collect_status == 1
+
+
 
         when (type) {
             "视频", "图文" -> {
@@ -358,8 +395,10 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
 
-                loadHtml(item.content)
-
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
             }
 
             "视讯" -> {
@@ -381,7 +420,10 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
 
-                loadHtml(item.content)
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
 
             }
 
@@ -391,7 +433,10 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
 
-                loadHtml(item.content)
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
             }
 
             "悦读", "文章" -> {
@@ -414,7 +459,10 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
 
-                loadHtml(item.content)
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
             }
 
             "问政" -> {
@@ -424,7 +472,10 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 tvBeginTime.text = item.begintime
                 tvSeeNum.text = "" + item.visit_num
 
-                loadHtml(item.content)
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
 
                 if (item.images != null && item.images.size > 0) {
                     multiImagView.visibility = View.VISIBLE
@@ -505,8 +556,37 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                     mAudioControl!!.onPause()
                 })
 
-                loadHtml(item.content)
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
             }
+
+
+            "直播" -> {
+                llVideo.visibility = View.VISIBLE
+                ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"))
+                ivVideo.setOnClickListener {
+                    val intent = Intent(this, VodActivity::class.java)
+                    intent.putExtra("videoPath", item.video)
+                    this.startActivity(intent)
+                }
+
+                Glide.with(this).load(item.image)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.color.bg_no_photo)
+                        .into(ivVideo)
+
+                tvNickName.text = item.name
+                tvSeeNum.text = "" + item.visit_num
+
+                if (item.content.isNotEmpty()) {
+                    newsDetailWebView.visibility = View.VISIBLE
+                    loadHtml(item.content)
+                }
+
+            }
+
 
         }
 
@@ -566,15 +646,19 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         if (item.like_status == 1) {
             tvGoodStatus.text = "已赞"
             tvGoodStatus.setTextColor(resources.getColor(R.color.colorAccent))
-            val redGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_good_select)
-            redGoodDrawable.bounds = drawables[0].getBounds()
-            tvGoodStatus.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3])
+//            val redGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_good_select)
+//            redGoodDrawable.bounds = drawables[0].getBounds()
+//            tvGoodStatus.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3])
+            sparkButton.isChecked = true
+//            sparkButton.playAnimation()
         } else {
             tvGoodStatus.text = "赞"
             tvGoodStatus.setTextColor(resources.getColor(R.color.default_gray_text_color))
-            val grayGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_details_dianzan)
-            grayGoodDrawable.bounds = drawables[0].getBounds()
-            tvGoodStatus.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3])
+//            val grayGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_details_dianzan)
+//            grayGoodDrawable.bounds = drawables[0].getBounds()
+//            tvGoodStatus.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3])
+            sparkButton.isChecked = false
+//            sparkButton.playAnimation()
         }
 
 
@@ -653,9 +737,12 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         if (isLike) {
             tvGoodStatus.text = "已赞"
             tvGoodStatus.setTextColor(resources.getColor(R.color.colorAccent))
-            val redGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_good_select)
-            redGoodDrawable.bounds = drawables[0].getBounds()
-            tvGoodStatus.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3])
+//            val redGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_good_select)
+//            redGoodDrawable.bounds = drawables[0].getBounds()
+//            tvGoodStatus.setCompoundDrawables(redGoodDrawable, drawables[1], drawables[2], drawables[3])
+
+            sparkButton.isChecked = true
+            sparkButton.playAnimation()
 
             like_num++
             tvGoodNum.text = "赞  $like_num"
@@ -666,9 +753,11 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
             tvGoodStatus.text = "赞"
             tvGoodStatus.setTextColor(resources.getColor(R.color.default_gray_text_color))
-            val grayGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_details_dianzan)
-            grayGoodDrawable.bounds = drawables[0].getBounds()
-            tvGoodStatus.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3])
+//            val grayGoodDrawable = mContext.resources.getDrawable(R.mipmap.icon_details_dianzan)
+//            grayGoodDrawable.bounds = drawables[0].getBounds()
+//            tvGoodStatus.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3])
+
+            sparkButton.isChecked = false
 
             like_num--
             tvGoodNum.text = "赞  $like_num"
@@ -679,9 +768,13 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     }
 
     override fun addCommentSuccess() {
-        updateEditTextBodyVisible(View.GONE)
+        if (enableHideComment) {
+            updateEditTextBodyVisible(View.GONE)
+        }else{
+            hideSoftInput(circleEt.windowToken)
+        }
 
-        mPresenter.getDetailsById(id)
+        mPresenter.getDetailsById(id,false)
     }
 
     override fun setCollectStatusSuccess(isCollect: Boolean) {
@@ -703,6 +796,10 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         if (ev!!.action == MotionEvent.ACTION_DOWN) {
             val v = currentFocus
             if (isShouldHideInput(v, ev)) {//点击的是其他区域，则调用系统方法隐藏软键盘
+                if (enableHideComment) {
+                    optionLayout.visibility = View.VISIBLE
+                    editTextBodyLl.visibility = View.GONE
+                }
                 hideSoftInput(v.windowToken)
             }
             return super.dispatchTouchEvent(ev)
@@ -742,11 +839,13 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         editTextBodyLl.visibility = visibility
 
         if (View.VISIBLE == visibility) {
+            optionLayout.visibility = View.GONE
             circleEt.requestFocus()
             //弹出键盘
             showSoftInput(circleEt)
 
         } else if (View.GONE == visibility) {
+            optionLayout.visibility = View.VISIBLE
             //隐藏键盘
             hideSoftInput(circleEt.windowToken)
         }
@@ -778,8 +877,17 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (mTencent != null) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, null)
+        }
+    }
+
+    private var mTencent:Tencent? = null
     private fun shareToQQ() {
-        val mTencent = Tencent.createInstance(Contacts.QQ_APPID, application)
+        mTencent = Tencent.createInstance(Contacts.QQ_APPID, application)
 
         if (!mTencent!!.isQQInstalled(this)) {
             ToastUtils.showShort("您未安装QQ客户端")
@@ -793,7 +901,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, Contacts.SHARE_BASE_URL + id) //必填 	这条分享消息被好友点击后的跳转URL。
 //        params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://avatar.csdn.net/C/3/D/1_u013451048.jpg") // 可选 分享图片的URL或者本地路径
         params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "濉溪发布")
-        mTencent.shareToQQ(this, params, object : IUiListener {
+        mTencent!!.shareToQQ(this, params, object : IUiListener {
             override fun onComplete(p0: Any?) {
                 mPresenter.getScoreByShare(id)
                 ToastUtils.showShort("分享成功")
@@ -973,6 +1081,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             intent.putExtra("seeNum", seeNum)
             intent.putExtra("position", item_position)
             intent.putExtra("like_status", like_status)
+            intent.putExtra("is_collect", hasCollect)
             setResult(Activity.RESULT_OK, intent)
         }
     }

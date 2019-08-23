@@ -32,6 +32,7 @@ public class CollectPresenter extends BasePresenter<CollectContract.View> implem
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> LogUtils.e("异常:" + throwable.toString()));
+                }, throwable -> mView.showFailed("") );
+
     }
 }

@@ -15,6 +15,7 @@ import cn.tklvyou.mediaconvergence.model.User
 import cn.tklvyou.mediaconvergence.ui.adapter.PointRvAdapter
 import cn.tklvyou.mediaconvergence.ui.mine.point.MyPointDetailActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
+import com.blankj.utilcode.util.LogUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.activity_point.*
@@ -28,6 +29,10 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
 
     override fun getActivityLayoutID(): Int {
         return R.layout.activity_point
+    }
+
+    override fun getLoadingView(): View {
+        return pointRecyclerView
     }
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -56,6 +61,11 @@ class PointActivity : BaseHttpRecyclerActivity<PointPresenter, PointModel, BaseV
             startActivity(Intent(this,MyPointDetailActivity::class.java))
         }
 
+        mPresenter.getGoodsPageList(1)
+    }
+
+    override fun onRetry() {
+        super.onRetry()
         mPresenter.getGoodsPageList(1)
     }
 

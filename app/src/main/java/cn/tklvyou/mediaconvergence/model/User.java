@@ -50,6 +50,7 @@ public class User {
         private String avatar;
         private String score;
         private String token;
+        private int unread;
         private int user_id;
         private int createtime;
         private int expiretime;
@@ -149,6 +150,14 @@ public class User {
 
         public void setExpires_in(int expires_in) {
             this.expires_in = expires_in;
+        }
+
+        public int getUnread() {
+            return unread;
+        }
+
+        public void setUnread(int unread) {
+            this.unread = unread;
         }
     }
 }

@@ -27,6 +27,11 @@ class PointRuleActivity : BaseWebViewActivity<PointRulePresenter>(),PointRuleCon
     }
 
 
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getPointRule()
+    }
+
     override fun setTitleContent(title: String) {
     }
 

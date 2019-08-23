@@ -1,23 +1,26 @@
 package cn.tklvyou.mediaconvergence.base.activity
+
+import android.graphics.Bitmap
 import android.net.http.SslError
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.webkit.*
+import android.webkit.WebSettings.*
 import cn.tklvyou.mediaconvergence.base.BaseContract
-import com.blankj.utilcode.util.ToastUtils
+import cn.tklvyou.mediaconvergence.widget.AdvancedWebView
 import org.jsoup.Jsoup
 
-abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivity<P>() {
+abstract class BaseWebViewActivity<P : BaseContract.BasePresenter<*>> : BaseActivity<P>(){
 
-    private lateinit var webView:WebView
+    private lateinit var webView: WebView
 
-    public fun initWebView(webView: WebView){
+    public fun initWebView(webView: WebView) {
         this.webView = webView
         //支持javascript
         val settings = webView.settings
-        settings.setRenderPriority(WebSettings.RenderPriority.HIGH)
+        settings.setRenderPriority(RenderPriority.HIGH)
         settings.javaScriptEnabled = true
+
         webView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView, newProgress: Int) {
                 // 当WebView进度改变时更新窗口进
@@ -32,8 +35,8 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
             }
         }
 
-
         webView.webViewClient = object : WebViewClient() {
+
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 webView.loadUrl(url)
                 return true
@@ -46,35 +49,41 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 //为webView 添加Padding
-                webView.loadUrl("javascript:document.body.style.padding=\"5%\"; void 0")
-                //解决网页可无限下拉出现大片空白的问题
-//                webView.loadUrl("javascript:(function(){"+"document.getElementsByTagName('body')[0].style.height = window.innerHeight+'px';"+"})()")
+                webView.loadUrl("javascript:document.body.style.padding=\"3%\"; void 0")
                 super.onPageFinished(view, url)
-
             }
 
         }
 
     }
 
-
-    public fun loadUrl(url:String){
+    public fun loadUrl(url: String) {
         webView.loadUrl(url)
     }
 
-    public fun loadHtml(html:String){
-        imageFillWidth(webView,html)
+    public fun loadHtml(html: String) {
+        imageFillWidth(html)
+    }
+
+    override fun onResume() {
+        webView.onResume()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        webView.onPause()
+        super.onPause()
     }
 
 
-    protected abstract fun setTitleContent(title:String)
+    protected abstract fun setTitleContent(title: String)
 
     /**
      * 处理图片视频填充手机宽度
      *
      * @param webView
      */
-    private fun imageFillWidth(webView: WebView, content: String) {
+    private fun imageFillWidth(content: String) {
         val doc = Jsoup.parse(content)
 
         //修改视频标签
@@ -96,6 +105,7 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
         //对数据进行包装,除去WebView默认存在的一定像素的边距问题
         val data = "<html><head><style>img{width:100% !important;}</style></head><body style='margin:0;padding:0'>${doc}</body></html>"
 
+
         //加载使用 jsoup 处理过的 html 文本
 //        webView.loadDataWithBaseURL(Contacts.DEV_BASE_URL, doc.toString(), "text/html", "UTF-8", null)
         webView.loadData(data, "text/html; charset=UTF-8", null)
@@ -103,7 +113,7 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             //页面内回退
             if (webView.canGoBack()) {
                 webView.goBack()
@@ -116,15 +126,12 @@ abstract class BaseWebViewActivity<P:BaseContract.BasePresenter<*>> : BaseActivi
 
 
     override fun onDestroy() {
-        super.onDestroy()
-        if (webView != null) {
-            webView.removeAllViews()
-            try {
-                webView.destroy()
-            } catch (t: Throwable) {
-            }
-
+        webView.removeAllViews()
+        try {
+            webView.destroy()
+        } catch (t: Throwable) {
         }
+        super.onDestroy()
     }
 
 

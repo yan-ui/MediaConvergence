@@ -18,8 +18,8 @@ android {
         applicationId "cn.tklvyou.mediaconvergence"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 4
+        versionName "1.0.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -71,8 +71,19 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.1.0-alpha08'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-1'
+
+    api 'com.just.agentweb:agentweb:4.1.2' // (必选)
+
+    api 'com.tencent.tbs.tbssdk:sdk:43697'
+
+    //点赞动画按钮
+    implementation 'com.github.varunest:sparkbutton:1.0.6'
+    //app状态管理
+    implementation 'com.billy.android:gloading:1.0.1'
     //版本更新
-    implementation 'com.allenliu.versionchecklib:library:2.1.9'
+    implementation 'com.qianwen:update-app:3.5.2'
+    implementation 'com.qianwen:okhttp-utils:3.8.0'
+
     //webView加载html依赖的库
     implementation 'org.jsoup:jsoup:1.11.2'
     //RxPermissions权限管理

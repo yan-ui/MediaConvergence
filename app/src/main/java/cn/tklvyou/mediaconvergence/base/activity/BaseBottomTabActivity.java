@@ -46,6 +46,7 @@ public abstract class BaseBottomTabActivity<P extends BaseContract.BasePresenter
                     LogUtils.w("selectFragment currentPosition == position" +
                             " >> fragments[position] != null && fragments[position].isVisible()" +
                             " >> return;	");
+                    homeDoubleClick(position);
                     return;
                 }
             }
@@ -75,6 +76,9 @@ public abstract class BaseBottomTabActivity<P extends BaseContract.BasePresenter
      */
     public abstract int getFragmentContainerResId();
 
+    public void  homeDoubleClick(int position){
+
+    }
 
     /**
      * 获取所有的Fragment
@@ -85,6 +89,9 @@ public abstract class BaseBottomTabActivity<P extends BaseContract.BasePresenter
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        fragments = null;
+        if (fragments != null) {
+            fragments.clear();
+            fragments = null;
+        }
     }
 }

@@ -118,6 +118,7 @@ public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter,
      */
     public abstract void setList(List<T> list);
 
+
     /**
      * 显示列表（已在UI线程中）
      *
@@ -126,8 +127,9 @@ public abstract class BaseRecyclerActivity<P extends BaseContract.BasePresenter,
     public void setList(AdapterCallBack<A> callBack) {
         if (adapter == null) {
             setAdapter(callBack.createAdapter());
+        }else {
+            callBack.refreshAdapter();
         }
-        callBack.refreshAdapter();
     }
 
 

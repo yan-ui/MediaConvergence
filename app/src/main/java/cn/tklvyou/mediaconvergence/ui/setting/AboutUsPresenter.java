@@ -1,5 +1,9 @@
 package cn.tklvyou.mediaconvergence.ui.setting;
 
+import com.blankj.utilcode.util.ToastUtils;
+
+import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
+import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
 
 /**
@@ -10,24 +14,23 @@ import cn.tklvyou.mediaconvergence.base.BasePresenter;
  * @Email: 971613168@qq.com
  */
 public class AboutUsPresenter extends BasePresenter<AboutUsContract.View> implements AboutUsContract.AboutPresenter {
-    @Override
-    public void setAppIcon(int appIcon) {
-        mView.showAppIcon(appIcon);
-    }
 
     @Override
-    public void setAppVersionName(String name) {
-        mView.showAppVersionName(name);
+    public void getSystemConfig() {
+        RetrofitHelper.getInstance().getServer()
+                .getSystemConfig()
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                            if(result.getCode() == 1){
+                                mView.setSystemConfig(result.getData());
+                            }else {
+                                ToastUtils.showShort(result.getMsg());
+                            }
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                        }
+
+                );
     }
-
-
-   /* @Override
-    public void showAppIcon(int appIcon) {
-        mView.setAppIcon(appIcon);
-    }
-
-    @Override
-    public void showAppVersionName(String name) {
-        mView.setAppVersionName(name);
-    }*/
 }

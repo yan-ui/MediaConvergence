@@ -40,6 +40,9 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
         return R.layout.fragment_mine
     }
 
+    override fun getLoadingView(): View {
+        return mineRecyclerView
+    }
 
     override fun initView() {
         mineTitleBar.setBackgroundResource(android.R.color.transparent)
@@ -114,6 +117,8 @@ class MineFragment : BaseRecyclerFragment<MinePresenter, MineRvModel, BaseViewHo
         tvNickName.text = user.nickname
         tvMobile.text = user.mobile
         tvPoint.text = user.score
+
+        adapter.setBadgeNumber(user.unread)
 
     }
 

@@ -1,14 +1,10 @@
 package cn.tklvyou.mediaconvergence.ui.account;
 
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.base.BaseResult;
-import cn.tklvyou.mediaconvergence.model.User;
-import io.reactivex.functions.Consumer;
 
 
 /**
@@ -20,12 +16,12 @@ public class AccountForgetPresenter extends BasePresenter<AccountContract.Forget
     @Override
     public void getCaptcha(String mobile, String event) {
         RetrofitHelper.getInstance().getServer()
-                .sendSms(mobile,event)
+                .sendSms(mobile, event)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     ToastUtils.showShort(result.getMsg());
-                    if(result.getCode() ==1){
+                    if (result.getCode() == 1) {
                         mView.getCaptchaSuccess();
                     }
                 }, throwable -> {
@@ -40,11 +36,10 @@ public class AccountForgetPresenter extends BasePresenter<AccountContract.Forget
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    mView.hideLoading();
-                    ToastUtils.showShort(result.getMsg());
-                    if(result.getCode() == 1){
+                    mView.showSuccess(result.getMsg());
+                    if (result.getCode() == 1) {
                         mView.resetpwdSuccess();
                     }
-                }, throwable -> mView.hideLoading());
+                }, throwable -> mView.showFailed(""));
     }
 }

@@ -67,7 +67,7 @@ class JuzhengFragment : BaseHttpRecyclerFragment<JuzhengListPresenter, NewsBean,
         setList(object : AdapterCallBack<JuzhengRvAdapter> {
 
             override fun createAdapter(): JuzhengRvAdapter {
-                return JuzhengRvAdapter()
+                return JuzhengRvAdapter(list)
             }
 
             override fun refreshAdapter() {

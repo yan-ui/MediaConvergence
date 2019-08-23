@@ -15,7 +15,6 @@ import cn.tklvyou.mediaconvergence.ui.adapter.GridImageAdapter
 import cn.tklvyou.mediaconvergence.ui.camera.TakePhotoActivity
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -113,6 +112,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
             }
 
             ivDelete.setOnClickListener {
+                selectList?.clear()
                 videoLayout.visibility = View.GONE
                 ivAddVideo.visibility = View.VISIBLE
             }
@@ -145,6 +145,21 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                 return@setOnClickListener
             }
 
+            if (selectList.isNullOrEmpty()) {
+
+                if (page == "V视") {
+                    ToastUtils.showShort("请上传拍摄视频")
+                } else {
+                    if (isVideo) {
+                        ToastUtils.showShort("请上传拍摄视频")
+                    } else {
+                        ToastUtils.showShort("请上传拍摄图片")
+                    }
+
+                }
+                return@setOnClickListener
+            }
+
             showLoading()
             if (page == "V视") {
                 mPresenter.qiniuUploadFile(File(selectList!![0].path), true, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
@@ -152,6 +167,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                 if (isVideo) {
                     mPresenter.qiniuUploadFile(File(selectList!![0].path), true, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
                 } else {
+                    selectList = adapter!!.list
                     selectList!!.forEach {
                         if (it.isCompressed || (it.isCut && it.isCompressed)) {
                             imageFiles.add(File(it.compressPath))
@@ -199,7 +215,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
 
 
     override fun publishSuccess() {
-        hideLoading()
+        showSuccess("")
         finish()
     }
 

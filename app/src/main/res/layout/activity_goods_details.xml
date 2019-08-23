@@ -61,14 +61,14 @@
 
             </LinearLayout>
 
-            <WebView
+            <cn.tklvyou.mediaconvergence.widget.x5.X5WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_13"
                 android:layout_marginRight="@dimen/dp_13">
 
-            </WebView>
+            </cn.tklvyou.mediaconvergence.widget.x5.X5WebView>
 
         </LinearLayout>
 

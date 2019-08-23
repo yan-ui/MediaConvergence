@@ -46,6 +46,7 @@ public class NewsBean implements Serializable {
     private String content;
     private String nickname;
     private String avatar;
+    private String url;
     private String type;
     private String status;
     private int visit_num;
@@ -170,6 +171,14 @@ public class NewsBean implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getStatus() {

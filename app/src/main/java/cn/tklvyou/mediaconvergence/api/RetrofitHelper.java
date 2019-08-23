@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitHelper {
     private static String TAG = "RetrofitHelper";
     private long CONNECT_TIMEOUT = 60L;
-    private long READ_TIMEOUT = 15L;
+    private long READ_TIMEOUT = 30L;
     private long WRITE_TIMEOUT = 30L;
     private static RetrofitHelper mInstance = null;
     private Retrofit mRetrofit = null;
@@ -81,7 +81,7 @@ public class RetrofitHelper {
 
     private OkHttpClient getOkHttpClient() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .retryOnConnectionFailure(true)
+                .retryOnConnectionFailure(true)//默认重试一次，若需要重试N次，则要实现拦截器。
                 .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)

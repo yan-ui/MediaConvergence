@@ -53,7 +53,6 @@ public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresen
         srlBaseHttpRecycler.setOnRefreshListener(this);
     }
 
-
     @Override
     public void setAdapter(A adapter) {
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -76,7 +75,6 @@ public abstract class BaseHttpRecyclerFragment<P extends BaseContract.BasePresen
 
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
-        LogUtils.e("---------------  onRefresh ---------------");
         onRefresh();
     }
 

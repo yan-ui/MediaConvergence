@@ -8,15 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentTransaction;
 
+import com.billy.android.loading.Gloading;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.netease.neliveplayer.playerkit.common.log.LogUtil;
 import com.trello.rxlifecycle3.LifecycleTransformer;
 import com.trello.rxlifecycle3.components.support.RxFragment;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
+import cn.tklvyou.mediaconvergence.base.SpecialAdapter;
 import cn.tklvyou.mediaconvergence.base.activity.BaseActivity;
 import cn.tklvyou.mediaconvergence.base.interfaces.LazyFragmentControl;
 
@@ -29,6 +30,8 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
     protected T mPresenter;
     protected BaseActivity mActivity;//activity的上下文对象
     protected Bundle mBundle;
+
+    private View mContentView;
 
     private static final long DEFAULT_TIME_INTERVAL = 5 * 1000;//默认间隔时间30秒
 
@@ -43,6 +46,9 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
 
     private long mLastVisibleTime = System.currentTimeMillis();//上一次显示的时间
     private long mTimeInterval = DEFAULT_TIME_INTERVAL;
+
+    //小范围加载视图
+    private Gloading.Holder specialLoadingHolder;
 
 
     @Override
@@ -92,7 +98,8 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         isAlive = true;
-        return inflater.inflate(getFragmentLayoutID(), container, false);
+        mContentView = inflater.inflate(getFragmentLayoutID(), container, false);
+        return mContentView;
     }
 
     /**
@@ -107,6 +114,22 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
         initView();
         initPrepare();
 
+        specialLoadingHolder = Gloading.from(new SpecialAdapter()).wrap(getLoadingView()).withRetry(new Runnable() {
+            @Override
+            public void run() {
+                specialLoadingHolder.showLoadSuccess();
+                onRetry();
+            }
+        });
+    }
+
+    /**
+     * 覆写此方法可以更改Loading绑定的View
+     *
+     * @return
+     */
+    protected View getLoadingView() {
+        return mContentView;
     }
 
     @Override
@@ -258,32 +281,38 @@ public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends
 
     @Override
     public void showLoading() {
-        ((BaseActivity) mActivity).showLoading();
+        specialLoadingHolder.showLoading();
     }
 
     @Override
-    public void hideLoading() {
-        ((BaseActivity) mActivity).hideLoading();
+    public void showPageLoading() {
+        mActivity.showPageLoading();
     }
 
     @Override
     public void showSuccess(String message) {
-        ToastUtils.showShort(message);
+        specialLoadingHolder.showLoadSuccess();
+        if (!StringUtils.isEmpty(message)) {
+            ToastUtils.showShort(message);
+        }
     }
 
     @Override
     public void showFailed(String message) {
-        ToastUtils.showShort(message);
+        specialLoadingHolder.showLoadFailed();
+        if (!StringUtils.isEmpty(message)) {
+            ToastUtils.showShort(message);
+        }
     }
 
     @Override
     public void showNoNet() {
-        ((BaseActivity) mActivity).showNoNet();
+        specialLoadingHolder.showLoadFailed();
     }
 
     @Override
     public void showNoData() {
-        ((BaseActivity) mActivity).showNoData();
+        specialLoadingHolder.showEmpty();
     }
 
     @Override

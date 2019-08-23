@@ -47,6 +47,12 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         return R.layout.fragment_camera
     }
 
+
+    override fun getLoadingView(): View {
+        return cameraRecyclerView
+    }
+
+
     private var isRefresh = false
     private var isChoose = false
     override fun initView() {
@@ -111,7 +117,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
 //            }
 //        })
 
-        mPresenter.getNewList("随手拍", null, 1)
+        mPresenter.getNewList("随手拍", null, 1,false)
     }
 
     override fun lazyData() {
@@ -126,6 +132,7 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
         } else {
             if (isRefresh) {
                 isRefresh = false
+                cameraRecyclerView.scrollToPosition(0)
                 cameraSmartRefreshLayout.autoRefresh()
             }
         }
@@ -134,13 +141,20 @@ class CameraFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsBean, Base
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden && !isFirstResume) {
-            mPresenter.getNewList("随手拍", null, 1)
+            cameraRecyclerView.scrollToPosition(0)
+            cameraSmartRefreshLayout.autoRefresh()
         }
     }
 
 
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getNewList("随手拍", null, 1,true)
+    }
+
+
     override fun getListAsync(page: Int) {
-        mPresenter.getNewList("随手拍", null, page)
+        mPresenter.getNewList("随手拍", null, page,false)
     }
 
     override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {

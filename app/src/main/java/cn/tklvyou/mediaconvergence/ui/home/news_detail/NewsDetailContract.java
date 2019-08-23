@@ -16,7 +16,7 @@ public interface NewsDetailContract {
         void sendVoteSuccess(List<VoteOptionModel> optionModelList);
     }
     interface Presenter extends BaseContract.BasePresenter<View>{
-        void getDetailsById(int id);
+        void getDetailsById(int id,boolean showPageLoading);
         void addLikeNews(int id);
         void cancelLikeNews(int id);
         void addComment(int id,String detail);

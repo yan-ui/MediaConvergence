@@ -10,9 +10,12 @@ import androidx.annotation.NonNull;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.List;
+
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.helper.GlideManager;
 import cn.tklvyou.mediaconvergence.model.ExchangeModel;
+import cn.tklvyou.mediaconvergence.model.NewsBean;
 
 /**
  * @author :JenkinsZhou
@@ -24,8 +27,8 @@ import cn.tklvyou.mediaconvergence.model.ExchangeModel;
 public class ExchangeRecordAdapter extends BaseQuickAdapter<ExchangeModel, BaseViewHolder> {
     private static final String STATUS_HIDDEN = "hidden";
 
-    public ExchangeRecordAdapter() {
-        super(R.layout.item_exchange_record);
+    public ExchangeRecordAdapter(List<ExchangeModel> data) {
+        super(R.layout.item_exchange_record,data);
     }
 
     @Override

@@ -1,15 +1,16 @@
 package cn.tklvyou.mediaconvergence.ui.service
 
+import android.graphics.Color
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
-import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
+import cn.tklvyou.mediaconvergence.base.activity.BaseX5WebViewActivity
 import cn.tklvyou.mediaconvergence.helper.GlideManager
 import cn.tklvyou.mediaconvergence.model.PointModel
 import cn.tklvyou.mediaconvergence.widget.dailog.ConfirmDialog
 import com.blankj.utilcode.util.SpanUtils
 import kotlinx.android.synthetic.main.activity_goods_details.*
 
-class GoodsDetailsActivity : BaseWebViewActivity<GoodsDetailPresenter>(), GoodsDetailContract.View {
+class GoodsDetailsActivity : BaseX5WebViewActivity<GoodsDetailPresenter>(), GoodsDetailContract.View {
 
     override fun initPresenter(): GoodsDetailPresenter {
         return GoodsDetailPresenter()
@@ -30,7 +31,11 @@ class GoodsDetailsActivity : BaseWebViewActivity<GoodsDetailPresenter>(), GoodsD
 
         id = intent.getIntExtra("id", 0)
         mPresenter.getGoodsDetails(id)
+    }
 
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getGoodsDetails(id)
     }
 
     override fun setTitleContent(title: String) {
@@ -44,23 +49,32 @@ class GoodsDetailsActivity : BaseWebViewActivity<GoodsDetailPresenter>(), GoodsD
         tvStore.text = "库存：${model.stock}"
         loadHtml(model.content)
 
-        btnExchange.setOnClickListener {
+        if (model.stock <= 0) {
+            btnExchange.isEnabled = false
+            btnExchange.setBackgroundColor(Color.parseColor("#FFA0A0A0"))
+        } else {
+            btnExchange.setOnClickListener {
 
-            val dialog = ConfirmDialog(this)
-            dialog.setTitle("商品兑换")
-            dialog.setStyleMessage(SpanUtils().append("是否消耗")
-                    .append(""+model.score+"分").setForegroundColor(resources.getColor(R.color.colorAccent))
-                    .append("兑换此商品？")
-                    .create())
+                val dialog = ConfirmDialog(this)
+                dialog.setTitle("商品兑换")
+                dialog.setStyleMessage(SpanUtils().append("是否消耗")
+                        .append("" + model.score + "分").setForegroundColor(resources.getColor(R.color.colorAccent))
+                        .append("兑换此商品？")
+                        .create())
 
-            dialog.setYesOnclickListener("立即兑换") {
-                mPresenter.exchangeGoods(id)
-                dialog.dismiss()
+                dialog.setYesOnclickListener("立即兑换") {
+                    mPresenter.exchangeGoods(id)
+                    dialog.dismiss()
+                }
+
+                dialog.show()
             }
-
-            dialog.show()
         }
+    }
 
+
+    override fun exchangeSuccess() {
+        finish()
     }
 
 

@@ -17,9 +17,6 @@ import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
 import cn.tklvyou.mediaconvergence.common.RequestConstant;
 import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 /**
  * @author :JenkinsZhou
@@ -58,13 +55,11 @@ public class DataPresenter extends BasePresenter<IDataContract.DataView> impleme
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    mView.hideLoading();
+                    mView.showSuccess(result.getMsg());
                     if (result.getCode() == RequestConstant.CODE_REQUEST_SUCCESS) {
                         mView.editSuccess();
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> mView.hideLoading());
+                }, throwable -> mView.showFailed(""));
     }
 
     @Override
@@ -88,7 +83,7 @@ public class DataPresenter extends BasePresenter<IDataContract.DataView> impleme
             @Override
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
-                mView.hideLoading();
+                mView.showSuccess("");
             }
 
             @Override

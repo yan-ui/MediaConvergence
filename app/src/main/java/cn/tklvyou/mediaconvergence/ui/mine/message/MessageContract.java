@@ -15,9 +15,11 @@ public interface MessageContract {
 
     interface View extends BaseContract.BaseView {
         void setMessageList(int page, BasePageModel<MessageModel> pageModel);
+        void clearSuccess();
     }
 
     interface Presenter extends BaseContract.BasePresenter<MessageContract.View> {
         void getMsgPageList(int page);
+        void clearMessage();
     }
 }

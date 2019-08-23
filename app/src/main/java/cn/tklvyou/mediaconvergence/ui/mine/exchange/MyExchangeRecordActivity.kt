@@ -24,29 +24,6 @@ import kotlinx.android.synthetic.main.layout_refresh_recycler.*
  */
 class MyExchangeRecordActivity : BaseHttpRecyclerActivity<ExchangePresenter, ExchangeModel, BaseViewHolder, ExchangeRecordAdapter>(), ExchangeRecordContract.View {
 
-    override fun setList(list: MutableList<ExchangeModel>?) {
-        setList(object : AdapterCallBack<ExchangeRecordAdapter> {
-
-            override fun createAdapter(): ExchangeRecordAdapter {
-                return ExchangeRecordAdapter()
-            }
-
-            override fun refreshAdapter() {
-                adapter.setNewData(list)
-            }
-        })
-    }
-
-
-    override fun setExchangeList(page: Int, pageModel: BasePageModel<ExchangeModel>?) {
-        if (pageModel != null) {
-            onLoadSucceed(page, pageModel.data)
-        } else {
-            onLoadFailed(page, null)
-        }
-    }
-
-
     override fun initPresenter(): ExchangePresenter {
         return ExchangePresenter()
     }
@@ -64,6 +41,34 @@ class MyExchangeRecordActivity : BaseHttpRecyclerActivity<ExchangePresenter, Exc
         recyclerViewRoot.layoutManager = LinearLayoutManager(this)
         mPresenter.getExchangePageList(1)
     }
+
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getExchangePageList(1)
+    }
+
+    override fun setList(list: MutableList<ExchangeModel>?) {
+        setList(object : AdapterCallBack<ExchangeRecordAdapter> {
+
+            override fun createAdapter(): ExchangeRecordAdapter {
+                return ExchangeRecordAdapter(list)
+            }
+
+            override fun refreshAdapter() {
+                adapter.setNewData(list)
+            }
+        })
+    }
+
+
+    override fun setExchangeList(page: Int, pageModel: BasePageModel<ExchangeModel>?) {
+        if (pageModel != null) {
+            onLoadSucceed(page, pageModel.data)
+        } else {
+            onLoadFailed(page, null)
+        }
+    }
+
 
 
     override fun getListAsync(page: Int) {

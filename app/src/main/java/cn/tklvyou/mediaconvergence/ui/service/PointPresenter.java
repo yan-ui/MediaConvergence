@@ -25,7 +25,7 @@ public class PointPresenter extends BasePresenter<PointContract.View> implements
                     }else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> mView.showFailed(""));
     }
 
     @Override

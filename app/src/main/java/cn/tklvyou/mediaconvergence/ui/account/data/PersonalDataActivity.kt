@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import cn.tklvyou.mediaconvergence.R
+import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.base.activity.BaseTitleActivity
 import cn.tklvyou.mediaconvergence.helper.AccountHelper
 import cn.tklvyou.mediaconvergence.helper.GlideManager
@@ -30,7 +31,7 @@ import java.util.*
  * @date 2019年07月31日17:23
  * @Email: 971613168@qq.com
  */
-class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.DataView, View.OnClickListener {
+class PersonalDataActivity : BaseActivity<DataPresenter>(), IDataContract.DataView, View.OnClickListener {
     override fun setQiniuToken(token: String) {
         this.qiniuToken = token
     }
@@ -43,11 +44,6 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
         return R.layout.activity_personal_data
     }
 
-    override fun setTitleBar(titleBar: CommonTitleBar?) {
-        setTitle("个人资料")
-//        titleBar!!.setMainTitle()
-    }
-
 
     private var imageList = ArrayList<String>()
     private var selectList: List<LocalMedia> = ArrayList()
@@ -55,6 +51,10 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
 
 
     override fun initView(savedInstanceState: Bundle?) {
+        setTitle("个人资料")
+        setNavigationImage()
+        setNavigationOnClickListener { finish() }
+
         showData()
         civAvatar.setOnClickListener(this)
         tvSave.setOnClickListener(this)
@@ -184,7 +184,7 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
             return
         }
         val userInfoBean = AccountHelper.getInstance().userInfo
-        GlideManager.loadImg(userInfoBean.avatar, civAvatar, R.mipmap.default_avatar)
+        GlideManager.loadCircleImg(userInfoBean.avatar, civAvatar, R.mipmap.default_avatar)
         tvNickName.text = CommonUtil.getNotNullValue(userInfoBean.nickname)
         tvPhoneNumber.text = CommonUtil.getNotNullValue(userInfoBean.mobile)
     }
@@ -195,7 +195,7 @@ class PersonalDataActivity : BaseTitleActivity<DataPresenter>(), IDataContract.D
         for (localMedia in selectList) {
             imageList.add(localMedia.compressPath)
         }
-        GlideManager.loadImg(parsePath(imageList), civAvatar, CommonUtil.getDrawable(R.mipmap.default_avatar))
+        GlideManager.loadCircleImg(parsePath(imageList), civAvatar, CommonUtil.getDrawable(R.mipmap.default_avatar))
     }
 
     private fun doEdit() {

@@ -135,11 +135,17 @@ class ZhuanPanActivity : BaseActivity<ZhuanPanPresenter>(), ZhuanPanContract.Vie
             num--
             tvNum.text = "剩余转盘次数：$num"
             scoreStr = model.name
-            LogUtils.e(idList.indexOf(model.id) + 1)
             wheelSurfView.startRotate(idList.size - idList.indexOf(model.id) + 1)
         } else {
             wheelSurfView.goBtn.isEnabled = true
         }
+
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        wheelSurfView.setRotateListener(null)
 
     }
 

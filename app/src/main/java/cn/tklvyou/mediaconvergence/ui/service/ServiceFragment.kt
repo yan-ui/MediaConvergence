@@ -29,6 +29,10 @@ class ServiceFragment : BaseRecyclerFragment<NullPresenter, ServiceModel, BaseVi
         return R.layout.fragment_service
     }
 
+    override fun getLoadingView(): View {
+        return serviceRecyclerView
+    }
+
     override fun initView() {
         serviceTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
 

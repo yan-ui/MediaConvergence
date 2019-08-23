@@ -32,7 +32,7 @@ public class BrowsePresenter extends BasePresenter<BrowseContract.View> implemen
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> LogUtils.e("异常:" + throwable.toString()));
+                }, throwable -> mView.showFailed("") );
     }
 
 

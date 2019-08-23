@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import cn.tklvyou.mediaconvergence.R
+import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.base.activity.BaseTitleActivity
 import cn.tklvyou.mediaconvergence.common.CommonConstant.TIME_INTERVAL
 import cn.tklvyou.mediaconvergence.common.CommonConstant.TIME_ONE_SECOND
@@ -16,7 +17,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar
 import kotlinx.android.synthetic.main.activity_phone_edit.*
 
-class EditPhoneActivity : BaseTitleActivity<EditPhonePresenter>(), EditPhoneContract.EditView, View.OnClickListener {
+class EditPhoneActivity : BaseActivity<EditPhonePresenter>(), EditPhoneContract.EditView, View.OnClickListener {
 
     private var timeCount: TimeCount? = null
 
@@ -38,12 +39,11 @@ class EditPhoneActivity : BaseTitleActivity<EditPhonePresenter>(), EditPhoneCont
         return R.layout.activity_phone_edit
     }
 
-    override fun setTitleBar(titleBar: CommonTitleBar?) {
-        setTitle("更换绑定")
-//        titleBar!!.setMainTitle("更换绑定")
-    }
 
     override fun initView(savedInstanceState: Bundle?) {
+        setTitle("更换绑定")
+        setNavigationImage()
+        setNavigationOnClickListener { finish() }
 
         tvSendVCode.setOnClickListener(this)
         tvConfirmBind.setOnClickListener(this)

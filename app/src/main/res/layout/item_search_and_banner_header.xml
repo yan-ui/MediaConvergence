@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_30"
         android:layout_margin="@dimen/dp_5"
@@ -14,16 +15,18 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/dp_8">
 
-        <EditText
+        <TextView
             android:id="@+id/etSearch"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            android:imeOptions="actionSearch"
             android:drawableLeft="@mipmap/icon_gray_search"
             android:drawablePadding="@dimen/dp_6"
+            android:enabled="false"
+            android:gravity="center_vertical"
             android:hint="安徽高考 : 6月23日放榜 | 濉溪县九大措施助力…"
+            android:imeOptions="actionSearch"
             android:singleLine="true"
             android:textSize="@dimen/sp_12" />
 
@@ -33,7 +36,8 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/dp_10"
             android:paddingRight="@dimen/dp_10"
-            android:src="@mipmap/icon_mini_circle_close" />
+            android:src="@mipmap/icon_mini_circle_close"
+            android:visibility="gone" />
 
     </LinearLayout>
 

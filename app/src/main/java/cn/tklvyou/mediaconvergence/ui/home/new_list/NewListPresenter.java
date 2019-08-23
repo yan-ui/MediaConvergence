@@ -50,16 +50,23 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> {
+                    mView.setJuZhengHeader(null);
+                    mView.showFailed("");
+                });
     }
 
     @Override
-    public void getNewList(String module, String module_second, int p) {
+    public void getNewList(String module, String module_second, int p, boolean showLoading) {
+        if (showLoading) {
+            mView.showLoading();
+        }
         RetrofitHelper.getInstance().getServer()
                 .getNewList(module, module_second, p)
                 .compose(RxSchedulers.applySchedulers())
 //                .compose(mView.bindToLife())
                 .subscribe(result -> {
+                            mView.showSuccess("");
                             if (result.getCode() == 1) {
                                 if (mView != null) {
                                     mView.setNewList(p, result.getData());
@@ -68,9 +75,9 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
                             if (mView != null) {
                                 mView.setNewList(p, null);
+                                mView.showFailed("");
                             }
                         }
                 );
@@ -78,20 +85,28 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
 
 
     @Override
-    public void getHaveSecondModuleNews(int p, String module) {
+    public void getHaveSecondModuleNews(int p, String module, boolean showLoading) {
+        if (showLoading) {
+            mView.showLoading();
+        }
         RetrofitHelper.getInstance().getServer()
                 .getHaveSecondModuleNews(module, p)
                 .compose(RxSchedulers.applySchedulers())
 //                .compose(mView.bindToLife())
                 .subscribe(result -> {
+                            mView.showSuccess("");
                             if (result.getCode() == 1) {
-                                mView.setHaveSecondModuleNews(p, result.getData());
+                                if (mView != null) {
+                                    mView.setHaveSecondModuleNews(p, result.getData());
+                                }
                             } else {
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setHaveSecondModuleNews(p, null);
+                            if (mView != null) {
+                                mView.setHaveSecondModuleNews(p, null);
+                                mView.showFailed("");
+                            }
                         }
                 );
     }
@@ -108,6 +123,9 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> {
+                    mView.setBanner(null);
+                    mView.showFailed("");
+                });
     }
 }

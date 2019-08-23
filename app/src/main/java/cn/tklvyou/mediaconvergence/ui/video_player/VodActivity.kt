@@ -21,6 +21,9 @@ import com.pili.pldroid.player.PLOnErrorListener
 import kotlinx.android.synthetic.main.activity_vod_player.*
 import kotlinx.android.synthetic.main.activity_vod_player.btnBack
 import java.util.*
+import com.pili.pldroid.player.AVOptions
+
+
 
 /**
  * 播放页面
@@ -139,6 +142,8 @@ class VodActivity : BaseActivity<NullPresenter>() {
 
     private fun initPlayer() {
         mDYLoading.start()
+
+
         mVideoView.setBufferingIndicator(mDYLoading)
         mVideoView.setVideoPath(mVideoPath)
         mVideoView.setOnErrorListener { p0 ->

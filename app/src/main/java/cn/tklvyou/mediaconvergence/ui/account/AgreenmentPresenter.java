@@ -20,6 +20,6 @@ public class AgreenmentPresenter extends BasePresenter<AccountContract.Agreenmen
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> mView.hideLoading());
+                }, throwable -> mView.showFailed(""));
     }
 }

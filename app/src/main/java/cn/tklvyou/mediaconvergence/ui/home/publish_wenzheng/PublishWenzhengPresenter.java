@@ -15,11 +15,7 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsContract;
 import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 
 public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContract.View> implements PublishWenzhengContract.Presenter {
@@ -28,6 +24,7 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
 
     @Override
     public void getQiniuToken() {
+        mView.showPageLoading();
         RetrofitHelper.getInstance().getServer()
                 .getQiniuToken()
                 .compose(RxSchedulers.applySchedulers())
@@ -36,10 +33,12 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
                     if (result.getCode() == 1) {
                         mView.setQiniuToken(result.getData().toString());
                     } else {
+                        mView.showFailed("");
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
+                    mView.showFailed("");
                 });
     }
 
@@ -50,12 +49,15 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    if(result.getCode() ==1){
-                        mView.setJuZhengHeader(result.getData());
-                    }else {
-                        ToastUtils.showShort(result.getMsg());
-                    }
-                }, throwable -> throwable.printStackTrace());
+                            mView.showSuccess(result.getMsg());
+                            if (result.getCode() == 1) {
+                                mView.setJuZhengHeader(result.getData());
+                            }
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            mView.showFailed("");
+                        }
+                );
     }
 
 
@@ -67,7 +69,7 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
         for (int i = 0; i < files.size(); i++) {
 
             String currentTim = String.valueOf(System.currentTimeMillis());
-            String key = "upload/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
+            String key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
             String mimeType = "image/jpeg";
 
             QiniuUploadManager.QiniuUploadFile param = new QiniuUploadManager.QiniuUploadFile(files.get(i).getAbsolutePath(), key, mimeType, token);
@@ -88,7 +90,7 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
             @Override
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
-                mView.hideLoading();
+                mView.showSuccess("");
             }
 
             @Override
@@ -98,7 +100,7 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
 
             @Override
             public void onUploadCompleted() {
-                mView.hideLoading();
+                mView.showSuccess("");
                 mView.uploadImagesSuccess(keys);
             }
 
@@ -117,15 +119,12 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    ToastUtils.showShort(result.getMsg());
+                    mView.showSuccess(result.getMsg());
                     if (result.getCode() == 1) {
                         mView.publishSuccess();
-                    }else {
-                        mView.hideLoading();
                     }
                 }, throwable -> {
-                    mView.hideLoading();
-                    throwable.printStackTrace();
+                    mView.showFailed("");
                 });
     }
 

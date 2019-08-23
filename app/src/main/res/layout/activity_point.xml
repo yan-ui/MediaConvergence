@@ -123,15 +123,20 @@
         android:background="@color/common_bg"
         app:srlEnableLoadMore="false">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:paddingTop="@dimen/dp_15"
-            android:overScrollMode="never"
-            android:id="@+id/pointRecyclerView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-           >
+            android:layout_height="match_parent">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:paddingTop="@dimen/dp_15"
+                android:overScrollMode="never"
+                android:id="@+id/pointRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </RelativeLayout>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 

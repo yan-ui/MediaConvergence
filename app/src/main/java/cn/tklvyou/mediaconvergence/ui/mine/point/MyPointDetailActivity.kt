@@ -2,6 +2,7 @@ package cn.tklvyou.mediaconvergence.ui.mine.point;
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.tklvyou.mediaconvergence.R
@@ -27,35 +28,16 @@ import kotlinx.android.synthetic.main.activity_point_detail.*
  */
 class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, PointDetailModel, BaseViewHolder, MyPointAdapter>(), PointDetailContract.View {
 
-
-    override fun setList(list: MutableList<PointDetailModel>?) {
-        setList(object : AdapterCallBack<MyPointAdapter> {
-
-            override fun createAdapter(): MyPointAdapter {
-                return MyPointAdapter()
-            }
-
-            override fun refreshAdapter() {
-                adapter.setNewData(list)
-            }
-        })
-    }
-
-    override fun setPointDetails(page: Int, pageModel: BasePageModel<PointDetailModel>?) {
-        if (pageModel != null) {
-            onLoadSucceed(page, pageModel.data)
-        } else {
-            onLoadFailed(page, null)
-        }
-    }
-
-
     override fun initPresenter(): PointDetailPresenter {
         return PointDetailPresenter()
     }
 
     override fun getActivityLayoutID(): Int {
         return R.layout.activity_point_detail
+    }
+
+    override fun getLoadingView(): View {
+        return pointDetailRecyclerView
     }
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -74,6 +56,11 @@ class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, Poi
         mPresenter.getPointPageList(1)
     }
 
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getPointPageList(1)
+    }
+
     override fun setUser(bean: User.UserinfoBean) {
         tvMyPoint.text = bean.score
     }
@@ -81,6 +68,29 @@ class MyPointDetailActivity : BaseHttpRecyclerActivity<PointDetailPresenter, Poi
 
     override fun getListAsync(page: Int) {
         mPresenter.getPointPageList(page)
+    }
+
+
+
+    override fun setList(list: MutableList<PointDetailModel>?) {
+        setList(object : AdapterCallBack<MyPointAdapter> {
+
+            override fun createAdapter(): MyPointAdapter {
+                return MyPointAdapter(list)
+            }
+
+            override fun refreshAdapter() {
+                adapter.setNewData(list)
+            }
+        })
+    }
+
+    override fun setPointDetails(page: Int, pageModel: BasePageModel<PointDetailModel>?) {
+        if (pageModel != null) {
+            onLoadSucceed(page, pageModel.data)
+        } else {
+            onLoadFailed(page, null)
+        }
     }
 
 

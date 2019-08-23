@@ -22,9 +22,9 @@ public interface NewListContract {
     }
 
     interface Presenter extends BaseContract.BasePresenter<View> {
-        void getNewList(String module, String module_second, int p);
+        void getNewList(String module, String module_second, int p, boolean showLoading);
 
-        void getHaveSecondModuleNews(int p, String module);
+        void getHaveSecondModuleNews(int p, String module, boolean showLoading);
 
         void getBanner(String module);
 

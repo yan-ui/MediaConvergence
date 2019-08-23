@@ -13,20 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 
-import com.allenliu.versionchecklib.v2.AllenVersionChecker;
-import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
-import com.allenliu.versionchecklib.v2.builder.UIData;
-import com.allenliu.versionchecklib.v2.callback.CustomVersionDialogListener;
-import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
+import com.billy.android.loading.Gloading;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.trello.rxlifecycle3.LifecycleTransformer;
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
@@ -38,6 +36,7 @@ import java.util.List;
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
 import cn.tklvyou.mediaconvergence.base.ConnectionLiveData;
+import cn.tklvyou.mediaconvergence.base.SpecialAdapter;
 import cn.tklvyou.mediaconvergence.manager.ThreadManager;
 import cn.tklvyou.mediaconvergence.widget.BaseDialog;
 import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
@@ -55,6 +54,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     protected View mContentView;
 
     public FrameLayout4Loading mFrameLayout4Loading;
+//    public FrameLayout mFrameLayout4Loading;
 
     protected CommonTitleBar getBaseTitleBar() {
         return baseTitleBar;
@@ -63,6 +63,13 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     private CommonTitleBar baseTitleBar;
 
     private boolean isAlive = false;
+
+    //整个页面的加载视图
+    private Gloading.Holder pageHolder;
+
+    //小范围加载视图
+    private Gloading.Holder specialLoadingHolder;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,12 +85,39 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         threadNameList = new ArrayList<String>();
 
         mContentView = View.inflate(this, getActivityLayoutID(), (ViewGroup) findViewById(R.id.base_content));
+
+
+        specialLoadingHolder = Gloading.from(new SpecialAdapter()).wrap(getLoadingView()).withRetry(new Runnable() {
+            @Override
+            public void run() {
+                specialLoadingHolder.showLoading();
+                onRetry();
+            }
+        });
+
+        //在Activity中显示, 父容器为: android.R.id.content
+        pageHolder = Gloading.getDefault().wrap(mContentView).withRetry(new Runnable() {
+            @Override
+            public void run() {
+                onRetry();
+            }
+        });
+
+
         initBaseView();
         attachView();
 
         initView(savedInstanceState);
     }
 
+    /**
+     * 覆写此方法可以更改Loading绑定的View
+     *
+     * @return
+     */
+    protected View getLoadingView() {
+        return mContentView;
+    }
 
     @Override
     protected void onDestroy() {
@@ -104,25 +138,25 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
         mPresenter = initPresenter();
         mContext = this;
 
-        ConnectionLiveData connectionLiveData = new ConnectionLiveData(this);
-        connectionLiveData.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (!aBoolean) {
-                    showNoNet();
-                } else {
-                    mFrameLayout4Loading.hideAllMask();
-                }
-            }
-        });
-
-
-        mFrameLayout4Loading.setRefreashClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NetworkUtils.openWirelessSettings();
-            }
-        });
+//        ConnectionLiveData connectionLiveData = new ConnectionLiveData(this);
+//        connectionLiveData.observe(this, new Observer<Boolean>() {
+//            @Override
+//            public void onChanged(Boolean aBoolean) {
+//                if (!aBoolean) {
+//                    showNoNet();
+//                } else {
+//                    mFrameLayout4Loading.hideAllMask();
+//                }
+//            }
+//        });
+//
+//
+//        mFrameLayout4Loading.setRefreashClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                NetworkUtils.openWirelessSettings();
+//            }
+//        });
     }
 
     /**
@@ -210,51 +244,6 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     }
 
 
-    public void updateVersion(Context context, String downloadUrl, String content, boolean isForce) {
-        DownloadBuilder builder = AllenVersionChecker.getInstance()
-                .downloadOnly(
-                        UIData.create().setDownloadUrl(downloadUrl).setContent(content)
-                );
-
-        if (isForce) {
-            //强制更新 取消回调
-            builder.setForceUpdateListener(new ForceUpdateListener() {
-                @Override
-                public void onShouldForceUpdate() {
-                    ActivityUtils.finishAllActivities();
-                }
-            });
-        }
-
-        //静默下载
-        builder.setSilentDownload(false);
-        //如果本地有安装包缓存也会重新下载apk
-        builder.setForceRedownload(true);
-        //更新界面选择
-        builder.setCustomVersionDialogListener(createCustomDialogOne());
-        //自定义下载路径
-        builder.setDownloadAPKPath(Environment.getExternalStorageDirectory() + "/CarNations/download/");
-        builder.executeMission(context);
-    }
-
-    /**
-     * 务必用库传回来的context 实例化你的dialog
-     * 自定义的dialog UI参数展示，使用versionBundle
-     *
-     * @return
-     */
-    private CustomVersionDialogListener createCustomDialogOne() {
-        CustomVersionDialogListener listener = new CustomVersionDialogListener() {
-            @Override
-            public Dialog getCustomVersionDialog(Context context, UIData versionBundle) {
-                BaseDialog baseDialog = new BaseDialog(context, R.style.BaseDialog, R.layout.custom_dialog_one_layout);
-                TextView textView = baseDialog.findViewById(R.id.tv_msg);
-                textView.setText(versionBundle.getContent());
-                return baseDialog;
-            }
-        };
-        return listener;
-    }
 
 
     /**
@@ -278,6 +267,7 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
 
     /**
      * 初始化View
+     *
      * @param savedInstanceState
      */
     protected abstract void initView(@Nullable Bundle savedInstanceState);
@@ -298,35 +288,46 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
 
     @Override
     public void showLoading() {
-        mFrameLayout4Loading.showLoadingView();
+        specialLoadingHolder.showLoading();
+//        mFrameLayout4Loading.showLoadingView();
     }
 
     @Override
-    public void hideLoading() {
-        mFrameLayout4Loading.hideLoadingView();
+    public void showPageLoading() {
+        pageHolder.showLoading();
+//        mFrameLayout4Loading.hideLoadingView();
     }
 
 
     @Override
     public void showSuccess(String message) {
-        ToastUtils.showShort(message);
+        specialLoadingHolder.showLoadSuccess();
+        pageHolder.showLoadSuccess();
+        if (!StringUtils.isEmpty(message)) {
+            ToastUtils.showShort(message);
+        }
     }
 
     @Override
     public void showFailed(String message) {
-        ToastUtils.showShort(message);
+        specialLoadingHolder.showLoadFailed();
+        if (!StringUtils.isEmpty(message)) {
+            ToastUtils.showShort(message);
+        }
     }
 
     @Override
     public void showNoNet() {
-        mFrameLayout4Loading.showNoNetView();
-        ToastUtils.showShort("暂无网络");
+        specialLoadingHolder.showLoadFailed();
+//        mFrameLayout4Loading.showNoNetView();
+//        ToastUtils.showShort("暂无网络");
     }
 
     @Override
     public void showNoData() {
-        mFrameLayout4Loading.doShowNoData();
-        ToastUtils.showShort("暂无数据");
+        specialLoadingHolder.showEmpty();
+//        mFrameLayout4Loading.doShowNoData();
+//        ToastUtils.showShort("暂无数据");
     }
 
 

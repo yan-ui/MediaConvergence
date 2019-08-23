@@ -12,23 +12,23 @@ import cn.tklvyou.mediaconvergence.base.BasePresenter;
 public class NewsDetailPresenter extends BasePresenter<NewsDetailContract.View> implements NewsDetailContract.Presenter {
 
     @Override
-    public void getDetailsById(int id) {
-        mView.showLoading();
+    public void getDetailsById(int id,boolean showPageLoading) {
+        if(showPageLoading) {
+            mView.showPageLoading();
+        }else {
+            mView.showLoading();
+        }
         RetrofitHelper.getInstance().getServer()
                 .getArticleDetail(id)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    mView.hideLoading();
+                    mView.showSuccess(result.getMsg());
                     if (result.getCode() == 1) {
                         mView.setDetails(result.getData());
-                    } else {
-                        ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> {
-                    throwable.printStackTrace();
-                    mView.hideLoading();
-                    mView.showNoNet();
+                    mView.showFailed("");
                 });
     }
 

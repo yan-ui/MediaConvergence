@@ -1,6 +1,7 @@
 package cn.tklvyou.mediaconvergence.ui.setting;
 
 import cn.tklvyou.mediaconvergence.base.BaseContract;
+import cn.tklvyou.mediaconvergence.model.SystemConfigModel;
 
 /**
  * @author :JenkinsZhou
@@ -11,13 +12,10 @@ import cn.tklvyou.mediaconvergence.base.BaseContract;
  */
 public interface AboutUsContract {
     interface View extends BaseContract.BaseView {
-        void showAppIcon(int appIcon);
-
-        void showAppVersionName(String versionName);
+      void setSystemConfig(SystemConfigModel model);
     }
 
     interface AboutPresenter extends BaseContract.BasePresenter<AboutUsContract.View> {
-        void setAppIcon(int appIcon);
-        void setAppVersionName(String name);
+        void getSystemConfig();
     }
 }

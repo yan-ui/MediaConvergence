@@ -10,17 +10,17 @@ public class GoodsDetailPresenter extends BasePresenter<GoodsDetailContract.View
 
     @Override
     public void getGoodsDetails(int id) {
+        mView.showPageLoading();
         RetrofitHelper.getInstance().getServer()
                 .getGoodsDetail(id)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
+                    mView.showSuccess(result.getMsg());
                     if(result.getCode() ==1){
                         mView.setGoodsDetail(result.getData());
-                    }else {
-                        ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> mView.showFailed(""));
     }
 
     @Override
@@ -31,6 +31,9 @@ public class GoodsDetailPresenter extends BasePresenter<GoodsDetailContract.View
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
                     ToastUtils.showShort(result.getMsg());
+                    if(result.getCode() == 1){
+                        mView.exchangeSuccess();
+                    }
 
                 }, throwable -> throwable.printStackTrace());
     }

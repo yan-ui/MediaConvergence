@@ -9,40 +9,60 @@ import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
  */
 
 public interface AccountContract {
-    interface LoginView extends BaseContract.BaseView{
+
+    interface View extends BaseContract.BaseView {
+        void getCaptchaSuccess();
+        void loginSuccess();
+
+        void loginError();
+    }
+
+    interface Presenter extends BaseContract.BasePresenter<View> {
+        void login(String name, String password);
+        void codeLogin(String mobile,String code);
+        void getCaptcha(String mobile, String event);
+    }
+
+    interface LoginView extends BaseContract.BaseView {
+        void bindMobile(int third_id);
         void loginSuccess();
         void loginError();
-        void bindMobile(int third_id);
-    }
-    interface LoginPresenter extends BaseContract.BasePresenter<LoginView>{
-        void login(String name, String password);
-        void thirdLogin(String platform,String code);
     }
 
-    interface RegisterView extends BaseContract.BaseView{
+    interface LoginPresenter extends BaseContract.BasePresenter<LoginView> {
+        void thirdLogin(String platform, String code);
+    }
+
+    interface RegisterView extends BaseContract.BaseView {
         void registerSuccess();
+
         void getCaptchaSuccess();
     }
 
 
-    interface RegisterPresenter extends BaseContract.BasePresenter<RegisterView>{
-        void getCaptcha(String mobile,String event);
-        void register(String mobile,String password,String captcha);
+    interface RegisterPresenter extends BaseContract.BasePresenter<RegisterView> {
+        void getCaptcha(String mobile, String event);
+
+        void register(String mobile, String password, String captcha);
     }
 
-    interface ForgetView extends BaseContract.BaseView{
+    interface ForgetView extends BaseContract.BaseView {
         void getCaptchaSuccess();
+
         void resetpwdSuccess();
     }
-    interface ForgetPresenter extends BaseContract.BasePresenter<ForgetView>{
-        void getCaptcha(String mobile,String event);
-        void resetpwd(String mobile, String newpassword,String captcha);
+
+    interface ForgetPresenter extends BaseContract.BasePresenter<ForgetView> {
+        void getCaptcha(String mobile, String event);
+
+        void resetpwd(String mobile, String newpassword, String captcha);
     }
 
-    interface AgreenmentView extends BaseContract.BaseView{
+    interface AgreenmentView extends BaseContract.BaseView {
         void setSystemConfig(SystemConfigModel model);
     }
-    interface AgreenmentPresenter extends BaseContract.BasePresenter<AgreenmentView>{
+
+    interface AgreenmentPresenter extends BaseContract.BasePresenter<AgreenmentView> {
         void getSystemConfig();
     }
 

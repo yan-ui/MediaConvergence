@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import cn.tklvyou.mediaconvergence.R;
+import cn.tklvyou.mediaconvergence.base.activity.BaseActivity;
 import cn.tklvyou.mediaconvergence.base.activity.BaseTitleActivity;
 import cn.tklvyou.mediaconvergence.helper.AccountHelper;
 import cn.tklvyou.mediaconvergence.utils.CommonUtil;
@@ -25,7 +26,7 @@ import static cn.tklvyou.mediaconvergence.common.CommonConstant.TIME_ONE_SECOND;
  * @date 2019年07月30日10:18
  * @Email: 971613168@qq.com
  */
-public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.EditPassPresenter> implements EditPassContract.EditView, View.OnClickListener {
+public class EditPasswordActivity extends BaseActivity<EditPassContract.EditPassPresenter> implements EditPassContract.EditView, View.OnClickListener {
     private TextView tvSendVCode;
     private TextView tvConfirmEdit;
     private EditText etVCode;
@@ -37,6 +38,10 @@ public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.Edi
 
     @Override
     protected void initView(Bundle savedInstanceState) {
+        setTitle("修改密码");
+        setNavigationImage();
+        setNavigationOnClickListener(v -> finish());
+
         tvSendVCode = findViewById(R.id.tvSendVCode);
         tvSendVCode.setOnClickListener(this);
         tvConfirmEdit = findViewById(R.id.tvConfirmEdit);
@@ -179,14 +184,5 @@ public class EditPasswordActivity extends BaseTitleActivity<EditPassContract.Edi
         timeCount = null;
         super.onDestroy();
     }
-
-
-    @Override
-    public void setTitleBar(CommonTitleBar titleBar) {
-        setTitle("修改密码");
-//        titleBar.setMainTitle("修改密码");
-    }
-
-
 
 }

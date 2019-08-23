@@ -21,10 +21,11 @@ public class SystemConfigModel {
     private String ios_download;
     private String android_version;
     private String android_info;
-    private String android_update;
+    private int android_update;
     private String android_download;
     private String register;
     private String default_search;
+    private String qrcode;
 
     public String getIos_version() {
         return ios_version;
@@ -74,11 +75,11 @@ public class SystemConfigModel {
         this.android_info = android_info;
     }
 
-    public String getAndroid_update() {
+    public int getAndroid_update() {
         return android_update;
     }
 
-    public void setAndroid_update(String android_update) {
+    public void setAndroid_update(int android_update) {
         this.android_update = android_update;
     }
 
@@ -104,5 +105,13 @@ public class SystemConfigModel {
 
     public void setDefault_search(String default_search) {
         this.default_search = default_search;
+    }
+
+    public String getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(String qrcode) {
+        this.qrcode = qrcode;
     }
 }

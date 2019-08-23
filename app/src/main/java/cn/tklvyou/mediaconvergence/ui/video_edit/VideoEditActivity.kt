@@ -16,7 +16,6 @@ import cn.tklvyou.mediaconvergence.utils.mediaplayer.MPlayer
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MPlayerException
 import cn.tklvyou.mediaconvergence.utils.mediaplayer.MinimalDisplay
 import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.luck.picture.lib.entity.LocalMedia
 import kotlinx.android.synthetic.main.activity_video_edit.*
@@ -55,7 +54,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
                 val bitmap = getVideoThumbnail(file_path, mSeekBar.progress * 1000L)
                 if (bitmap == null) {
                     runOnUiThread {
-                        hideLoading()
+                        showSuccess("")
                         ToastUtils.showShort("此处无法截取，请重新选取")
                     }
 
@@ -63,7 +62,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
                     runOnUiThread {
                         val path = "$cacheDir/videoImage.png"
                         if (ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG)) {
-                            hideLoading()
+                            showSuccess("")
 
                             if (hasBack) {
                                 val intent = Intent()
@@ -79,7 +78,7 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
                             }
                             finish()
                         } else {
-                            hideLoading()
+                            showSuccess("")
                             ToastUtils.showShort("图片保存失败")
                         }
                     }
@@ -154,8 +153,8 @@ class VideoEditActivity : BaseActivity<NullPresenter>() {
             }
 
         }
-        if(b != null){
-            b = rotaingImageView(90f,b)
+        if (b != null) {
+            b = rotaingImageView(90f, b)
         }
         return b
     }

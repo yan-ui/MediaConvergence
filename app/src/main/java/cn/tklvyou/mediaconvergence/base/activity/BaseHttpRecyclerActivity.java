@@ -1,7 +1,9 @@
 package cn.tklvyou.mediaconvergence.base.activity;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.cjt2325.cameralibrary.util.LogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -53,6 +55,7 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
+                LogUtils.e("============onLoadMore=============");
                 onLoadMore();
             }
         },rvBaseRecycler);
@@ -70,6 +73,7 @@ public abstract class BaseHttpRecyclerActivity<P extends BaseContract.BasePresen
 
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
+        LogUtils.e("===========onRefresh==============");
         onRefresh();
     }
 

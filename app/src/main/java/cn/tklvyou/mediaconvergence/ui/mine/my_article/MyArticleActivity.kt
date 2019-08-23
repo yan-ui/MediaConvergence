@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.NullPresenter
+import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.base.activity.BaseTitleActivity
 import cn.tklvyou.mediaconvergence.ui.adapter.ChannelPagerAdapter
 import cn.tklvyou.mediaconvergence.utils.CommonUtil
@@ -26,7 +27,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ClipPa
  * @date 2019年08月05日10:16
  * @Email: 971613168@qq.com
  */
-class MyArticleActivity : BaseTitleActivity<NullPresenter>() {
+class MyArticleActivity : BaseActivity<NullPresenter>() {
     private val mFragments = ArrayList<RxFragment>()
     private var mTabNameList = ArrayList<String>()
     private lateinit var commonNavigator: CommonNavigator
@@ -35,18 +36,16 @@ class MyArticleActivity : BaseTitleActivity<NullPresenter>() {
         return NullPresenter()
     }
 
-
-    override fun setTitleBar(titleBar: CommonTitleBar?) {
-        titleBar?.setMainTitle("我的帖子")
-    }
-
-
     override fun getActivityLayoutID(): Int {
         return R.layout.activity_my_article
     }
 
 
     override fun initView(savedInstanceState: Bundle?) {
+        setTitle("我的帖子")
+        setNavigationImage()
+        setNavigationOnClickListener { finish() }
+
         mTabNameList.add("拍客")
         mTabNameList.add("V视")
         mFragments.add(MyCameraFragment())

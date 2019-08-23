@@ -29,13 +29,44 @@ import kotlinx.android.synthetic.main.layout_refresh_recycler.*
  * @Email: 971613168@qq.com
  */
 class MyMessageActivity : BaseHttpRecyclerActivity<MessagePresenter, MessageModel, BaseViewHolder, SystemMsgAdapter>(), MessageContract.View {
+
     val EXTRA_KEY_MESSAGE_ID = "EXTRA_KEY_MESSAGE_ID"
+
+    override fun initPresenter(): MessagePresenter {
+        return MessagePresenter()
+    }
+
+    override fun getActivityLayoutID(): Int {
+        return R.layout.layout_refresh_recycler
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
+        setTitle("我的消息")
+        setNavigationImage()
+        setNavigationOnClickListener { finish() }
+        setPositiveText("清空")
+        setPositiveOnClickListener {
+            mPresenter.clearMessage()
+        }
+
+
+        initSmartRefreshLayout(smartLayoutRoot)
+        initRecyclerView(recyclerViewRoot)
+        recyclerViewRoot.layoutManager = LinearLayoutManager(this)
+        mPresenter.getMsgPageList(1)
+    }
+
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getMsgPageList(1)
+    }
+
     override fun setList(list: MutableList<MessageModel>?) {
 
         setList(object : AdapterCallBack<SystemMsgAdapter> {
 
             override fun createAdapter(): SystemMsgAdapter {
-                return SystemMsgAdapter()
+                return SystemMsgAdapter(list)
             }
 
             override fun refreshAdapter() {
@@ -53,28 +84,14 @@ class MyMessageActivity : BaseHttpRecyclerActivity<MessagePresenter, MessageMode
         }
     }
 
-
-    override fun initPresenter(): MessagePresenter {
-        return MessagePresenter()
-    }
-
-    override fun getActivityLayoutID(): Int {
-        return R.layout.layout_refresh_recycler
-    }
-
-    override fun initView(savedInstanceState: Bundle?) {
-        setTitle("我的消息")
-        setNavigationImage()
-        setNavigationOnClickListener { finish() }
-        initSmartRefreshLayout(smartLayoutRoot)
-        initRecyclerView(recyclerViewRoot)
-        recyclerViewRoot.layoutManager = LinearLayoutManager(this)
-        mPresenter.getMsgPageList(1)
-    }
-
-
     override fun getListAsync(page: Int) {
         mPresenter.getMsgPageList(page)
+    }
+
+    override fun clearSuccess() {
+        if(adapter != null){
+            adapter.setNewData(ArrayList<MessageModel>())
+        }
     }
 
 

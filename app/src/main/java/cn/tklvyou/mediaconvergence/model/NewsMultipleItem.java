@@ -18,6 +18,7 @@ public class NewsMultipleItem<T> implements MultiItemEntity {
     public static final int DANG_JIAN = 10;                         //悦听
     public static final int ZHUAN_LAN = 11;                         //专栏
     public static final int GONG_GAO = 12;                          //公告
+    public static final int ZHI_BO = 13;                            //直播
 
     private int itemType;
     private T dataBean;
@@ -59,6 +60,9 @@ public class NewsMultipleItem<T> implements MultiItemEntity {
                 break;
             case "公告":
                 itemType = GONG_GAO;
+                break;
+            case "直播":
+                itemType = ZHI_BO;
                 break;
             default:
                 itemType = WEN_ZHENG;

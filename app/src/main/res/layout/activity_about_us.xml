@@ -32,10 +32,18 @@
             android:layout_marginTop="@dimen/dp_12" />
 
 
+        <ImageView
+            android:id="@+id/ivCode"
+            android:layout_marginTop="@dimen/dp_50"
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="@dimen/dp_120"
+            android:layout_gravity="center" />
+
+
         <TextView
             style="@style/TextGrayColor99999Sp12Style"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/dp_135"
+            android:layout_marginTop="@dimen/dp_70"
             android:text="版权所有 © 2004-2019 京ICP证050806号" />
 
         <TextView

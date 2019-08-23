@@ -32,7 +32,7 @@ public class PointDetailPresenter extends BasePresenter<PointDetailContract.View
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> mView.showFailed(""));
     }
 
     @Override

@@ -62,8 +62,9 @@ class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountCo
 
     }
 
+    private var timeCount:TimeCount? = null
     override fun getCaptchaSuccess() {
-        val timeCount = TimeCount(60000, 1000, object : TimeCount.ITimeCountListener {
+        timeCount = TimeCount(60000, 1000, object : TimeCount.ITimeCountListener {
             override fun onTick(millisUntilFinished: Long) {
                 btnGetCaptcha.setTextColor(Color.parseColor("#999999"))
                 btnGetCaptcha.isClickable = false
@@ -77,7 +78,7 @@ class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountCo
             }
 
         })
-        timeCount.start()
+        timeCount!!.start()
     }
 
     override fun resetpwdSuccess() {
@@ -159,6 +160,10 @@ class ForgetPasswordActivity : BaseActivity<AccountForgetPresenter>(), AccountCo
         dialog!!.setTitle("温馨提示")
         dialog!!.setMessage("当前正在修改密码，是否取消？")
         dialog!!.setYesOnclickListener("确认"){
+            if(timeCount != null){
+                timeCount!!.cancel()
+                timeCount = null
+            }
             dialog!!.dismiss()
             finish()
         }

@@ -51,6 +51,7 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
 
     override fun setQiniuToken(token: String) {
         this.qiniuToken = token
+        mPresenter.getJuZhengHeader("问政")
     }
 
     override fun initPresenter(): PublishWenzhengPresenter {
@@ -75,7 +76,7 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
 
     override fun initView(savedInstanceState: Bundle?) {
         setTitle("发布问政")
-        setNavigationText("图片", R.mipmap.icon_titlebar_back)
+        setNavigationText("", R.mipmap.icon_titlebar_back)
         setNavigationOnClickListener { finish() }
 
         selectList = ArrayList()
@@ -137,9 +138,13 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
 
         mPresenter.getQiniuToken()
 
-        mPresenter.getJuZhengHeader("问政")
+
     }
 
+    override fun onRetry() {
+        super.onRetry()
+        mPresenter.getQiniuToken()
+    }
 
     override fun uploadImagesSuccess(urls: MutableList<String>) {
         for ((index, item) in urls.withIndex()) {
@@ -154,7 +159,7 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
 
 
     override fun publishSuccess() {
-        hideLoading()
+        showSuccess("")
         finish()
     }
 

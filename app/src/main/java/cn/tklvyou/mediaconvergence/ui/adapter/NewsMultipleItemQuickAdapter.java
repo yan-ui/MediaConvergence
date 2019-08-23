@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -70,6 +71,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
         addItemType(NewsMultipleItem.DANG_JIAN, R.layout.item_news_news_layout);
         addItemType(NewsMultipleItem.ZHUAN_LAN, R.layout.item_news_news_layout);
         addItemType(NewsMultipleItem.GONG_GAO, R.layout.item_news_news_layout);
+        addItemType(NewsMultipleItem.ZHI_BO, R.layout.item_news_zhi_bo_layout);
     }
 
     private AudioController mAudioControl;
@@ -108,6 +110,8 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                 // 加载网络图片
                 if (!StringUtils.isEmpty(bean.getAvatar().trim())) {
                     GlideManager.loadCircleImg(bean.getAvatar(), helper.getView(R.id.ivAvatar), R.mipmap.default_avatar);
+                } else {
+                    GlideManager.loadCircleImg(R.mipmap.default_avatar, helper.getView(R.id.ivAvatar));
                 }
 
                 Glide.with(mContext).load(bean.getImage()).into((ImageView) helper.getView(R.id.ivVideoBg));
@@ -433,6 +437,8 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                 if (!StringUtils.isEmpty(bean.getAvatar().trim())) {
                     GlideManager.loadRoundImg(bean.getAvatar(), helper.getView(R.id.headIv), 5f);
+                } else {
+                    GlideManager.loadRoundImg(R.mipmap.default_avatar, helper.getView(R.id.headIv));
                 }
 
                 ExpandTextView expandTextView = helper.getView(R.id.contentTv);
@@ -452,7 +458,9 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                 if (bean.getImages() != null && bean.getImages().size() > 0) {
                     //上传的是图片
                     ImageView ivVideo = helper.getView(R.id.ivVideo);
-                    ivVideo.setVisibility(View.GONE);
+                    FrameLayout llVideo = helper.getView(R.id.llVideo);
+                    llVideo.setVisibility(View.GONE);
+
 
                     MultiImageView multiImageView = helper.getView(R.id.multiImagView);
                     multiImageView.setVisibility(View.VISIBLE);
@@ -472,30 +480,21 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                     MultiImageView multiImageView = helper.getView(R.id.multiImagView);
                     multiImageView.setVisibility(View.GONE);
+                    FrameLayout llVideo = helper.getView(R.id.llVideo);
+                    llVideo.setVisibility(View.VISIBLE);
 
                     ImageView ivVideo = helper.getView(R.id.ivVideo);
-                    ivVideo.setVisibility(View.VISIBLE);
                     ivVideo.setBackgroundColor(Color.parseColor("#abb1b6"));
                     ivVideo.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(mContext, VodActivity.class);
-//                    intent.putExtra("media_type", "livestream")
                             intent.putExtra("videoPath", bean.getVideo());
                             mContext.startActivity(intent);
                         }
                     });
 
-
-                    Glide.with(mContext).load(bean.getImage())
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.color.bg_no_photo)
-                            .into(new SimpleTarget<Drawable>() {
-                                @Override
-                                public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                    ivVideo.setBackground(resource);
-                                }
-                            });
+                    GlideManager.loadImg(bean.getImage(),ivVideo);
 
                 }
                 break;
@@ -504,6 +503,8 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                 if (helper.getLayoutPosition() == 0) {
                     helper.getView(R.id.ivReadingImage).getLayoutParams().height = ConvertUtils.dp2px(90);
+                } else {
+                    helper.getView(R.id.ivReadingImage).getLayoutParams().height = ConvertUtils.dp2px(115);
                 }
 
                 helper.setText(R.id.tvName, bean.getName());
@@ -515,14 +516,12 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
             case NewsMultipleItem.LISTEN:
                 bean = (NewsBean) item.getDataBean();
 
-                mAudioControl.onPause();
-
                 helper.setText(R.id.tvName, bean.getName());
                 helper.setText(R.id.tvBeginTime, bean.getBegintime());
 
-                if(bean.getTime().contains(":") || bean.getTime().contains("：")){
+                if (bean.getTime().contains(":") || bean.getTime().contains("：")) {
                     helper.setText(R.id.tvTime, bean.getTime());
-                }else {
+                } else {
                     helper.setText(R.id.tvTime, formatTime(Double.valueOf(bean.getTime()).longValue()));
                 }
 
@@ -542,7 +541,6 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                     grayGoodDrawable.setBounds(drawables[0].getBounds());
                     tvGoodNum.setCompoundDrawables(grayGoodDrawable, drawables[1], drawables[2], drawables[3]);
                 }
-
 
 
                 if (bean.getPlayStatus()) {
@@ -743,6 +741,16 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                     }
                 }
                 break;
+            case NewsMultipleItem.ZHI_BO:
+                bean = (NewsBean) item.getDataBean();
+                helper.setText(R.id.tvName, bean.getName());
+                helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());
+                helper.setText(R.id.tvTime, "" + bean.getBegintime());
+
+                Glide.with(mContext).load(bean.getImage()).into((ImageView) helper.getView(R.id.ivVideoBg));
+
+                helper.addOnClickListener(R.id.ivStartPlayer);
+                break;
             default:
                 break;
         }
@@ -843,8 +851,8 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                     R.id.tvTime);
             startTime.setText(curTimeString);
         }
-
-        if (mData != null && mData.get(position) != null) {
+        int length = mData.size();
+        if (mData != null && length > position && mData.get(position) != null) {
             NewsBean mediaEntity = (NewsBean) mData.get(position).getDataBean();
             mediaEntity.setTime(curTimeString);
         }
@@ -852,28 +860,31 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
     @Override
     public void isPlay(int position, boolean isPlay) {
-        NewsBean mediaEntity = (NewsBean) mData.get(position).getDataBean();
-        mediaEntity.setPlayStatus(isPlay);
-        if (getViewByPosition(getRecyclerView(), position, R.id.play) != null
-                && getViewByPosition(getRecyclerView(), position, R.id.pause) != null) {
-            ImageView play = (ImageView) getViewByPosition(getRecyclerView(), position, R.id.play);
-            ImageView pause = (ImageView) getViewByPosition(getRecyclerView(), position,
-                    R.id.pause);
-            if (isPlay) {
-                if (play != null) {
-                    play.setVisibility(View.GONE);
-                }
-                if (pause != null) {
-                    pause.setVisibility(View.VISIBLE);
-                }
+        int length = mData.size();
+        if (mData != null && length > position && mData.get(position) != null) {
+            NewsBean mediaEntity = (NewsBean) mData.get(position).getDataBean();
+            mediaEntity.setPlayStatus(isPlay);
+            if (getViewByPosition(getRecyclerView(), position, R.id.play) != null
+                    && getViewByPosition(getRecyclerView(), position, R.id.pause) != null) {
+                ImageView play = (ImageView) getViewByPosition(getRecyclerView(), position, R.id.play);
+                ImageView pause = (ImageView) getViewByPosition(getRecyclerView(), position,
+                        R.id.pause);
+                if (isPlay) {
+                    if (play != null) {
+                        play.setVisibility(View.GONE);
+                    }
+                    if (pause != null) {
+                        pause.setVisibility(View.VISIBLE);
+                    }
 
 
-            } else {
-                if (play != null) {
-                    play.setVisibility(View.VISIBLE);
-                }
-                if (pause != null) {
-                    pause.setVisibility(View.GONE);
+                } else {
+                    if (play != null) {
+                        play.setVisibility(View.VISIBLE);
+                    }
+                    if (pause != null) {
+                        pause.setVisibility(View.GONE);
+                    }
                 }
             }
         }
@@ -897,11 +908,11 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
      * ----------------------------------------------------------------------------------
      */
 
-
     private String formatTime(Long position) {
         int totalSeconds = (int) (position + 0.5);
         int seconds = totalSeconds % 60;
         int minutes = totalSeconds / 60 % 60;
         return String.format(Locale.US, "%02d:%02d", minutes, seconds);
     }
+
 }

@@ -24,7 +24,7 @@ public class SearchPresenter extends BasePresenter<SearchContract.View> implemen
     @Override
     public void searchNewList(String module, String name, int p) {
         RetrofitHelper.getInstance().getServer()
-                .searchNewList(module,name, p)
+                .searchNewList(module, name, p)
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
@@ -34,8 +34,7 @@ public class SearchPresenter extends BasePresenter<SearchContract.View> implemen
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setNewList(p, null);
+                            mView.showFailed("");
                         }
                 );
     }

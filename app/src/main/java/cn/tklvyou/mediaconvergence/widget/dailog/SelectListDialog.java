@@ -3,13 +3,21 @@ package cn.tklvyou.mediaconvergence.widget.dailog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.blankj.utilcode.util.LogUtils;
 
 import cn.tklvyou.mediaconvergence.R;
 
@@ -53,6 +61,8 @@ public class SelectListDialog extends Dialog {
         //初始化界面控件的事件
         initEvent();
 
+
+
     }
 
     /**
@@ -87,6 +97,26 @@ public class SelectListDialog extends Dialog {
         mRecyclerView = findViewById(R.id.recycler_view);
         titleTv = findViewById(R.id.tvTitle);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus) {
+            return;
+        }
+        setHeight();
+    }
+
+    private void setHeight() {
+        Window window = getWindow();
+        DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        if (window.getDecorView().getHeight() >= (int) (displayMetrics.heightPixels * 0.6)) {
+            attributes.height = (int) (displayMetrics.heightPixels * 0.5);
+        }
+        window.setAttributes(attributes);
     }
 
     /**

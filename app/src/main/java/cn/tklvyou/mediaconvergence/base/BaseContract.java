@@ -9,20 +9,21 @@ import com.trello.rxlifecycle3.LifecycleTransformer;
 
 public interface BaseContract {
 
-    interface BasePresenter<T extends BaseView>{
+    interface BasePresenter<T extends BaseView> {
         /**
          * view挂载
          *
          * @param view
          */
         void attachView(T view);
+
         /**
          * View卸载
          */
         void detachView();
     }
 
-    interface BaseView{
+    interface BaseView {
 
         /**
          * 显示进度中
@@ -30,9 +31,9 @@ public interface BaseContract {
         void showLoading();
 
         /**
-         * 隐藏进度
+         * 整个页面显示进度中
          */
-        void hideLoading();
+        void showPageLoading();
 
         /**
          * 显示请求成功

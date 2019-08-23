@@ -6,15 +6,15 @@
     android:orientation="vertical">
 
     <ImageView
+        android:padding="@dimen/dp_8"
         android:id="@+id/ivImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="@dimen/dp_66"
+        android:layout_height="@dimen/dp_66" />
 
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_9"
         android:textColor="#ff666666"
         android:textSize="@dimen/sp_12" />
 

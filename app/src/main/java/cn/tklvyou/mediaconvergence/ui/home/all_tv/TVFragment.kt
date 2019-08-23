@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.home.all_tv
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.view.View
@@ -11,6 +12,7 @@ import cn.tklvyou.mediaconvergence.model.BasePageModel
 import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.SuixiTVGridRvAdpater
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
+import cn.tklvyou.mediaconvergence.ui.service.ServiceWebviewActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -29,6 +31,10 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         return TVListPresenter()
     }
 
+    override fun getLoadingView(): View {
+        return mRecyclerView
+    }
+
     private var type = ""
     override fun initView() {
         type = mBundle.getString("type", "濉溪新闻")
@@ -38,11 +44,12 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         mRecyclerView.layoutManager = GridLayoutManager(context, 2)
         mRecyclerView.addItemDecoration(GridDividerItemDecoration(30, Color.WHITE, true))
 
+        mPresenter.getNewList("濉溪TV", type, 1)
     }
 
 
     override fun lazyData() {
-        mPresenter.getNewList("濉溪TV", type, 1)
+
     }
 
     override fun setNewList(p: Int, model: BasePageModel<NewsBean>?) {
@@ -82,15 +89,25 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         val bean = (adapter as SuixiTVGridRvAdpater).data[position]
         val id = bean.id
         val type = "电视"
-        NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
+        if (bean.url.isNotEmpty()) {
+            startDetailsActivity(context!!,bean.url)
+        } else {
+            NewsDetailActivity.startNewsDetailActivity(mActivity!!, type, id)
+        }
     }
 
+    private fun startDetailsActivity(context: Context, url: String) {
+        val intent = Intent(context, ServiceWebviewActivity::class.java)
+        intent.putExtra("url", url)
+        intent.putExtra("other",true)
+        startActivity(intent)
+    }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemChildClick(adapter, view, position)
         if (view != null) {
             when (view.id) {
-                R.id.ivSuiXiTVStartPlayer ->{
+                R.id.ivSuiXiTVStartPlayer -> {
                     val intent = Intent(context, VodActivity::class.java)
                     intent.putExtra("videoPath", (adapter as SuixiTVGridRvAdpater).data[position].video)
                     startActivity(intent)

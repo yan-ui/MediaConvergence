@@ -6,11 +6,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
-import cn.tklvyou.mediaconvergence.base.BaseResult;
 import cn.tklvyou.mediaconvergence.helper.AccountHelper;
-import cn.tklvyou.mediaconvergence.model.User;
-import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
-import io.reactivex.functions.Consumer;
 
 
 /**
@@ -42,14 +38,13 @@ public class AccountRegisterPresenter extends BasePresenter<AccountContract.Regi
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
-                    mView.hideLoading();
-                    ToastUtils.showShort(result.getMsg());
+                    mView.showSuccess(result.getMsg());
                     if(result.getCode() == 1){
                         mView.registerSuccess();
                         AccountHelper.getInstance().setUserInfo(result.getData().getUserinfo());
                         SPUtils.getInstance().put("token",result.getData().getUserinfo().getToken());
                         SPUtils.getInstance().put("login",true);
                     }
-                }, throwable -> mView.hideLoading());
+                }, throwable -> mView.showFailed(""));
     }
 }

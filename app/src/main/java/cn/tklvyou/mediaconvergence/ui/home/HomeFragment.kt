@@ -57,14 +57,15 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         if (SPUtils.getInstance().getInt("groupId") != 2) {
             homeTitleBar.rightCustomView.visibility = View.GONE
         }
+
         homeTitleBar.rightCustomView.setOnClickListener {
             RxPermissions(this)
-                    .request(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO)
+                    .request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
                     .subscribe { granted ->
                         if (granted) { // Always true pre-M
                             val intent = Intent(context, TakePhotoActivity::class.java)
-                            intent.putExtra("is_video",true)
-                            intent.putExtra("page","V视")
+                            intent.putExtra("is_video", true)
+                            intent.putExtra("page", "V视")
                             startActivity(intent)
                             isRefresh = true
                         } else {
@@ -83,8 +84,19 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     override fun onResume() {
         super.onResume()
-        if(isRefresh){
+        if (isRefresh) {
             isRefresh = false
+            if (mChannelFragments.size > 0) {
+                (mChannelFragments[0] as NewsListFragment).refreshData()
+            }
+        }
+    }
+
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && !isFirstResume) {
+            mViewPager.setCurrentItem(0, false)
             (mChannelFragments[0] as NewsListFragment).refreshData()
         }
     }
@@ -127,7 +139,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         mViewPager.adapter = mChannelPagerAdapter
         mViewPager.offscreenPageLimit = mSelectedChannels.size
 
-        mViewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{
+        mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
             }
 
@@ -135,13 +147,13 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
             }
 
             override fun onPageSelected(p0: Int) {
-                if(p0 == 0){
+                if (p0 == 0) {
                     if (SPUtils.getInstance().getInt("groupId") == 2) {
                         homeTitleBar.rightCustomView.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         homeTitleBar.rightCustomView.visibility = View.GONE
                     }
-                }else{
+                } else {
                     homeTitleBar.rightCustomView.visibility = View.GONE
                 }
             }
@@ -196,6 +208,9 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 "公告" -> {
                     bundle.putInt("type", NewsMultipleItem.GONG_GAO)
                 }
+                "直播" -> {
+                    bundle.putInt("type", NewsMultipleItem.ZHI_BO)
+                }
 
             }
 
@@ -220,7 +235,6 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 intent.putExtra("page", "V视")
                 intent.putExtra("data", selectList as Serializable)
                 startActivity(intent)
-
             }
         }
 
@@ -232,6 +246,11 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         commonNavigator = null
         mChannelFragments.clear()
         mChannelPagerAdapter = null
+    }
+
+    fun reload() {
+        mViewPager.setCurrentItem(0, false)
+        (mChannelFragments[0] as NewsListFragment).refreshData()
     }
 
 }

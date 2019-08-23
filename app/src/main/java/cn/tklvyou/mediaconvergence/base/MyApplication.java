@@ -2,11 +2,15 @@ package cn.tklvyou.mediaconvergence.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.MutableContextWrapper;
 import android.os.StrictMode;
+import android.util.Log;
+import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
+import com.billy.android.loading.Gloading;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.netease.neliveplayer.playerkit.sdk.PlayerManager;
@@ -27,6 +31,7 @@ import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.tencent.smtt.sdk.QbSdk;
 
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.common.Contacts;
@@ -85,14 +90,40 @@ public class MyApplication extends MultiDexApplication {
         Utils.init(this);
 
         //初始化网易云播放器
-        initPlayerSDK();
+//        initPlayerSDK();
 
         GlobalClickCallbacks.init(this);
 
+        //设置为true时Logcat会输出日志
+        Gloading.debug(true);
+        //初始化状态管理
+        Gloading.initDefault(new GlobalAdapter());
+
+        initTencentTBS();
+    }
+
+    private void initTencentTBS() {
+        //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
+        QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
+
+            @Override
+            public void onViewInitFinished(boolean arg0) {
+                // TODO Auto-generated method stub
+                //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
+                Log.d("app", " onViewInitFinished is " + arg0);
+            }
+
+            @Override
+            public void onCoreInitFinished() {
+                // TODO Auto-generated method stub
+            }
+        };
+        //x5内核初始化接口
+        QbSdk.initX5Environment(getApplicationContext(),  cb);
     }
 
     private void initWb() {
-        WbSdk.install(this,new AuthInfo(this, Contacts.WB_APP_KEY, Contacts.WB_REDIRECT_URL,
+        WbSdk.install(this, new AuthInfo(this, Contacts.WB_APP_KEY, Contacts.WB_REDIRECT_URL,
                 Contacts.WB_SCOPE));
     }
 

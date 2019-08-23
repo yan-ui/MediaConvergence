@@ -107,8 +107,9 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
     public void setList(AdapterCallBack<A> callBack) {
         if (adapter == null) {
             setAdapter(callBack.createAdapter());
+        }else {
+            callBack.refreshAdapter();
         }
-        callBack.refreshAdapter();
     }
 
 
@@ -198,6 +199,20 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
                 }
             }
         });
+    }
+
+
+    public synchronized void loadDataFail(int page){
+        isLoading = false;
+
+        if (onStopLoadListener == null) {
+            Log.w(TAG, "stopLoadData  onStopLoadListener == null >> return;");
+            return;
+        }
+        onStopLoadListener.onStopRefresh();
+        if (page > PAGE_NUM_1) {
+            onStopLoadListener.onStopLoadMore(isHaveMore);
+        }
     }
 
     /**
@@ -329,8 +344,7 @@ public abstract class BaseRecyclerFragment<P extends BaseContract.BasePresenter,
      */
     public synchronized void onLoadFailed(int page, Exception e) {
         Log.e(TAG, "onLoadFailed page = " + page + "; e = " + (e == null ? null : e.getMessage()));
-        stopLoadData(page);
-        ToastUtils.showShort("加载失败");
+        loadDataFail(page);
     }
 
 

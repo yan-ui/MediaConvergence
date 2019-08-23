@@ -97,6 +97,7 @@
  -keep class com.qiniu.qplayer.mediaEngine.MediaPlayer{*;}
 
  #tencent
+ -keep class * extends android.app.Dialog
  -keep class com.tencent.open.TDialog$*
  -keep class com.tencent.open.TDialog$* {*;}
  -keep class com.tencent.open.PKDialog

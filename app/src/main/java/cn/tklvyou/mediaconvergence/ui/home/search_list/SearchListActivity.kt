@@ -40,7 +40,7 @@ class SearchListActivity : BaseHttpRecyclerActivity<SearchPresenter, NewsBean, B
         initSmartRefreshLayout(smartRefreshLayout)
         initRecyclerView(recyclerView)
         searchStr = intent.getStringExtra("search")
-        etSearch.setText(searchStr)
+        etSearch.hint = searchStr
 
         btnClear.setOnClickListener {
             etSearch.setText("")
@@ -48,18 +48,18 @@ class SearchListActivity : BaseHttpRecyclerActivity<SearchPresenter, NewsBean, B
 
         etSearch.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-
                 if (etSearch.text.toString().isEmpty()) {
-                    ToastUtils.showShort("请输入搜索内容")
+                    searchStr = etSearch.hint.toString()
                 } else {
                     searchStr = etSearch.text.toString()
-                    mPresenter.searchNewList("新闻", searchStr, 1)
                 }
+
+                mPresenter.searchNewList("新闻", searchStr, 1)
+                hideSoftInput(etSearch.windowToken)
             }
             return@setOnEditorActionListener true
         }
 
-        mPresenter.searchNewList("新闻", searchStr, 1)
     }
 
 
@@ -75,7 +75,7 @@ class SearchListActivity : BaseHttpRecyclerActivity<SearchPresenter, NewsBean, B
         setList(object : AdapterCallBack<MyCollectionAdapter> {
 
             override fun createAdapter(): MyCollectionAdapter {
-                return MyCollectionAdapter()
+                return MyCollectionAdapter(list)
             }
 
             override fun refreshAdapter() {

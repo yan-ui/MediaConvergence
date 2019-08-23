@@ -162,7 +162,7 @@ public class GlobalClickCallbacks implements Application.ActivityLifecycleCallba
     static class ProxyOnclickListener implements View.OnClickListener {
         private View.OnClickListener onclick;
 
-        private int MIN_CLICK_DELAY_TIME = 1000;
+        private int MIN_CLICK_DELAY_TIME = 600;
 
         private long lastClickTime = 0;
 

@@ -2,9 +2,7 @@ package cn.tklvyou.mediaconvergence.ui.home.publish_news;
 
 import android.util.Log;
 
-import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.luck.picture.lib.tools.DateUtils;
 
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -13,15 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import cn.tklvyou.mediaconvergence.api.RetrofitHelper;
 import cn.tklvyou.mediaconvergence.api.RxSchedulers;
 import cn.tklvyou.mediaconvergence.base.BasePresenter;
 import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 
 public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View> implements PublishNewsContract.Presenter {
@@ -37,7 +31,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
 
 
             String currentTim = String.valueOf(System.currentTimeMillis());
-            String key = "upload/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
+            String key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
             String mimeType = "image/jpeg";
 
             QiniuUploadManager.QiniuUploadFile param = new QiniuUploadManager.QiniuUploadFile(files.get(i).getAbsolutePath(), key, mimeType, token);
@@ -61,8 +55,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                 if(err.contains("no token")){
                     getQiniuToken();
                 }
-                ToastUtils.showShort("上传失败,请重新上传");
-                mView.hideLoading();
+                mView.showSuccess("上传失败,请重新上传");
             }
 
             @Override
@@ -72,7 +65,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
 
             @Override
             public void onUploadCompleted() {
-                mView.hideLoading();
+                mView.showSuccess("");
                 mView.uploadImagesSuccess(keys);
             }
 
@@ -96,8 +89,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                                 mView.publishSuccess();
                             }
                         }, throwable -> {
-                            mView.hideLoading();
-                            throwable.printStackTrace();
+                            mView.showFailed("");
                         }
 
                 );
@@ -115,8 +107,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                         mView.publishSuccess();
                     }
                 }, throwable -> {
-                    mView.hideLoading();
-                    throwable.printStackTrace();
+                    mView.showFailed("");
                 });
     }
 
@@ -166,8 +157,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                 if(err.contains("no token")){
                     getQiniuToken();
                 }
-                ToastUtils.showShort("上传失败,请重新上传");
-                mView.hideLoading();
+                mView.showSuccess("上传失败,请重新上传");
             }
 
             @Override

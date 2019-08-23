@@ -30,6 +30,24 @@ public class MessagePresenter extends BasePresenter<MessageContract.View> implem
                     } else {
                         ToastUtils.showShort(result.getMsg());
                     }
-                }, throwable -> throwable.printStackTrace());
+                }, throwable -> mView.showFailed(""));
+    }
+
+    @Override
+    public void clearMessage() {
+        mView.showLoading();
+        RetrofitHelper.getInstance().getServer()
+                .clearMessage()
+                .compose(RxSchedulers.applySchedulers())
+                .compose(mView.bindToLife())
+                .subscribe(result -> {
+                    mView.showSuccess(result.getMsg());
+                    if (result.getCode() == RequestConstant.CODE_REQUEST_SUCCESS) {
+                        mView.clearSuccess();
+                    }
+                }, throwable -> {
+                    mView.showSuccess("");
+                    throwable.printStackTrace();
+                });
     }
 }

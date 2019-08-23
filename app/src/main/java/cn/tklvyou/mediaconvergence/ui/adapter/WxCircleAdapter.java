@@ -90,6 +90,8 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
 
         if (!StringUtils.isEmpty(item.getAvatar().trim())) {
             GlideManager.loadRoundImg(item.getAvatar(),helper.getView(R.id.headIv), 5f);
+        }else {
+            GlideManager.loadRoundImg(R.mipmap.default_avatar,helper.getView(R.id.headIv), 5f);
         }
 
         ExpandTextView expandTextView = helper.getView(R.id.contentTv);

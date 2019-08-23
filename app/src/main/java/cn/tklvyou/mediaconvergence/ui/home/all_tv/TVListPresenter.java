@@ -11,19 +11,20 @@ import cn.tklvyou.mediaconvergence.base.BasePresenter;
 public class TVListPresenter extends BasePresenter<TVListContract.View> implements TVListContract.Presenter {
 
     @Override
-    public void getNewList(String module,String module_second, int p) {
+    public void getNewList(String module, String module_second, int p) {
         RetrofitHelper.getInstance().getServer()
-                .getNewList(module, module_second,p)
+                .getNewList(module, module_second, p)
                 .compose(RxSchedulers.applySchedulers())
                 .subscribe(result -> {
                             if (result.getCode() == 1) {
-                                mView.setNewList(p, result.getData());
+                                if (mView != null) {
+                                    mView.setNewList(p, result.getData());
+                                }
                             } else {
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setNewList(p, null);
+                            mView.showFailed("");
                         }
                 );
     }

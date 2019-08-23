@@ -24,8 +24,7 @@ public class JuzhengListPresenter extends BasePresenter<JuzhengListContract.View
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setNewList(p, null);
+                             mView.showFailed("");
                         }
                 );
     }

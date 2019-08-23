@@ -139,7 +139,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
                 mPresenter.getScoreByRead(id)
             }
         }
-        timer!!.schedule(timerTask,6 * 60 * 1000)
+        timer!!.schedule(timerTask, 6 * 60 * 1000)
     }
 
     private fun getIntentData() {
@@ -170,12 +170,12 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         tvSeeNum.text = "" + item.visit_num
 
         var imageUrl: String
-        if(item.images == null || item.images.size == 0){
+        if (item.images == null || item.images.size == 0) {
             imageUrl = item.image
-        }else{
+        } else {
             imageUrl = item.images[0]
         }
-        
+
         Glide.with(this).load(imageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.color.bg_no_photo)
@@ -191,7 +191,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
                 }
 
 
-                if(item.tel_list != null && item.tel_list.size == 3) {
+                if (item.tel_list != null && item.tel_list.size == 3) {
                     llTVLayout.visibility = View.VISIBLE
                     rbYesterday.text = SpanUtils().appendLine("昨天").append(item.tel_list[0].date).create()
                     rbToday.text = SpanUtils().appendLine("今天").append(item.tel_list[1].date).create()
@@ -200,23 +200,23 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
                     loadHtml(item.tel_list[1].content)
 
                     rgTime.setOnCheckedChangeListener { group, checkedId ->
-                        when(checkedId){
-                            R.id.rbYesterday ->{
+                        when (checkedId) {
+                            R.id.rbYesterday -> {
                                 loadHtml(item.tel_list[0].content)
                             }
 
-                            R.id.rbToday ->{
+                            R.id.rbToday -> {
                                 loadHtml(item.tel_list[1].content)
                             }
 
-                            R.id.rbTomorrow ->{
+                            R.id.rbTomorrow -> {
                                 loadHtml(item.tel_list[2].content)
                             }
                         }
 
                     }
 
-                }else{
+                } else {
                     llTVLayout.visibility = View.GONE
                 }
 
@@ -240,7 +240,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
                 mVideoView.setVideoPath(item.video)
                 mVideoView.setOnErrorListener { p0 ->
-//                    when (p0) {
+                    //                    when (p0) {
 //                        PLOnErrorListener.MEDIA_ERROR_UNKNOWN -> {
 //                            ToastUtils.showShort("未知错误")
 //                        }
@@ -301,7 +301,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
                 tvCommentNum.text = "评论  ${item.comment_num}"
                 tvCommentNum.setOnClickListener {
                     val intent = Intent(this, CommentListActivity::class.java)
-                    intent.putExtra("id",id)
+                    intent.putExtra("id", id)
                     startActivity(intent)
                 }
 
@@ -364,7 +364,6 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         }
 
 
-
     }
 
     override fun addCommentSuccess() {
@@ -392,6 +391,8 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         if (ev!!.action == MotionEvent.ACTION_DOWN) {
             val v = currentFocus
             if (isShouldHideInput(v, ev)) {//点击的是其他区域，则调用系统方法隐藏软键盘
+                optionLayout.visibility = View.VISIBLE
+                editTextBodyLl.visibility = View.GONE
                 hideSoftInput(v.windowToken)
             }
             return super.dispatchTouchEvent(ev)
@@ -431,11 +432,14 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         editTextBodyLl.visibility = visibility
 
         if (View.VISIBLE == visibility) {
+            optionLayout.visibility = View.GONE
+
             circleEt.requestFocus()
             //弹出键盘
             showSoftInput(circleEt)
 
         } else if (View.GONE == visibility) {
+            optionLayout.visibility = View.VISIBLE
             //隐藏键盘
             hideSoftInput(circleEt.windowToken)
         }
@@ -457,7 +461,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
             timer = null
         }
 
-        if(mVideoView.isPlaying){
+        if (mVideoView.isPlaying) {
             mVideoView.stopPlayback()
         }
 

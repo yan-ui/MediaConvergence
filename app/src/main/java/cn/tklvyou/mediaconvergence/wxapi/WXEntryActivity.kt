@@ -68,6 +68,7 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
             }
 
             BaseResp.ErrCode.ERR_AUTH_DENIED ->{
+
                 LogUtils.e("ERR_AUTH_DENIED")
                 finish()
             }

@@ -25,7 +25,7 @@ public class PointRulePresenter extends BasePresenter<PointRuleContract.View> im
                     }
 
                 }, throwable -> {
-                    throwable.printStackTrace();
+                    mView.showFailed("");
                 });
     }
 }

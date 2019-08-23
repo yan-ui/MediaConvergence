@@ -32,8 +32,7 @@ public class CommentPresenter extends BasePresenter<CommentContract.View> implem
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            throwable.printStackTrace();
-                            mView.setCommentList(p, null);
+                            mView.showFailed("");
                         }
                 );
     }

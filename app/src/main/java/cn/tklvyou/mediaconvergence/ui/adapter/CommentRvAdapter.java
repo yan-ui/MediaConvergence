@@ -33,6 +33,12 @@ public class CommentRvAdapter extends BaseQuickAdapter<CommentModel, BaseViewHol
             GlideManager.loadRoundImg(bean.getAvatar(), helper.getView(R.id.ivAvatar), 5f, R.mipmap.default_avatar, true);
         }
 
+        if (bean.getAdmin_status() == 1) {
+            helper.setVisible(R.id.tvTag,true);
+        } else {
+            helper.setVisible(R.id.tvTag,false);
+        }
+
         helper.setText(R.id.tvNickName,bean.getNickname());
         helper.setText(R.id.tvTime,bean.getCreatetime());
         helper.setText(R.id.tvContent,bean.getDetail());

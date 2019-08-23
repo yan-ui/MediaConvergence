@@ -67,6 +67,14 @@ public interface ApiService {
     @POST("api/user/login")
     Observable<BaseResult<User>> login(@Query("account") String account, @Query("password") String password);
 
+
+    /**
+     * 验证码登录
+     */
+    @POST("api/user/mobilelogin")
+    Observable<BaseResult<User>> codeLogin(@Query("mobile") String mobile, @Query("captcha") String captcha);
+
+
     /**
      * 修改密码
      */
@@ -185,6 +193,12 @@ public interface ApiService {
      */
     @POST("api/msg/index")
     Observable<BaseResult<BasePageModel<MessageModel>>> getSystemMsgList(@Query("p") int p);
+
+    /**
+     * 清空消息
+     */
+    @POST("api/msg/deleteall")
+    Observable<BaseResult<Object>> clearMessage();
 
     /**
      * 兑换记录

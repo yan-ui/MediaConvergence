@@ -8,6 +8,7 @@ import cn.tklvyou.mediaconvergence.model.PointModel;
 public interface GoodsDetailContract {
     interface View extends BaseContract.BaseView {
         void setGoodsDetail(PointModel model);
+        void exchangeSuccess();
     }
 
     interface Presenter extends BaseContract.BasePresenter<View> {

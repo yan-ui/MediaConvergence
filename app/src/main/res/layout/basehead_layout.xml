@@ -16,21 +16,28 @@
         titlebar:centerTextSize="@dimen/sp_19"
         titlebar:centerType="textView"
         titlebar:leftDrawablePadding="@dimen/dp_5"
-        titlebar:leftType="textView"
         titlebar:leftTextColor="@color/white"
         titlebar:leftTextSize="@dimen/sp_14"
-        titlebar:rightType="textView"
+        titlebar:leftType="textView"
         titlebar:rightTextColor="@color/white"
         titlebar:rightTextSize="@dimen/sp_14"
+        titlebar:rightType="textView"
         titlebar:showBottomLine="false"
         titlebar:statusBarMode="light"
         titlebar:titleBarHeight="@dimen/dp_40" />
 
     <!--内容容器-->
+    <!--<FrameLayout-->
+        <!--android:id="@+id/base_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"></FrameLayout>-->
+
+
     <cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading
-        android:id="@+id/base_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    android:id="@+id/base_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    </cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading>
 
 
 </LinearLayout>

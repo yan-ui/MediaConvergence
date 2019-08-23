@@ -27,6 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_10"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:text="矩阵号名称"
             android:textColor="@color/default_black_text_color"
             android:textSize="@dimen/sp_12" />
