@@ -24,7 +24,9 @@ public class TVListPresenter extends BasePresenter<TVListContract.View> implemen
                                 ToastUtils.showShort(result.getMsg());
                             }
                         }, throwable -> {
-                            mView.showFailed("");
+                            if (mView != null) {
+                                mView.showFailed("");
+                            }
                         }
                 );
     }

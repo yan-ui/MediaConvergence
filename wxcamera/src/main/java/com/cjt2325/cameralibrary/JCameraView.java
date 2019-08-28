@@ -568,6 +568,10 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
         mCaptureLayout.setTip(tip);
     }
 
+    public void setDurationTime(int time){
+        mCaptureLayout.setDuration(time);
+    }
+
     @Override
     public void startPreviewCallback() {
         LogUtil.i("startPreviewCallback");

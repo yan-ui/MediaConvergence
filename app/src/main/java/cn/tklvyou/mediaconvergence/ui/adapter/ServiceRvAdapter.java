@@ -22,10 +22,14 @@ import cn.tklvyou.mediaconvergence.ui.service.ServiceWebviewActivity;
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration;
 import cn.tklvyou.mediaconvergence.utils.YResourceUtils;
 
+import static cn.tklvyou.mediaconvergence.ui.service.WebConstant.EXTRA_SHARE_ENABLE;
+import static cn.tklvyou.mediaconvergence.ui.service.WebConstant.EXTRA_SHARE_TITLE;
+
 /**
  * Created by yiwei on 16/5/17.
  */
 public class ServiceRvAdapter extends BaseQuickAdapter<ServiceModel, BaseViewHolder> {
+
 
     public ServiceRvAdapter(int layoutResId, @Nullable List<ServiceModel> data) {
         super(layoutResId, data);
@@ -49,6 +53,8 @@ public class ServiceRvAdapter extends BaseQuickAdapter<ServiceModel, BaseViewHol
                     Intent intent = new Intent(mContext, ServiceWebviewActivity.class);
                     String url =  ((ServiceChildGridRvAdpater)adapter).getData().get(position).getUrl();
                     intent.putExtra("url", url);
+                    intent.putExtra(EXTRA_SHARE_ENABLE,false);
+                    intent.putExtra(EXTRA_SHARE_TITLE,"");
                     mContext.startActivity(intent);
                 }
             });

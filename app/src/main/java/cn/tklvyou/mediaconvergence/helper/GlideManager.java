@@ -159,7 +159,7 @@ public class GlideManager {
     }
 
     public static void loadImg(Object obj, ImageView iv) {
-        sCommonPlaceholder = R.mipmap.default_avatar;
+        sCommonPlaceholder = R.mipmap.logo;
         loadImg(obj, iv, sCommonPlaceholder);
     }
 

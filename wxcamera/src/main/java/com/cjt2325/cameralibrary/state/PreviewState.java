@@ -79,8 +79,10 @@ class PreviewState implements State {
                 if (isShort) {
                     machine.getView().resetState(JCameraView.TYPE_SHORT);
                 } else {
-                    machine.getView().playVideo(firstFrame, url);
-                    machine.setState(machine.getBorrowVideoState());
+                    if (CameraInterface.getInstance().getSurfaceHolder() != null) {
+                        machine.getView().playVideo(firstFrame, url);
+                        machine.setState(machine.getBorrowVideoState());
+                    }
                 }
             }
         });

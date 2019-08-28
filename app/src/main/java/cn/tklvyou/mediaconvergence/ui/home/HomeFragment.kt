@@ -171,6 +171,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         for ((index, item) in mSelectedChannels.withIndex()) {
             val newsFragment = NewsListFragment()
             val bundle = Bundle()
+            bundle.putString("param",item)
             when (item) {
                 "V视频" -> {
                     bundle.putInt("type", NewsMultipleItem.VIDEO)
@@ -187,7 +188,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 "问政" -> {
                     bundle.putInt("type", NewsMultipleItem.WEN_ZHENG)
                 }
-                "矩阵" -> {
+                "矩阵","新闻网" -> {
                     bundle.putInt("type", NewsMultipleItem.JU_ZHENG)
                 }
                 "原创" -> {
@@ -210,6 +211,11 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 }
                 "直播" -> {
                     bundle.putInt("type", NewsMultipleItem.ZHI_BO)
+                }
+
+                else ->{
+                    bundle.putInt("type", NewsMultipleItem.NEWS)
+                    bundle.putBoolean("banner",false)
                 }
 
             }

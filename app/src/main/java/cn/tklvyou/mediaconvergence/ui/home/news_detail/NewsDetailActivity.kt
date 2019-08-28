@@ -126,10 +126,9 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         initWebView(newsDetailWebView)
 
         when (type) {
-            "视频", "图片" -> {
+            "视频", "图文" -> {
                 llWXHeader.visibility = View.VISIBLE
                 llArticle.visibility = View.GONE
-
             }
 
             "电视" -> {
@@ -279,7 +278,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
             shareToWXFriend()
         }
 
-        mPresenter.getDetailsById(id,true)
+        mPresenter.getDetailsById(id, true)
 
         timer = Timer()
         timerTask = object : TimerTask() {
@@ -308,7 +307,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
 
     override fun onRetry() {
         super.onRetry()
-        mPresenter.getDetailsById(id,false)
+        mPresenter.getDetailsById(id, false)
     }
 
 
@@ -316,7 +315,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         commenNum = item.comment_num
         seeNum = item.visit_num
 
-        shareTitle = item.name
+        shareTitle = if(item.name.isEmpty()) item.module else item.name
         //收藏状态
         hasCollect = item.collect_status == 1
 
@@ -770,11 +769,11 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
     override fun addCommentSuccess() {
         if (enableHideComment) {
             updateEditTextBodyVisible(View.GONE)
-        }else{
+        } else {
             hideSoftInput(circleEt.windowToken)
         }
 
-        mPresenter.getDetailsById(id,false)
+        mPresenter.getDetailsById(id, false)
     }
 
     override fun setCollectStatusSuccess(isCollect: Boolean) {
@@ -885,7 +884,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         }
     }
 
-    private var mTencent:Tencent? = null
+    private var mTencent: Tencent? = null
     private fun shareToQQ() {
         mTencent = Tencent.createInstance(Contacts.QQ_APPID, application)
 

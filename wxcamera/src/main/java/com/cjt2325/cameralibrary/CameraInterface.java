@@ -98,7 +98,7 @@ public class CameraInterface implements Camera.PreviewCallback {
     private int recordScleRate = 0;
 
     //视频质量
-    private int mediaQuality = JCameraView.MEDIA_QUALITY_MIDDLE;
+    private int mediaQuality = JCameraView.MEDIA_QUALITY_LOW;
     private SensorManager sm = null;
 
     //获取CameraInterface单例
@@ -109,6 +109,10 @@ public class CameraInterface implements Camera.PreviewCallback {
                     mCameraInterface = new CameraInterface();
             }
         return mCameraInterface;
+    }
+
+    public SurfaceHolder getSurfaceHolder() {
+        return mHolder;
     }
 
     public void setSwitchView(ImageView mSwitchView, ImageView mFlashLamp) {
@@ -350,6 +354,7 @@ public class CameraInterface implements Camera.PreviewCallback {
     }
 
     private float prevewProp;
+
     public float getPrevewProp() {
         return prevewProp;
     }
@@ -405,6 +410,8 @@ public class CameraInterface implements Camera.PreviewCallback {
                 isPreviewing = true;
                 Log.i(TAG, "=== Start Preview ===");
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

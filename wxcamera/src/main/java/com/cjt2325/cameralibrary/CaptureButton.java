@@ -9,6 +9,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -73,6 +75,7 @@ public class CaptureButton extends View {
     private LongPressRunnable longPressRunnable;    //长按后处理的逻辑Runnable
     private CaptureListener captureLisenter;        //按钮回调接口
     private RecordCountDownTimer timer;             //计时器
+
 
     public CaptureButton(Context context) {
         super(context);
@@ -146,15 +149,19 @@ public class CaptureButton extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                LogUtil.i("state = " + state);
+                LogUtil.i("state = " + state +"   button_state = "+button_state);
                 if (event.getPointerCount() > 1 || state != STATE_IDLE)
                     break;
                 event_Y = event.getY();     //记录Y值
                 state = STATE_PRESS;        //修改当前状态为点击按下
 
                 //判断按钮状态是否为可录制状态
-                if ((button_state == BUTTON_STATE_ONLY_RECORDER || button_state == BUTTON_STATE_BOTH))
+                if ((button_state == BUTTON_STATE_ONLY_RECORDER || button_state == BUTTON_STATE_BOTH)) {
                     postDelayed(longPressRunnable, 500);    //同时延长500启动长按后处理的逻辑Runnable
+                }
+//                if ((button_state == BUTTON_STATE_ONLY_RECORDER || button_state == BUTTON_STATE_BOTH)) {
+//                    handler.postDelayed(longPressRunnable, 500); //同时延长500启动长按后处理的逻辑Runnable
+//                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (captureLisenter != null
@@ -243,7 +250,8 @@ public class CaptureButton extends View {
     }
 
     //内外圆动画
-    private void startRecordAnimation(float outside_start, float outside_end, float inside_start, float inside_end) {
+    private void startRecordAnimation(float outside_start, float outside_end,
+                                      float inside_start, float inside_end) {
         ValueAnimator outside_anim = ValueAnimator.ofFloat(outside_start, outside_end);
         ValueAnimator inside_anim = ValueAnimator.ofFloat(inside_start, inside_end);
         //外圆动画监听

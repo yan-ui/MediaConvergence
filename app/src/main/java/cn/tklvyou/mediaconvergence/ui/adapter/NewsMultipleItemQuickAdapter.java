@@ -114,15 +114,22 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                     GlideManager.loadCircleImg(R.mipmap.default_avatar, helper.getView(R.id.ivAvatar));
                 }
 
-                Glide.with(mContext).load(bean.getImage()).into((ImageView) helper.getView(R.id.ivVideoBg));
+                GlideManager.loadImg(bean.getImage(), helper.getView(R.id.ivVideoBg));
 
                 helper.addOnClickListener(R.id.ivStartPlayer);
                 break;
             case NewsMultipleItem.TV:
                 HaveSecondModuleNewsModel suixiTvModel = (HaveSecondModuleNewsModel) item.getDataBean();
 
-                if (suixiTvModel.getData().size() == 1) {
+                if (suixiTvModel.getData().size() == 0) {
+                    helper.getView(R.id.llSuixiTvFirst).setVisibility(View.GONE);
+                    helper.getView(R.id.llSuixiTvSecond).setVisibility(View.GONE);
+                } else if (suixiTvModel.getData().size() == 1) {
+                    helper.getView(R.id.llSuixiTvFirst).setVisibility(View.VISIBLE);
                     helper.getView(R.id.llSuixiTvSecond).setVisibility(View.INVISIBLE);
+                } else {
+                    helper.getView(R.id.llSuixiTvFirst).setVisibility(View.VISIBLE);
+                    helper.getView(R.id.llSuixiTvSecond).setVisibility(View.VISIBLE);
                 }
 
                 helper.setText(R.id.tvModuleSecond, suixiTvModel.getModule_second());
@@ -494,7 +501,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
                         }
                     });
 
-                    GlideManager.loadImg(bean.getImage(),ivVideo);
+                    GlideManager.loadImg(bean.getImage(), ivVideo);
 
                 }
                 break;

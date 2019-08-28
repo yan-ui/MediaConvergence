@@ -124,6 +124,7 @@ public class NewListPresenter extends BasePresenter<NewListContract.View> implem
                         ToastUtils.showShort(result.getMsg());
                     }
                 }, throwable -> {
+                    throwable.printStackTrace();
                     mView.setBanner(null);
                     mView.showFailed("");
                 });
