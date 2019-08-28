@@ -1132,55 +1132,61 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
      */
     private fun bannerSkipToNewsDetail(banner: BannerModel) {
         val bean = banner.article_info
-        when (bean.module) {
-            "V视频" -> {
-                val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "濉溪TV" -> {
-                if (bean.module_second == "置顶频道") {
-                    val type = if (bean.type == "tv") "电视" else "广播"
-                    TVNewsDetailActivity.startTVNewsDetailActivity(context!!, type, bean.id)
-                } else {
-                    val type = "电视"
-                    NewsDetailActivity.startNewsDetailActivity(context!!, type, bean.id)
+        if (bean.url.isNotEmpty()) {
+            startWebDetailsActivity(context!!,bean.url)
+        } else {
+            when (bean.module) {
+                "V视频" -> {
+                    val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
+                    startNewsDetailActivity(context!!, type, bean.id)
                 }
-            }
-            "新闻", "矩阵", "新闻网", "专栏", "党建" -> {
-                val type = "文章"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "视讯" -> {
-                val type = "视讯"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "问政" -> {
-                val type = "问政"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
+                "濉溪TV" -> {
+                    if (bean.module_second == "置顶频道") {
+                        val type = if (bean.type == "tv") "电视" else "广播"
+                        TVNewsDetailActivity.startTVNewsDetailActivity(context!!, type, bean.id)
+                    } else {
+                        val type = "电视"
+                        NewsDetailActivity.startNewsDetailActivity(context!!, type, bean.id)
+                    }
+                }
+                "新闻", "矩阵", "新闻网", "专栏", "党建" -> {
+                    val type = "文章"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+                "视讯" -> {
+                    val type = "视讯"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+                "问政" -> {
+                    val type = "问政"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
 
-            "原创", "随手拍" -> {
-                val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "悦读" -> {
-                val type = "悦读"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "悦听" -> {
-                val type = "悦听"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "公告" -> {
-                val type = "公告"
-                startNewsDetailActivity(context!!, type, bean.id)
-            }
-            "直播" -> {
-                val type = "直播"
-                startNewsDetailActivity(context!!, type, bean.id)
+                "原创", "随手拍" -> {
+                    val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+                "悦读" -> {
+                    val type = "悦读"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+                "悦听" -> {
+                    val type = "悦听"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+                "公告" -> {
+                    val type = "公告"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+                "直播" -> {
+                    val type = "直播"
+                    startNewsDetailActivity(context!!, type, bean.id)
+                }
+
             }
 
         }
+
 
     }
 

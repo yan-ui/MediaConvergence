@@ -16,17 +16,29 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import java.util.*
 
 class WXEntryActivity : Activity(), IWXAPIEventHandler {
     private var mWeixinAPI: IWXAPI? = null
     private val RETURN_MSG_TYPE_LOGIN = 1
     private val RETURN_MSG_TYPE_SHARE = 2
 
+    private var timer:Timer? = null
+    private var timerTask:TimerTask? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mWeixinAPI = WXAPIFactory.createWXAPI(this, Contacts.WX_APPID, true)
         mWeixinAPI!!.handleIntent(this.intent, this)
+
+        timer = Timer()
+        timerTask = object :TimerTask(){
+            override fun run() {
+                runOnUiThread {
+                    finish()
+                }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -35,10 +47,21 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
         mWeixinAPI!!.handleIntent(intent, this)//必须调用此句话
     }
 
+    override fun onResume() {
+        super.onResume()
+        timer?.schedule(timerTask,1000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
+        timer = null
+    }
+
     //微信发送的请求将回调到onReq方法
     override fun onReq(req: BaseReq) {
         LogUtils.d("onReq")
-        finish()
+        this.finish()
     }
 
     //发送到微信请求的响应结果
@@ -55,7 +78,7 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
                 } else if (resp is SendMessageToWX.Resp) {
                     InterfaceUtils.getInstance().onClick("")
                 }
-                finish()
+                this.finish()
             }
             BaseResp.ErrCode.ERR_USER_CANCEL -> {
                 if (resp.type == RETURN_MSG_TYPE_SHARE) {
@@ -64,23 +87,25 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
                     ToastUtils.showShort("登录失败")
                 }
                 LogUtils.e("ERR_USER_CANCEL")
-                finish()
+                this.finish()
             }
 
             BaseResp.ErrCode.ERR_AUTH_DENIED ->{
 
                 LogUtils.e("ERR_AUTH_DENIED")
-                finish()
+                this.finish()
             }
 
             else -> {
                 ToastUtils.showShort("微信登录错误")
                 LogUtils.d("微信登录错误" + " " + resp.errCode + resp.errStr)
-                finish()
+                this.finish()
             }
         }//发送取消
         //发送被拒绝
         //发送返回
+
+        this.finish()
     }
 
 }

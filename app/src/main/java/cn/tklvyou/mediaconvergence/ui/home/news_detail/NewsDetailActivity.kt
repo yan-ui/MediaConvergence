@@ -185,7 +185,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
                 llWXHeader.visibility = View.GONE
                 contentTv.visibility = View.GONE
                 llArticle.visibility = View.VISIBLE
-                shareItem.visibility = View.GONE
+//                shareItem.visibility = View.GONE
                 tvTitle.visibility = View.GONE
                 tvGoodNum.visibility = View.INVISIBLE
                 tvBeginTime.visibility = View.GONE

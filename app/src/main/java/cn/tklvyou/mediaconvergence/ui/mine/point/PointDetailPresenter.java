@@ -27,6 +27,7 @@ public class PointDetailPresenter extends BasePresenter<PointDetailContract.View
                 .compose(RxSchedulers.applySchedulers())
                 .compose(mView.bindToLife())
                 .subscribe(result -> {
+                    mView.showSuccess("");
                     if (result.getCode() == RequestConstant.CODE_REQUEST_SUCCESS) {
                         mView.setPointDetails(page, result.getData());
                     } else {
