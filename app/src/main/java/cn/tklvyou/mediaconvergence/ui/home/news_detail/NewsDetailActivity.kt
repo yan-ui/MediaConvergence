@@ -898,7 +898,7 @@ class NewsDetailActivity : BaseWebViewActivity<NewsDetailPresenter>(), NewsDetai
         params.putString(QQShare.SHARE_TO_QQ_TITLE, shareTitle)
 //        params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "摘要") //可选，最长40个字
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, Contacts.SHARE_BASE_URL + id) //必填 	这条分享消息被好友点击后的跳转URL。
-//        params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://avatar.csdn.net/C/3/D/1_u013451048.jpg") // 可选 分享图片的URL或者本地路径
+        params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://medium2.tklvyou.cn/qiniu/20190812/FiYgpZ32gNGMbRGxesypz9sSWUbI.png") // 可选 分享图片的URL或者本地路径
         params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "濉溪发布")
         mTencent!!.shareToQQ(this, params, object : IUiListener {
             override fun onComplete(p0: Any?) {

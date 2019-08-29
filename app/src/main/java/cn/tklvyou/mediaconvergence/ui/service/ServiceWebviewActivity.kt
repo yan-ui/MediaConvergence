@@ -1,5 +1,6 @@
 package cn.tklvyou.mediaconvergence.ui.service
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.sina.weibo.sdk.api.WebpageObject
 import com.sina.weibo.sdk.api.WeiboMultiMessage
+import com.sina.weibo.sdk.share.WbShareCallback
 import com.sina.weibo.sdk.share.WbShareHandler
 import com.sina.weibo.sdk.utils.Utility
 import com.tencent.connect.share.QQShare
@@ -32,7 +34,6 @@ import com.tencent.smtt.sdk.*
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
-import kotlinx.android.synthetic.main.activity_news_detail.*
 
 
 class ServiceWebviewActivity : BaseActivity<NullPresenter>() {
@@ -218,7 +219,7 @@ class ServiceWebviewActivity : BaseActivity<NullPresenter>() {
         val webpage = WXWebpageObject()
         webpage.webpageUrl = url
         val msg = WXMediaMessage(webpage)
-        msg.title = "分享"
+        msg.title = shareTitle
         msg.description = "濉溪发布"
         val bmp = BitmapFactory.decodeResource(resources, R.drawable.share_icon)
         val thumbBmp = Bitmap.createScaledBitmap(bmp, 100, 100, true)
@@ -261,7 +262,7 @@ class ServiceWebviewActivity : BaseActivity<NullPresenter>() {
         params.putString(QQShare.SHARE_TO_QQ_TITLE, shareTitle)
 //        params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "摘要") //可选，最长40个字
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, url) //必填 	这条分享消息被好友点击后的跳转URL。
-//        params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://avatar.csdn.net/C/3/D/1_u013451048.jpg") // 可选 分享图片的URL或者本地路径
+        params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://medium2.tklvyou.cn/qiniu/20190812/FiYgpZ32gNGMbRGxesypz9sSWUbI.png") // 可选 分享图片的URL或者本地路径
         params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "濉溪发布")
         mTencent!!.shareToQQ(this, params, object : IUiListener {
             override fun onComplete(p0: Any?) {
@@ -278,6 +279,7 @@ class ServiceWebviewActivity : BaseActivity<NullPresenter>() {
             }
 
         })
+
     }
 
     private fun shareToWX() {
@@ -308,7 +310,6 @@ class ServiceWebviewActivity : BaseActivity<NullPresenter>() {
         InterfaceUtils.getInstance().add(onClickResult)
 
     }
-
 
     private fun shareToWB() {
         val pinfo = packageManager.getInstalledPackages(0)// 获取所有已安装程序的包信息
@@ -344,6 +345,33 @@ class ServiceWebviewActivity : BaseActivity<NullPresenter>() {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (shareHandler != null) {
+            shareHandler!!.doResultIntent(intent, object : WbShareCallback {
+                override fun onWbShareFail() {
+                    ToastUtils.showShort("分享失败")
+                }
+
+                override fun onWbShareCancel() {
+                    ToastUtils.showShort("取消分享")
+                }
+
+                override fun onWbShareSuccess() {
+                    ToastUtils.showShort("分享成功")
+                }
+
+            })
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (mTencent != null) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, null)
+        }
+    }
 
     private var onClickResult = object : InterfaceUtils.OnClickResult {
         override fun onResult(msg: String?) {

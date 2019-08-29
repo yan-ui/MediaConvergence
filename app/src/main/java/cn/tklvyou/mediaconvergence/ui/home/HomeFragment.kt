@@ -97,7 +97,9 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         super.onHiddenChanged(hidden)
         if (!hidden && !isFirstResume) {
             mViewPager.setCurrentItem(0, false)
-            (mChannelFragments[0] as NewsListFragment).refreshData()
+            if (mChannelFragments.size > 0) {
+                (mChannelFragments[0] as NewsListFragment).refreshData()
+            }
         }
     }
 
@@ -171,7 +173,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
         for ((index, item) in mSelectedChannels.withIndex()) {
             val newsFragment = NewsListFragment()
             val bundle = Bundle()
-            bundle.putString("param",item)
+            bundle.putString("param", item)
             when (item) {
                 "V视频" -> {
                     bundle.putInt("type", NewsMultipleItem.VIDEO)
@@ -188,7 +190,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                 "问政" -> {
                     bundle.putInt("type", NewsMultipleItem.WEN_ZHENG)
                 }
-                "矩阵","新闻网" -> {
+                "矩阵", "新闻网" -> {
                     bundle.putInt("type", NewsMultipleItem.JU_ZHENG)
                 }
                 "原创" -> {
@@ -213,9 +215,9 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
                     bundle.putInt("type", NewsMultipleItem.ZHI_BO)
                 }
 
-                else ->{
+                else -> {
                     bundle.putInt("type", NewsMultipleItem.NEWS)
-                    bundle.putBoolean("banner",false)
+                    bundle.putBoolean("banner", false)
                 }
 
             }
@@ -256,7 +258,9 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
     fun reload() {
         mViewPager.setCurrentItem(0, false)
-        (mChannelFragments[0] as NewsListFragment).refreshData()
+        if(mChannelFragments.size > 0) {
+            (mChannelFragments[0] as NewsListFragment).refreshData()
+        }
     }
 
 }

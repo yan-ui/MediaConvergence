@@ -223,7 +223,30 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
 
     public fun refreshData() {
         recyclerView.scrollToPosition(0)
-        refreshLayout.autoRefresh()
+        when (type) {
+            NewsMultipleItem.VIDEO, NewsMultipleItem.NEWS -> {
+                if(::bannerModelList.isInitialized){
+                    refreshLayout.autoRefresh()
+                }else{
+                    showLoading = true
+                    mPresenter.getBanner(param)
+                }
+            }
+
+            NewsMultipleItem.JU_ZHENG, NewsMultipleItem.ZHUAN_LAN -> {
+                if(::juzhengHeaderList.isInitialized){
+                    refreshLayout.autoRefresh()
+                }else{
+                    showLoading = true
+                    mPresenter.getJuZhengHeader(param)
+                }
+            }
+
+            else -> {
+                refreshLayout.autoRefresh()
+            }
+        }
+
     }
 
     override fun onUserVisible() {
@@ -1133,7 +1156,7 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
     private fun bannerSkipToNewsDetail(banner: BannerModel) {
         val bean = banner.article_info
         if (bean.url.isNotEmpty()) {
-            startWebDetailsActivity(context!!,bean.url)
+            startWebDetailsActivity(context!!, bean.url)
         } else {
             when (bean.module) {
                 "V视频" -> {
