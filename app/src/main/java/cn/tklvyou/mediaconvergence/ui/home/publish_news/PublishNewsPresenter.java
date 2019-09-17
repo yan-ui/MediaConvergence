@@ -29,7 +29,6 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
 
         for (int i = 0; i < files.size(); i++) {
 
-
             String currentTim = String.valueOf(System.currentTimeMillis());
             String key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
             String mimeType = "image/jpeg";
@@ -52,10 +51,14 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
             @Override
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
-                if(err.contains("no token")){
+                if (err.contains("no token")) {
                     getQiniuToken();
+                    mView.publishError();
                 }
-                mView.showSuccess("上传失败,请重新上传");
+                if (mView != null) {
+                    mView.showSuccess("上传失败,请重新上传");
+                    mView.publishError();
+                }
             }
 
             @Override
@@ -65,8 +68,10 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
 
             @Override
             public void onUploadCompleted() {
-                mView.showSuccess("");
-                mView.uploadImagesSuccess(keys);
+                if (mView != null) {
+                    mView.showSuccess("");
+                    mView.uploadImagesSuccess(keys);
+                }
             }
 
             @Override
@@ -87,9 +92,12 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                             ToastUtils.showShort(result.getMsg());
                             if (result.getCode() == 1) {
                                 mView.publishSuccess();
+                            } else {
+                                mView.publishError();
                             }
                         }, throwable -> {
                             mView.showFailed("");
+                            mView.publishError();
                         }
 
                 );
@@ -105,9 +113,12 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
                     ToastUtils.showShort(result.getMsg());
                     if (result.getCode() == 1) {
                         mView.publishSuccess();
+                    } else {
+                        mView.publishError();
                     }
                 }, throwable -> {
                     mView.showFailed("");
+                    mView.publishError();
                 });
     }
 
@@ -134,7 +145,7 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
         String key;
         String mimeType;
         if (isVideo) {
-            key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/"  + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) +  ".mp4";
+            key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".mp4";
             mimeType = "video/webm";
         } else {
             key = "qiniu/" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "/" + uid + "_" + currentTim + "_" + RandomStringUtils.randomAlphanumeric(6) + ".jpg";
@@ -154,10 +165,14 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
             @Override
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
-                if(err.contains("no token")){
+                if (err.contains("no token")) {
                     getQiniuToken();
+                    mView.publishError();
                 }
-                mView.showSuccess("上传失败,请重新上传");
+                if (mView != null) {
+                    mView.showSuccess("上传失败,请重新上传");
+                    mView.publishError();
+                }
             }
 
             @Override
@@ -167,10 +182,12 @@ public class PublishNewsPresenter extends BasePresenter<PublishNewsContract.View
 
             @Override
             public void onUploadCompleted() {
-                if (isVideo) {
-                    mView.uploadVideoSuccess(key);
-                } else {
-                    mView.uploadImageSuccess(key);
+                if (mView != null) {
+                    if (isVideo) {
+                        mView.uploadVideoSuccess(key);
+                    } else {
+                        mView.uploadImageSuccess(key);
+                    }
                 }
             }
 

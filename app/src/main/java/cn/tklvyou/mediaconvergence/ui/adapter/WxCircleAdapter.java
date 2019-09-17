@@ -60,7 +60,7 @@ public class WxCircleAdapter extends BaseQuickAdapter<NewsBean, BaseViewHolder> 
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, NewsBean item) {
-        if (SPUtils.getInstance().getInt("groupId") == 3 || enableDelete) {
+        if (SPUtils.getInstance().getBoolean("dels",false) || enableDelete) {
             helper.setVisible(R.id.deleteBtn, true);
         } else {
             helper.setVisible(R.id.deleteBtn, false);

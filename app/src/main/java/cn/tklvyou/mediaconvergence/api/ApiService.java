@@ -242,6 +242,12 @@ public interface ApiService {
     Observable<BaseResult<Object>> deleteArticle(@Query("id") int id);
 
     /**
+     * 管理员删除V视
+     */
+    @POST("api/article/delv")
+    Observable<BaseResult<Object>> deleteVideo(@Query("id") int id);
+
+    /**
      * 删除V视
      */
     @POST("api/article/del")

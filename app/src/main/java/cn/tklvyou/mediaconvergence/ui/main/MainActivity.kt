@@ -79,9 +79,9 @@ class MainActivity : BaseBottomTabActivity<MainPresenter>(), MainContract.View {
         } else {
             getVersionInfo()
 
-            if (MyApplication.showSplash) {
-                startActivity(Intent(this, SplashActivity::class.java))
-            }
+//            if (MyApplication.showSplash) {
+//                startActivity(Intent(this, SplashActivity::class.java))
+//            }
 
             mFragments = ArrayList()
 

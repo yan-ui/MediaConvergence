@@ -13,6 +13,7 @@ import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.SuixiTVGridRvAdpater
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.service.ServiceWebviewActivity
+import cn.tklvyou.mediaconvergence.ui.service.WebConstant
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -100,6 +101,7 @@ class TVFragment : BaseHttpRecyclerFragment<TVListPresenter, NewsBean, BaseViewH
         val intent = Intent(context, ServiceWebviewActivity::class.java)
         intent.putExtra("url", url)
         intent.putExtra("other",true)
+        intent.putExtra(WebConstant.EXTRA_SHARE_TITLE, "")
         startActivity(intent)
     }
 

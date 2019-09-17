@@ -31,7 +31,9 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
                                 AccountHelper.getInstance().setUserInfo(result.getData().getUserinfo());
                                 SPUtils.getInstance().put("token", result.getData().getUserinfo().getToken());
                                 SPUtils.getInstance().put("login", true);
-                                SPUtils.getInstance().put("groupId", result.getData().getUserinfo().getGroup_id());
+                                SPUtils.getInstance().put("addv", result.getData().getUserinfo().isAddv());
+                                SPUtils.getInstance().put("delv", result.getData().getUserinfo().isDelv());
+                                SPUtils.getInstance().put("dels", result.getData().getUserinfo().isDels());
                             } else if (result.getCode() == 5) {
                                 mView.bindMobile(result.getData().getThird_id());
                             }

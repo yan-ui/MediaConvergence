@@ -91,6 +91,7 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
             public void onUploadFailed(String key, String err) {
                 Log.e(TAG, "onUploadFailed:" + err);
                 mView.showSuccess("");
+                mView.publishError();
             }
 
             @Override
@@ -122,9 +123,12 @@ public class PublishWenzhengPresenter extends BasePresenter<PublishWenzhengContr
                     mView.showSuccess(result.getMsg());
                     if (result.getCode() == 1) {
                         mView.publishSuccess();
+                    } else {
+                        mView.publishError();
                     }
                 }, throwable -> {
                     mView.showFailed("");
+                    mView.publishError();
                 });
     }
 

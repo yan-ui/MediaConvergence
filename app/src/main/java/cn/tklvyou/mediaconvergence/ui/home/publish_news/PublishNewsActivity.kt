@@ -160,6 +160,7 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
                 return@setOnClickListener
             }
 
+            btnSubmit.isEnabled = false
             showLoading()
             if (page == "V视") {
                 mPresenter.qiniuUploadFile(File(selectList!![0].path), true, qiniuToken, "" + AccountHelper.getInstance().uid, qiniuManager)
@@ -215,8 +216,14 @@ class PublishNewsActivity : BaseActivity<PublishNewsPresenter>(), PublishNewsCon
 
 
     override fun publishSuccess() {
+        btnSubmit.isEnabled = true
         showSuccess("")
         finish()
+    }
+
+    override fun publishError() {
+        showSuccess("")
+        btnSubmit.isEnabled = true
     }
 
 

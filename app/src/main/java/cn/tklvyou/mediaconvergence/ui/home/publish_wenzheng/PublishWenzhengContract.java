@@ -9,16 +9,25 @@ import cn.tklvyou.mediaconvergence.utils.QiniuUploadManager;
 
 
 public interface PublishWenzhengContract {
-    interface View extends BaseContract.BaseView{
+    interface View extends BaseContract.BaseView {
         void setQiniuToken(String token);
+
         void setJuZhengHeader(List<NewsBean> beans);
+
         void publishSuccess();
+
+        void publishError();
+
         void uploadImagesSuccess(List<String> urls);
     }
-    interface Presenter extends BaseContract.BasePresenter<View>{
+
+    interface Presenter extends BaseContract.BasePresenter<View> {
         void getQiniuToken();
+
         void getJuZhengHeader(String module);
+
         void qiniuUploadMultiImage(List<File> files, String token, String uid, QiniuUploadManager manager);
+
         void publishWenZheng(String module_second, String name, String content, String images);
 
     }

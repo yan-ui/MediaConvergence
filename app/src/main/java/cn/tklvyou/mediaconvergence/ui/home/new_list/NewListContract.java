@@ -10,6 +10,7 @@ import cn.tklvyou.mediaconvergence.model.HaveSecondModuleNewsModel;
 
 public interface NewListContract {
     interface View extends BaseContract.BaseView {
+
         void setNewList(int p, BasePageModel<NewsBean> model);
 
         void setHaveSecondModuleNews(int p, List<HaveSecondModuleNewsModel> datas);
@@ -31,6 +32,8 @@ public interface NewListContract {
         void getDetailsById(int id);
 
         void deleteArticle(int id, int position);
+
+        void deleteVideo(int id, int position);
 
         void getJuZhengHeader(String module);
 

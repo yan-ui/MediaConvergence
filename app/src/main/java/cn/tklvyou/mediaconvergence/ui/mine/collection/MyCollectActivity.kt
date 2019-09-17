@@ -14,6 +14,7 @@ import cn.tklvyou.mediaconvergence.ui.adapter.MyCollectionAdapter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.home.tv_news_detail.TVNewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.service.ServiceWebviewActivity
+import cn.tklvyou.mediaconvergence.ui.service.WebConstant
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.layout_recycler.*
@@ -100,7 +101,7 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
                     NewsDetailActivity.startNewsDetailActivity(this, type, id)
                 }
             }
-            "新闻", "矩阵", "专栏", "党建" -> {
+            "新闻", "矩阵", "专栏", "党建", "新闻网" -> {
                 val type = "文章"
                 if (bean.url.isNotEmpty()) {
                     startDetailsActivity(this, bean.url)
@@ -158,6 +159,16 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
                 }
             }
 
+            else -> {
+                val type = "文章"
+                if (bean.url.isNotEmpty()) {
+                    startDetailsActivity(this, bean.url)
+                } else {
+                    startNewsDetailActivity(this, type, id, position)
+                }
+            }
+
+
         }
 
 
@@ -167,6 +178,7 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
         val intent = Intent(context, ServiceWebviewActivity::class.java)
         intent.putExtra("url", url)
         intent.putExtra("other", true)
+        intent.putExtra(WebConstant.EXTRA_SHARE_TITLE, "")
         startActivity(intent)
     }
 
@@ -181,14 +193,14 @@ class MyCollectActivity : BaseHttpRecyclerActivity<CollectPresenter, NewsBean, B
             val like_status = data.getIntExtra("like_status", 0)
             val hasCollect = data.getBooleanExtra("is_collect", false)
 
-            if(hasCollect) {
+            if (hasCollect) {
                 val bean = (adapter as MyCollectionAdapter).data[position]
                 bean.comment_num = commenNum
                 bean.like_num = zanNum
                 bean.visit_num = seeNum
                 bean.like_status = like_status
                 adapter.notifyItemChanged(position)
-            }else{
+            } else {
                 adapter.remove(position)
             }
 

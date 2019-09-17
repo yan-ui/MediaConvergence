@@ -14,15 +14,20 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import cn.tklvyou.mediaconvergence.R
+import cn.tklvyou.mediaconvergence.base.activity.BaseRecyclerActivity
 import cn.tklvyou.mediaconvergence.base.activity.BaseWebViewActivity
+import cn.tklvyou.mediaconvergence.base.interfaces.AdapterCallBack
 import cn.tklvyou.mediaconvergence.helper.GlideManager
 import cn.tklvyou.mediaconvergence.model.NewsBean
+import cn.tklvyou.mediaconvergence.model.TelModel
+import cn.tklvyou.mediaconvergence.ui.adapter.TVNewsDetailsRvAdapter
 import cn.tklvyou.mediaconvergence.ui.home.AudioController
 import cn.tklvyou.mediaconvergence.ui.home.comment.CommentListActivity
 import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import com.blankj.utilcode.util.*
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.chad.library.adapter.base.BaseViewHolder
 import com.pili.pldroid.player.PLOnErrorListener
 import kotlinx.android.synthetic.main.activity_tv_news_detail.*
 import java.util.*
@@ -30,7 +35,7 @@ import java.util.*
 /**
  * Created by yiw on 2016/1/6.
  */
-class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNewsDetailContract.View {
+class TVNewsDetailActivity : BaseRecyclerActivity<TVNewsDetailPresenter, TelModel.ListBean, BaseViewHolder, TVNewsDetailsRvAdapter>(), TVNewsDetailContract.View {
 
     companion object {
         private val INTENT_TYPE = "type"
@@ -76,9 +81,7 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
             finish()
         }
 
-        initWebView(tvWebView)
-
-//        setPositiveImage(R.mipmap.icon_collect_normal)
+        initRecyclerView(mRecyclerView)
 
         val drawables = tvSeeNum.compoundDrawables
 
@@ -197,20 +200,20 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
                     rbToday.text = SpanUtils().appendLine("今天").append(item.tel_list[1].date).create()
                     rbTomorrow.text = SpanUtils().appendLine("明天").append(item.tel_list[2].date).create()
 
-                    loadHtml(item.tel_list[1].content)
+                    onLoadSucceed(1, item.tel_list[1].list)
 
                     rgTime.setOnCheckedChangeListener { group, checkedId ->
                         when (checkedId) {
                             R.id.rbYesterday -> {
-                                loadHtml(item.tel_list[0].content)
+                                onLoadSucceed(1, item.tel_list[0].list)
                             }
 
                             R.id.rbToday -> {
-                                loadHtml(item.tel_list[1].content)
+                                onLoadSucceed(1, item.tel_list[1].list)
                             }
 
                             R.id.rbTomorrow -> {
-                                loadHtml(item.tel_list[2].content)
+                                onLoadSucceed(1, item.tel_list[2].list)
                             }
                         }
 
@@ -336,6 +339,25 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
 
     }
 
+    override fun setList(list: MutableList<TelModel.ListBean>) {
+        setList(object : AdapterCallBack<TVNewsDetailsRvAdapter> {
+
+            override fun createAdapter(): TVNewsDetailsRvAdapter {
+                return TVNewsDetailsRvAdapter(R.layout.item_tv_news_details_list_view, list)
+            }
+
+            override fun refreshAdapter() {
+                adapter.setNewData(list)
+            }
+        })
+
+    }
+
+    override fun getListAsync(page: Int) {
+    }
+
+
+
     override fun updateLikeStatus(isLike: Boolean) {
         this.isLike = isLike
 
@@ -380,9 +402,6 @@ class TVNewsDetailActivity : BaseWebViewActivity<TVNewsDetailPresenter>(), TVNew
         } else {
             commonTitleBar.rightImageButton.setImageDrawable(resources.getDrawable(R.mipmap.icon_collect_normal))
         }
-    }
-
-    override fun setTitleContent(title: String) {
     }
 
 

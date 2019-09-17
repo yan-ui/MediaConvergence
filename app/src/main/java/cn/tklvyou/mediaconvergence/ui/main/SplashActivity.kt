@@ -14,7 +14,7 @@ class SplashActivity : BaseActivity<NullPresenter>() {
     }
 
     override fun getActivityLayoutID(): Int {
-        return R.layout.activity_splash
+        return R.layout.activity_splash_first
     }
 
     override fun initView(savedInstanceState: Bundle?) {

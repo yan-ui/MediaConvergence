@@ -87,6 +87,13 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
         switch (helper.getItemViewType()) {
             case NewsMultipleItem.VIDEO:
                 NewsBean bean = (NewsBean) item.getDataBean();
+
+                if(SPUtils.getInstance().getBoolean("delv",false)){
+                    helper.setVisible(R.id.deleteBtn,true);
+                }else {
+                    helper.setVisible(R.id.deleteBtn,false);
+                }
+
                 helper.setText(R.id.tvNewsTitle, bean.getName());
                 helper.setText(R.id.tvVideoTime, formatTime(Double.valueOf(bean.getTime()).longValue()));
                 helper.setText(R.id.tvCommentNum, "" + bean.getComment_num());
@@ -116,7 +123,7 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
                 GlideManager.loadImg(bean.getImage(), helper.getView(R.id.ivVideoBg));
 
-                helper.addOnClickListener(R.id.ivStartPlayer);
+                helper.addOnClickListener(R.id.ivStartPlayer,R.id.deleteBtn);
                 break;
             case NewsMultipleItem.TV:
                 HaveSecondModuleNewsModel suixiTvModel = (HaveSecondModuleNewsModel) item.getDataBean();

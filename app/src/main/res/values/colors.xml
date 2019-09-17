@@ -31,7 +31,7 @@
     <color name="grayAAAAAA">#AAAAAA</color>
     <color name="grayF4F4F4">#F4F4F4</color>
     <color name="grayCCCCCC">#CCCCCC</color>
-    <color name="gray999999"> #999999</color>
+    <color name="gray999999">#999999</color>
 
     <!--黑色区域-->
     <color name="black333333">#333333</color>

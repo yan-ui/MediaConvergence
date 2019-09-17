@@ -37,6 +37,7 @@ import cn.tklvyou.mediaconvergence.ui.video_player.VodActivity
 import cn.tklvyou.mediaconvergence.utils.BannerGlideImageLoader
 import cn.tklvyou.mediaconvergence.utils.GridDividerItemDecoration
 import cn.tklvyou.mediaconvergence.utils.RecycleViewDivider
+import cn.tklvyou.mediaconvergence.widget.dailog.CommonDialog
 import cn.tklvyou.mediaconvergence.widget.page_recycler.PageRecyclerView
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
@@ -57,6 +58,7 @@ import kotlin.collections.ArrayList
 class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultipleItem<Any>, BaseViewHolder, NewsMultipleItemQuickAdapter>(), NewListContract.View {
 
     override fun deleteSuccess(position: Int) {
+        adapter.remove(position)
     }
 
     override fun initPresenter(): NewListPresenter {
@@ -225,18 +227,18 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         recyclerView.scrollToPosition(0)
         when (type) {
             NewsMultipleItem.VIDEO, NewsMultipleItem.NEWS -> {
-                if(::bannerModelList.isInitialized){
+                if (::bannerModelList.isInitialized) {
                     refreshLayout.autoRefresh()
-                }else{
+                } else {
                     showLoading = true
                     mPresenter.getBanner(param)
                 }
             }
 
             NewsMultipleItem.JU_ZHENG, NewsMultipleItem.ZHUAN_LAN -> {
-                if(::juzhengHeaderList.isInitialized){
+                if (::juzhengHeaderList.isInitialized) {
                     refreshLayout.autoRefresh()
-                }else{
+                } else {
                     showLoading = true
                     mPresenter.getJuZhengHeader(param)
                 }
@@ -259,6 +261,14 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
                 }
             }
 
+        }
+    }
+
+
+    override fun onUserInvisible() {
+        super.onUserInvisible()
+        if(type == NewsMultipleItem.LISTEN){
+            audioController?.onPause()
         }
     }
 
@@ -942,6 +952,19 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
         super.onItemChildClick(adapter, view, position)
         if (view != null) {
             when (view.id) {
+
+                //V视频 删除按钮
+                R.id.deleteBtn -> {
+                    val dialog = CommonDialog(context)
+                    dialog.setTitle("温馨提示")
+                    dialog.setMessage("是否删除？")
+                    dialog.setYesOnclickListener("确认") {
+                        val bean = (adapter as NewsMultipleItemQuickAdapter).data[position].dataBean as NewsBean
+                        mPresenter.deleteVideo(bean.id, position)
+                        dialog.dismiss()
+                    }
+                    dialog.show()
+                }
 
                 //V视频 直播 播放按钮
                 R.id.ivStartPlayer -> {

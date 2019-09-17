@@ -1,4 +1,5 @@
 package cn.tklvyou.mediaconvergence.ui.mine.browse
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -13,6 +14,7 @@ import cn.tklvyou.mediaconvergence.ui.adapter.MyCollectionAdapter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.home.tv_news_detail.TVNewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.service.ServiceWebviewActivity
+import cn.tklvyou.mediaconvergence.ui.service.WebConstant
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.layout_recycler.*
@@ -76,83 +78,91 @@ class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean,
     }
 
 
-
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
         val bean = (adapter as MyCollectionAdapter).data[position]
         val id = bean.id
 
-        when(bean.module){
-            "V视频" ->{
+        when (bean.module) {
+            "V视频" -> {
                 val type = "视频"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
-            "濉溪TV" ->{
-                if(bean.module_second =="置顶频道"){
+            "濉溪TV" -> {
+                if (bean.module_second == "置顶频道") {
                     val type = if (bean.type == "tv") "电视" else "广播"
                     TVNewsDetailActivity.startTVNewsDetailActivity(this, type, id)
-                }else{
+                } else {
                     val type = "电视"
                     NewsDetailActivity.startNewsDetailActivity(this, type, id)
                 }
             }
-            "新闻","矩阵","专栏","党建" ->{
+            "新闻", "矩阵", "专栏", "党建", "新闻网" -> {
                 val type = "文章"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
-            "视讯" ->{
+            "视讯" -> {
                 val type = "视讯"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
-            "问政" ->{
+            "问政" -> {
                 val type = "问政"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
 
-            "原创","随手拍" ->{
+            "原创", "随手拍" -> {
                 val type = if (bean.images != null && bean.images.size > 0) "图文" else "视频"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
-            "悦读" ->{
+            "悦读" -> {
                 val type = "悦读"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
-            "悦听" ->{
+            "悦听" -> {
                 val type = "悦听"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
             }
-            "公告" ->{
+            "公告" -> {
                 val type = "公告"
                 if (bean.url.isNotEmpty()) {
-                    startDetailsActivity(this,bean.url)
+                    startDetailsActivity(this, bean.url)
+                } else {
+                    startNewsDetailActivity(this, type, id, position)
+                }
+            }
+
+            else -> {
+                val type = "文章"
+                if (bean.url.isNotEmpty()) {
+                    startDetailsActivity(this, bean.url)
                 } else {
                     startNewsDetailActivity(this, type, id, position)
                 }
@@ -167,7 +177,8 @@ class RecentBrowseActivity : BaseHttpRecyclerActivity<BrowsePresenter, NewsBean,
     private fun startDetailsActivity(context: Context, url: String) {
         val intent = Intent(context, ServiceWebviewActivity::class.java)
         intent.putExtra("url", url)
-        intent.putExtra("other",true)
+        intent.putExtra("other", true)
+        intent.putExtra(WebConstant.EXTRA_SHARE_TITLE, "")
         startActivity(intent)
     }
 

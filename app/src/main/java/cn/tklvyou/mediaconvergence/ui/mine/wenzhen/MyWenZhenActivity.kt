@@ -13,6 +13,7 @@ import cn.tklvyou.mediaconvergence.model.NewsBean
 import cn.tklvyou.mediaconvergence.ui.adapter.WenZhenAdapter
 import cn.tklvyou.mediaconvergence.ui.home.news_detail.NewsDetailActivity
 import cn.tklvyou.mediaconvergence.ui.service.ServiceWebviewActivity
+import cn.tklvyou.mediaconvergence.ui.service.WebConstant
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.layout_recycler.*
@@ -79,6 +80,7 @@ class MyWenZhenActivity : BaseHttpRecyclerActivity<WenZhenPresenter, NewsBean, B
         val intent = Intent(context, ServiceWebviewActivity::class.java)
         intent.putExtra("url", url)
         intent.putExtra("other",true)
+        intent.putExtra(WebConstant.EXTRA_SHARE_TITLE, "")
         startActivity(intent)
     }
 

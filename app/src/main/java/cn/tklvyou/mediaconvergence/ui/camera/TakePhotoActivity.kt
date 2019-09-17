@@ -12,6 +12,7 @@ import cn.tklvyou.mediaconvergence.base.activity.BaseActivity
 import cn.tklvyou.mediaconvergence.ui.home.publish_news.PublishNewsActivity
 import cn.tklvyou.mediaconvergence.ui.video_edit.VideoEditActivity
 import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.cjt2325.cameralibrary.CaptureButton
 import com.cjt2325.cameralibrary.JCameraView
 import com.luck.picture.lib.entity.LocalMedia
@@ -53,19 +54,21 @@ class TakePhotoActivity : BaseActivity<NullPresenter>() {
                 intent.putExtra("page", page)
                 intent.putExtra("isVideo", false)
 
-                val selectList = ArrayList<LocalMedia>()
-
-                val path = "$cacheDir/temp.png"
+                val path = "$cacheDir/temp.jpeg"
                 if (ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG)) {
+                    val selectList = ArrayList<LocalMedia>()
                     val localMedia = LocalMedia()
                     localMedia.setPosition(0)
                     localMedia.path = path
                     selectList.add(localMedia)
+
+                    intent.putExtra("data", selectList)
+                    startActivity(intent)
+                    finish()
+                }else{
+                    ToastUtils.showShort("保存失败，请重试")
                 }
 
-                intent.putExtra("data", selectList as Serializable)
-                startActivity(intent)
-                finish()
             }
 
             override fun recordSuccess(videoUrlPath: String, firstFrame: Bitmap) {

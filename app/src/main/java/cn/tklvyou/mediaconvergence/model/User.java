@@ -50,6 +50,9 @@ public class User {
         private String avatar;
         private String score;
         private String token;
+        private boolean addv;
+        private boolean delv;
+        private boolean dels;
         private int unread;
         private int user_id;
         private int createtime;
@@ -158,6 +161,30 @@ public class User {
 
         public void setUnread(int unread) {
             this.unread = unread;
+        }
+
+        public boolean isAddv() {
+            return addv;
+        }
+
+        public void setAddv(boolean addv) {
+            this.addv = addv;
+        }
+
+        public boolean isDelv() {
+            return delv;
+        }
+
+        public void setDelv(boolean delv) {
+            this.delv = delv;
+        }
+
+        public boolean isDels() {
+            return dels;
+        }
+
+        public void setDels(boolean dels) {
+            this.dels = dels;
         }
     }
 }

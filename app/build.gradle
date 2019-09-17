@@ -18,8 +18,8 @@ android {
         applicationId "cn.tklvyou.mediaconvergence"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 6
-        versionName "1.0.5"
+        versionCode 9
+        versionName "1.0.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -75,6 +75,8 @@ dependencies {
 
     api 'com.tencent.tbs.tbssdk:sdk:43697'
 
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47-androidx'
+
     //点赞动画按钮
     implementation 'com.github.varunest:sparkbutton:1.0.6'
     //app状态管理
@@ -114,7 +116,7 @@ dependencies {
     //指示器
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.4.0'
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47-androidx'
+
     implementation 'com.youth.banner:banner:1.4.10'
     //网易云视频播放器
     implementation project(path: ':playerkit')

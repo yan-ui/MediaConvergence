@@ -54,7 +54,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
     private var isRefresh = false
     override fun initView() {
         homeTitleBar.setBackgroundResource(R.drawable.shape_gradient_common_titlebar)
-        if (SPUtils.getInstance().getInt("groupId") != 2) {
+        if (!SPUtils.getInstance().getBoolean("addv",false)) {
             homeTitleBar.rightCustomView.visibility = View.GONE
         }
 
@@ -150,7 +150,7 @@ class HomeFragment : BaseFragment<HomePresenter>(), HomeContract.View {
 
             override fun onPageSelected(p0: Int) {
                 if (p0 == 0) {
-                    if (SPUtils.getInstance().getInt("groupId") == 2) {
+                    if (SPUtils.getInstance().getBoolean("addv",false)) {
                         homeTitleBar.rightCustomView.visibility = View.VISIBLE
                     } else {
                         homeTitleBar.rightCustomView.visibility = View.GONE

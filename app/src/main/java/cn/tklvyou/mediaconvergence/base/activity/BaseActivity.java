@@ -35,10 +35,8 @@ import java.util.List;
 
 import cn.tklvyou.mediaconvergence.R;
 import cn.tklvyou.mediaconvergence.base.BaseContract;
-import cn.tklvyou.mediaconvergence.base.ConnectionLiveData;
 import cn.tklvyou.mediaconvergence.base.SpecialAdapter;
 import cn.tklvyou.mediaconvergence.manager.ThreadManager;
-import cn.tklvyou.mediaconvergence.widget.BaseDialog;
 import cn.tklvyou.mediaconvergence.widget.FrameLayout4Loading;
 
 
@@ -54,7 +52,6 @@ public abstract class BaseActivity<P extends BaseContract.BasePresenter> extends
     protected View mContentView;
 
     public FrameLayout4Loading mFrameLayout4Loading;
-//    public FrameLayout mFrameLayout4Loading;
 
     protected CommonTitleBar getBaseTitleBar() {
         return baseTitleBar;

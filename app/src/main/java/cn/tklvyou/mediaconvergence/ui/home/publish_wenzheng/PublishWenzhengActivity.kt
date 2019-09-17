@@ -119,6 +119,7 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
                 return@setOnClickListener
             }
 
+            btnSubmit.isEnabled = false
             showLoading()
             imagesBuilder = StringBuilder()
 
@@ -159,8 +160,13 @@ class PublishWenzhengActivity : BaseActivity<PublishWenzhengPresenter>(), Publis
 
 
     override fun publishSuccess() {
+        btnSubmit.isEnabled = true
         showSuccess("")
         finish()
+    }
+
+    override fun publishError() {
+        btnSubmit.isEnabled = true
     }
 
 
