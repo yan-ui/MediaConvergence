@@ -54,6 +54,7 @@ class MainActivity : BaseBottomTabActivity<MainPresenter>(), MainContract.View {
     }
 
     override fun getActivityLayoutID(): Int {
+        LogUtils.e(System.currentTimeMillis())
         return R.layout.activity_main
     }
 
@@ -77,11 +78,12 @@ class MainActivity : BaseBottomTabActivity<MainPresenter>(), MainContract.View {
             startActivity(Intent(this, LoginActivity::class.java))
             return
         } else {
-            getVersionInfo()
+            if (MyApplication.showSplash) {
+                LogUtils.e(System.currentTimeMillis())
+                startActivity(Intent(this, SplashActivity::class.java))
+            }
 
-//            if (MyApplication.showSplash) {
-//                startActivity(Intent(this, SplashActivity::class.java))
-//            }
+            getVersionInfo()
 
             mFragments = ArrayList()
 

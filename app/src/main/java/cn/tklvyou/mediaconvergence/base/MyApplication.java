@@ -73,31 +73,39 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         mContext = this;
-        //异常处理初始化
-        CrashManager.init(mContext);
-        //初始化微信相关配置
-        initWx();
-        //初始化微博配置
-        initWb();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //初始化工具包
+                Utils.init(mContext);
+
+                //初始化全局防重复点击
+                GlobalClickCallbacks.init(mContext);
+
+                //初始化微信相关配置
+                initWx();
+                //初始化微博配置
+                initWb();
+
+                // android 7.0系统解决拍照的问题
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                builder.detectFileUriExposure();
 
 
-        // android 7.0系统解决拍照的问题
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
-        builder.detectFileUriExposure();
+                //设置为true时Logcat会输出日志
+                Gloading.debug(false);
+                //初始化状态管理
+                Gloading.initDefault(new GlobalAdapter());
 
-        //初始化工具包
-        Utils.init(this);
+                //异常处理初始化
+                CrashManager.init(mContext);
 
-        //初始化全局防重复点击
-        GlobalClickCallbacks.init(this);
+                initTencentTBS();
+            }
+        }).start();
 
-        //设置为true时Logcat会输出日志
-        Gloading.debug(true);
-        //初始化状态管理
-        Gloading.initDefault(new GlobalAdapter());
-
-        initTencentTBS();
     }
 
     private void initTencentTBS() {
@@ -106,14 +114,12 @@ public class MyApplication extends MultiDexApplication {
 
             @Override
             public void onViewInitFinished(boolean arg0) {
-                // TODO Auto-generated method stub
                 //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
                 Log.d("app", " onViewInitFinished is " + arg0);
             }
 
             @Override
             public void onCoreInitFinished() {
-                // TODO Auto-generated method stub
             }
         };
         //x5内核初始化接口

@@ -29,6 +29,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static cn.tklvyou.mediaconvergence.common.SpConstant.PREF_KEY_TOKEN;
+
 /**
  * Retrofit 辅助类
  */
@@ -129,6 +131,8 @@ public class RetrofitHelper {
 
             if (result != null && result.getCode() == 401) {
                 Log.d(TAG, "--->登录失效，自动重新登录");
+                SPUtils.getInstance().put(PREF_KEY_TOKEN, "");
+                SPUtils.getInstance().put("login", false);
                 Intent intent = new Intent(MyApplication.getAppContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 MyApplication.getAppContext().startActivity(intent);

@@ -44,7 +44,7 @@
         <activity android:name=".ui.home.comment.CommentListActivity" />
         <activity android:name=".ui.home.search_list.SearchListActivity" />
         <activity android:name=".ui.account.AgreementActivity" />
-        <activity android:name=".ui.main.SplashActivity" />
+        <activity android:name=".ui.main.SplashActivity" android:theme="@style/SplashActivityTheme" />
         <activity android:name=".ui.home.all_tv.AllTvActivity" />
         <activity android:name=".ui.home.all_juzheng.AllJuZhengActivity" />
         <activity android:name=".ui.service.PointRuleActivity" />
