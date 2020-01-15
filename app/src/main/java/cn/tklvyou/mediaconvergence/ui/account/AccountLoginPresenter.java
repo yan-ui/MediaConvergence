@@ -27,13 +27,13 @@ public class AccountLoginPresenter extends BasePresenter<AccountContract.LoginVi
                             mView.showSuccess(result.getMsg());
                             if (result.getCode() == 1) {
                                 ToastUtils.showShort(result.getMsg());
-                                mView.loginSuccess();
                                 AccountHelper.getInstance().setUserInfo(result.getData().getUserinfo());
                                 SPUtils.getInstance().put("token", result.getData().getUserinfo().getToken());
                                 SPUtils.getInstance().put("login", true);
                                 SPUtils.getInstance().put("addv", result.getData().getUserinfo().isAddv());
                                 SPUtils.getInstance().put("delv", result.getData().getUserinfo().isDelv());
                                 SPUtils.getInstance().put("dels", result.getData().getUserinfo().isDels());
+                                mView.loginSuccess();
                             } else if (result.getCode() == 5) {
                                 mView.bindMobile(result.getData().getThird_id());
                             }

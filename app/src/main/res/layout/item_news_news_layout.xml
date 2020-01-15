@@ -80,7 +80,7 @@
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:text="删除"
-                android:textColor="#8290AF"
+                android:textColor="@color/colorAccent"
                 android:textSize="@dimen/sp_13"
                 android:visibility="gone" />
 

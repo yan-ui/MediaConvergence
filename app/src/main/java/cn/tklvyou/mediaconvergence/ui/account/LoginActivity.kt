@@ -168,7 +168,6 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
 
         iUiListener = object : IUiListener {
             override fun onComplete(p0: Any?) {
-                LogUtils.e(p0)
                 val obj = p0 as JSONObject
                 val openId = obj.getString("openid")
                 val assess_token = obj.getString("access_token")
@@ -250,6 +249,7 @@ class LoginActivity : BaseActivity<AccountLoginPresenter>(), AccountContract.Log
     override fun loginSuccess() {
         MyApplication.showSplash = false
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     override fun loginError() {

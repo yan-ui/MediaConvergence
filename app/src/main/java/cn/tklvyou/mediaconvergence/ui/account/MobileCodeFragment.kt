@@ -1,21 +1,14 @@
 package cn.tklvyou.mediaconvergence.ui.account
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 
 import cn.tklvyou.mediaconvergence.R
 import cn.tklvyou.mediaconvergence.base.MyApplication
-import cn.tklvyou.mediaconvergence.base.NullPresenter
 import cn.tklvyou.mediaconvergence.base.fragment.BaseFragment
 import cn.tklvyou.mediaconvergence.ui.main.MainActivity
 import cn.tklvyou.mediaconvergence.widget.TimeCount
@@ -74,15 +67,15 @@ class MobileCodeFragment : BaseFragment<AccountPresenter>(), AccountContract.Vie
     override fun getCaptchaSuccess() {
         timeCount = TimeCount(60000, 1000, object : TimeCount.ITimeCountListener {
             override fun onTick(millisUntilFinished: Long) {
-                btnGetCaptcha.setTextColor(Color.parseColor("#999999"))
-                btnGetCaptcha.isClickable = false
-                btnGetCaptcha.text = "${millisUntilFinished / 1000}秒"
+                btnGetCaptcha?.isClickable = false
+                btnGetCaptcha?.text = "${millisUntilFinished / 1000}秒"
+                btnGetCaptcha?.setTextColor(Color.parseColor("#999999"))
             }
 
             override fun onFinish() {
-                btnGetCaptcha.setTextColor(resources.getColor(R.color.colorAccent))
-                btnGetCaptcha.isClickable = true
-                btnGetCaptcha.text = "发送验证码"
+                btnGetCaptcha?.isClickable = true
+                btnGetCaptcha?.text = "发送验证码"
+                btnGetCaptcha?.setTextColor(resources.getColor(R.color.colorAccent))
             }
 
         })
@@ -144,5 +137,10 @@ class MobileCodeFragment : BaseFragment<AccountPresenter>(), AccountContract.Vie
         mPresenter.codeLogin(account, code)
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        timeCount?.cancel()
+    }
 
 }

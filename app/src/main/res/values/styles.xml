@@ -1,7 +1,7 @@
 <resources>
 
     <style name="SplashActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/icon_splash</item>
+        <item name="android:windowBackground">@drawable/splash_bg</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>

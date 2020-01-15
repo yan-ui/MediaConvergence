@@ -960,7 +960,11 @@ class NewsListFragment : BaseHttpRecyclerFragment<NewListPresenter, NewsMultiple
                     dialog.setMessage("是否删除？")
                     dialog.setYesOnclickListener("确认") {
                         val bean = (adapter as NewsMultipleItemQuickAdapter).data[position].dataBean as NewsBean
-                        mPresenter.deleteVideo(bean.id, position)
+                        if(bean.module == "V视频"){
+                            mPresenter.deleteVideo(bean.id, position)
+                        }else{
+                            mPresenter.deleteArticle(bean.id, position)
+                        }
                         dialog.dismiss()
                     }
                     dialog.show()

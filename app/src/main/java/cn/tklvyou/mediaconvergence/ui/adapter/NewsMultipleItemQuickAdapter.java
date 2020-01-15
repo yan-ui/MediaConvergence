@@ -163,6 +163,10 @@ public class NewsMultipleItemQuickAdapter extends BaseMultiItemQuickAdapter<News
 
             case NewsMultipleItem.NEWS:
                 bean = (NewsBean) item.getDataBean();
+                if(SPUtils.getInstance().getBoolean("dels",false)){
+                    helper.setGone(R.id.deleteBtn,true);
+                }
+                helper.addOnClickListener(R.id.deleteBtn);
                 helper.setText(R.id.tvTitle, bean.getName());
                 helper.setText(R.id.tvTime, bean.getBegintime());
                 helper.setText(R.id.tvSeeNum, "" + bean.getVisit_num());

@@ -21,6 +21,7 @@ import cn.tklvyou.mediaconvergence.ui.camera.CameraFragment
 import cn.tklvyou.mediaconvergence.ui.mine.MineFragment
 import cn.tklvyou.mediaconvergence.ui.service.ServiceFragment
 import cn.tklvyou.mediaconvergence.utils.UpdateAppHttpUtil
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -54,7 +55,6 @@ class MainActivity : BaseBottomTabActivity<MainPresenter>(), MainContract.View {
     }
 
     override fun getActivityLayoutID(): Int {
-        LogUtils.e(System.currentTimeMillis())
         return R.layout.activity_main
     }
 
@@ -74,12 +74,13 @@ class MainActivity : BaseBottomTabActivity<MainPresenter>(), MainContract.View {
         hideTitleBar()
 
         isLogin = SPUtils.getInstance().getBoolean("login")
+        LogUtils.e(isLogin)
         if (!isLogin) {
             startActivity(Intent(this, LoginActivity::class.java))
             return
         } else {
+            ActivityUtils.finishOtherActivities(this::class.java)
             if (MyApplication.showSplash) {
-                LogUtils.e(System.currentTimeMillis())
                 startActivity(Intent(this, SplashActivity::class.java))
             }
 
